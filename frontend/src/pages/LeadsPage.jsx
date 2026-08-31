@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { Plus, MagnifyingGlass, ArrowUp, ArrowDown, Buildings, Phone, Archive } from "@phosphor-icons/react";
 import api from "@/services/api";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -37,6 +38,8 @@ export default function LeadsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editLead, setEditLead] = useState(null);
   const [form, setForm] = useState({ name: "", contact_name: "", phone_number: "", email: "", company_source: "", potential_value: "", tag: "COLD", stage: "NEW" });
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
+  const [archiveDialog, setArchiveDialog] = useState({ open: false, id: null });
   const userRole = localStorage.getItem("user_role");
   const isManager = userRole === "MANAGER";
 
@@ -78,7 +81,6 @@ export default function LeadsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this lead?")) return;
     try {
       await api.delete(`/leads/${id}/`);
       toaster.create({ title: "Lead deleted", type: "success" });
@@ -89,7 +91,6 @@ export default function LeadsPage() {
   };
 
   const handleArchive = async (id) => {
-    if (!confirm("Archive this lead? It will be hidden from Leads and Dashboard.")) return;
     try {
       await api.post(`/leads/${id}/archive/`);
       toaster.create({ title: "Lead archived", type: "success" });
@@ -168,11 +169,11 @@ export default function LeadsPage() {
                     <Table.Cell>
                       <HStack gap={2}>
                         <Button size="xs" variant="outline" onClick={() => openEdit(lead)}>Edit</Button>
-                        <Button size="xs" variant="outline" colorPalette="orange" onClick={() => handleArchive(lead.id)}>
+                        <Button size="xs" variant="outline" colorPalette="orange" onClick={() => setArchiveDialog({ open: true, id: lead.id })}>
                           <Archive size={12} />
                         </Button>
                         {isManager && (
-                          <Button size="xs" variant="outline" colorPalette="red" onClick={() => handleDelete(lead.id)}>Del</Button>
+                          <Button size="xs" variant="outline" colorPalette="red" onClick={() => setDeleteDialog({ open: true, id: lead.id })}>Del</Button>
                         )}
                       </HStack>
                     </Table.Cell>
@@ -276,6 +277,24 @@ export default function LeadsPage() {
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
+
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, id: null })}
+        onConfirm={() => handleDelete(deleteDialog.id)}
+        title="Delete Lead"
+        message="Are you sure you want to delete this lead? This action cannot be undone."
+        action="delete"
+      />
+
+      <ConfirmDialog
+        open={archiveDialog.open}
+        onClose={() => setArchiveDialog({ open: false, id: null })}
+        onConfirm={() => handleArchive(archiveDialog.id)}
+        title="Archive Lead"
+        message="This lead will be hidden from Leads, Pipeline, and Dashboard. You can restore it later from Archived Leads."
+        action="archive"
+      />
     </VStack>
   );
 }

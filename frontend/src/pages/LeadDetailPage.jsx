@@ -36,6 +36,7 @@ import {
   ArrowClockwise,
 } from "@phosphor-icons/react";
 import api from "@/services/api";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -65,6 +66,7 @@ export default function LeadDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [archiveDialog, setArchiveDialog] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -134,7 +136,6 @@ export default function LeadDetailPage() {
   };
 
   const handleArchive = async () => {
-    if (!confirm("Archive this lead? It will be hidden from Leads and Dashboard.")) return;
     try {
       const res = await api.post(`/leads/${lead.id}/archive/`);
       setLead(res.data.lead);
@@ -194,7 +195,7 @@ export default function LeadDetailPage() {
               <ArrowClockwise size={14} /> Restore
             </Button>
           ) : (
-            <Button size="sm" variant="outline" colorPalette="orange" onClick={handleArchive}>
+            <Button size="sm" variant="outline" colorPalette="orange" onClick={() => setArchiveDialog(true)}>
               <Archive size={14} /> Archive
             </Button>
           )}
@@ -551,6 +552,15 @@ export default function LeadDetailPage() {
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
+
+      <ConfirmDialog
+        open={archiveDialog}
+        onClose={() => setArchiveDialog(false)}
+        onConfirm={handleArchive}
+        title="Archive Lead"
+        message="This lead will be hidden from Leads, Pipeline, and Dashboard. You can restore it later from Archived Leads."
+        action="archive"
+      />
     </VStack>
   );
 }

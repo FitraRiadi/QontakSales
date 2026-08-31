@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { Plus, Pencil, Trash, UserPlus, Camera, X } from "@phosphor-icons/react";
 import api from "@/services/api";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -32,6 +33,7 @@ export default function AgentsPage() {
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const fileInputRef = useRef(null);
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
 
   const fetchAgents = () => {
     api.get("/agents/").then((r) => {
@@ -94,7 +96,6 @@ export default function AgentsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this agent?")) return;
     try {
       await api.delete(`/agents/${id}/`);
       toaster.create({ title: "Agent deleted", type: "success" });
@@ -142,7 +143,7 @@ export default function AgentsPage() {
                   <Table.Cell>
                     <HStack gap={2}>
                       <Button size="xs" variant="outline" onClick={() => openEdit(agent)}><Pencil size={12} /> Edit</Button>
-                      <Button size="xs" variant="outline" colorPalette="red" onClick={() => handleDelete(agent.id)}><Trash size={12} /> Del</Button>
+                      <Button size="xs" variant="outline" colorPalette="red" onClick={() => setDeleteDialog({ open: true, id: agent.id })}><Trash size={12} /> Del</Button>
                     </HStack>
                   </Table.Cell>
                 </Table.Row>
@@ -187,6 +188,15 @@ export default function AgentsPage() {
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
+
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, id: null })}
+        onConfirm={() => handleDelete(deleteDialog.id)}
+        title="Delete Agent"
+        message="Are you sure you want to delete this agent? All their data will be permanently removed."
+        action="delete"
+      />
     </VStack>
   );
 }
