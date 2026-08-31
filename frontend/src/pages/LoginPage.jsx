@@ -37,6 +37,12 @@ export default function LoginPage() {
       localStorage.setItem("refresh_token", response.data.refresh);
       const profile = await api.get("/auth/profile/");
       localStorage.setItem("user_role", profile.data.role);
+      localStorage.setItem("user_name", `${profile.data.first_name} ${profile.data.last_name}`);
+      localStorage.removeItem("manager_token");
+      localStorage.removeItem("manager_refresh");
+      localStorage.removeItem("manager_user");
+      localStorage.removeItem("impersonating");
+      localStorage.removeItem("impersonated_name");
       navigate("/dashboard");
     } catch (err) {
       const msg = err.response?.data?.detail || err.response?.data?.error || "Invalid email or password";
