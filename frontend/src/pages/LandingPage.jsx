@@ -24,6 +24,8 @@ import {
   Star,
   ChatCircleText,
 } from "@phosphor-icons/react";
+import brandLogo from "@/assets/brand.png";
+import heroImg from "@/assets/heroImg.png";
 
 const features = [
   { icon: Kanban, title: "Sales Pipeline", desc: "Visual Kanban board to track every deal from first contact to closed won." },
@@ -129,7 +131,7 @@ export default function LandingPage() {
       <Box as="nav" position="sticky" top={0} zIndex={10} bg="white/80" backdropFilter="blur(12px)" borderBottom="1px solid" borderColor="border">
         <Container maxW="7xl" py={4}>
           <HStack justify="space-between">
-            <Heading size="lg" color="primary">QontakSales</Heading>
+            <Box as="img" src={brandLogo} h="36px" alt="QontakSales" />
             <HStack gap={3}>
               <Button variant="ghost" onClick={() => navigate("/login")}>Login</Button>
               <Button bg="primary" color="white" onClick={() => navigate("/register")} _hover={{ bg: "secondary" }} px={6}>Get Started Free</Button>
@@ -169,11 +171,8 @@ export default function LandingPage() {
               </HStack>
             </VStack>
             <Box flex={1} position="relative">
-              <Box bg="gradient-to-br from-primary/5 to-stageContacted/10" borderRadius="2xl" p={8} minH="360px" border="1px solid" borderColor="border">
-                <VStack gap={4}>
-                  <Kanban size={80} color="#2563EB" weight="light" />
-                  <Text color="foreground" opacity={0.5} fontSize="sm">Interactive Pipeline Preview</Text>
-                </VStack>
+              <Box bg="gradient-to-br from-primary/5 to-stageContacted/10" borderRadius="2xl" p={8} minH="360px" border="1px solid" borderColor="border" display="flex" alignItems="center" justifyContent="center">
+                <Box as="img" src={heroImg} maxH="340px" alt="Sales Dashboard" />
               </Box>
               <Box position="absolute" top={-4} right={-4} bg="white" p={3} borderRadius="lg" shadow="lg" border="1px solid" borderColor="border">
                 <HStack gap={2}><CheckCircle size={16} color="var(--color-accent)" /><Text fontSize="xs" fontWeight="medium">Deal Won!</Text></HStack>

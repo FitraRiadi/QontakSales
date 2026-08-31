@@ -229,6 +229,9 @@ export default function TopBar({ onMenuClick }) {
               <Box p={3} borderBottom="1px solid" borderColor="border">
                 <Text fontWeight="semibold" fontSize="sm">{user?.first_name} {user?.last_name}</Text>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>{user?.role}</Text>
+                {user?.company_name && (
+                  <Text fontSize="xs" color="foreground" opacity={0.4}>{user.company_name}</Text>
+                )}
               </Box>
               <VStack align="stretch" gap={0}>
                 <HStack p={3} cursor="pointer" _hover={{ bg: "muted" }} onClick={() => { navigate("/settings"); setShowMenu(false); }}>

@@ -1,6 +1,7 @@
 import { Box, VStack, Text, Link as ChakraLink, HStack } from "@chakra-ui/react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { House, Users, Kanban, Gear, UserPlus, X } from "@phosphor-icons/react";
+import brandLogo from "@/assets/brand.png";
 
 const allNavItems = [
   { label: "Dashboard", icon: House, path: "/dashboard" },
@@ -34,7 +35,7 @@ export default function Sidebar({ open, onClose }) {
         transition="transform 200ms ease"
       >
         <HStack justify="space-between" p={6}>
-          <Text fontSize="xl" fontWeight="bold" color="primary">QontakSales</Text>
+          <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />
           <Box display={{ base: "block", md: "none" }} cursor="pointer" onClick={onClose}><X size={20} /></Box>
         </HStack>
 

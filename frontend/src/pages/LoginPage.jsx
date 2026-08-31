@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { Eye, EyeClosed, Lightning, ChartLineUp, Kanban } from "@phosphor-icons/react";
 import api from "@/services/api";
+import brandLogo from "@/assets/brand.png";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ export default function LoginPage() {
           <Kanban size={400} weight="light" style={{ position: "absolute", top: -50, right: -50 }} />
         </Box>
         <VStack align="start" gap={8} position="relative" zIndex={1}>
-          <Heading size="2xl">QontakSales</Heading>
+          <Box as="img" src={brandLogo} h="40px" alt="QontakSales" />
           <VStack align="start" gap={6}>
             <HStack gap={4}>
               <Box bg="white/20" p={3} borderRadius="lg"><ChartLineUp size={24} /></Box>

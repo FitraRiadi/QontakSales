@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { Eye, EyeClosed, Buildings, User, Envelope, Lock } from "@phosphor-icons/react";
 import api from "@/services/api";
+import brandLogo from "@/assets/brand.png";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export default function RegisterPage() {
         <Box position="absolute" bottom={-100} left={-100} w={300} h={300} bg="white" opacity={5} borderRadius="full" />
         <Box position="absolute" top={-50} right={-50} w={200} h={200} bg="white" opacity={5} borderRadius="full" />
         <VStack align="start" gap={8} position="relative" zIndex={1}>
-          <Heading size="2xl">QontakSales</Heading>
+          <Box as="img" src={brandLogo} h="40px" alt="QontakSales" />
           <VStack align="start" gap={4}>
             <Text fontSize="lg" opacity={0.9}>Start closing more deals today.</Text>
             <VStack align="start" gap={3} mt={4}>
