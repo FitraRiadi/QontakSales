@@ -21,6 +21,7 @@ class LeadSerializer(serializers.ModelSerializer):
             "tag",
             "assigned_to",
             "assigned_to_name",
+            "address",
             "created_at",
             "updated_at",
         ]

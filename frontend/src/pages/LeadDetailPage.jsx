@@ -5,22 +5,53 @@ import {
   Box,
   Button,
   Card,
+  Dialog,
   Field,
   Heading,
   HStack,
   Input,
   SimpleGrid,
   Spinner,
-  Table,
   Text,
   Textarea,
   VStack,
+  Portal,
   createToaster,
 } from "@chakra-ui/react";
-import { ArrowLeft, Phone, Buildings, CurrencyDollar, Clock } from "@phosphor-icons/react";
+import {
+  ArrowLeft,
+  Phone,
+  Envelope,
+  Buildings,
+  CurrencyDollar,
+  Clock,
+  User,
+  MapPin,
+  FloppyDisk,
+  PencilSimple,
+  WhatsappLogo,
+  CheckCircle,
+  XCircle,
+} from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
+
+const STAGE_LABELS = {
+  NEW: "Prospek Baru",
+  CONTACTED: "Hubungi",
+  NEGOTIATION: "Negosiasi",
+  WON: "Won",
+  LOST: "Lost",
+};
+
+const STAGE_COLORS = {
+  NEW: "blue",
+  CONTACTED: "yellow",
+  NEGOTIATION: "purple",
+  WON: "green",
+  LOST: "red",
+};
 
 export default function LeadDetailPage() {
   const { id } = useParams();
@@ -29,6 +60,9 @@ export default function LeadDetailPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newNote, setNewNote] = useState("");
+  const [editOpen, setEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState({});
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -38,7 +72,10 @@ export default function LeadDetailPage() {
       setLead(leadRes.data);
       setLogs(logsRes.data.results || logsRes.data);
       setLoading(false);
-    }).catch(() => { setLoading(false); toaster.create({ title: "Failed to load lead", type: "error" }); });
+    }).catch(() => {
+      setLoading(false);
+      toaster.create({ title: "Failed to load lead", type: "error" });
+    });
   }, [id]);
 
   const handleAddNote = async (e) => {
@@ -54,73 +91,431 @@ export default function LeadDetailPage() {
     }
   };
 
-  if (loading) return <Box display="flex" justifyContent="center" py={20}><Spinner size="xl" color="primary" /></Box>;
+  const openEdit = () => {
+    setEditForm({
+      name: lead.name || "",
+      contact_name: lead.contact_name || "",
+      phone_number: lead.phone_number || "",
+      email: lead.email || "",
+      company_source: lead.company_source || "",
+      potential_value: lead.potential_value || "",
+      tag: lead.tag || "COLD",
+      stage: lead.stage || "NEW",
+      address: lead.address || "",
+    });
+    setEditOpen(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const res = await api.put(`/leads/${lead.id}/`, editForm);
+      setLead(res.data);
+      setEditOpen(false);
+      toaster.create({ title: "Lead updated", type: "success" });
+    } catch {
+      toaster.create({ title: "Update failed", type: "error" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleMoveStage = async (stage) => {
+    try {
+      const res = await api.post(`/leads/${lead.id}/move_stage/`, { stage });
+      setLead(res.data);
+      toaster.create({ title: `Marked as ${STAGE_LABELS[stage]}`, type: stage === "WON" ? "success" : "warning" });
+    } catch {
+      toaster.create({ title: "Failed to update stage", type: "error" });
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "-";
+    return new Date(dateStr).toLocaleDateString("id-ID", {
+      day: "numeric", month: "long", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
+  };
+
+  const mapsUrl = lead?.address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.address)}`
+    : null;
+
+  if (loading)
+    return <Box display="flex" justifyContent="center" py={20}><Spinner size="xl" color="primary" /></Box>;
   if (!lead) return <Text>Lead not found</Text>;
 
   return (
     <VStack gap={6} align="stretch">
-      <HStack gap={4}>
-        <Button variant="ghost" size="sm" onClick={() => navigate(-1)}><ArrowLeft size={16} /> Back</Button>
-        <Heading size="lg">Lead Detail</Heading>
+      {/* Header */}
+      <HStack justify="space-between" wrap="wrap" gap={4}>
+        <HStack gap={4} wrap="wrap">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+            <ArrowLeft size={16} /> Back
+          </Button>
+          <VStack align="start" gap={0}>
+            <HStack gap={3} wrap="wrap">
+              <Heading size={{ base: "md", md: "lg" }}>{lead.name}</Heading>
+              <Badge colorPalette={STAGE_COLORS[lead.stage]} size="lg">{STAGE_LABELS[lead.stage]}</Badge>
+              <Badge colorPalette={lead.tag === "HOT" ? "red" : "blue"} size="lg">{lead.tag}</Badge>
+            </HStack>
+            {lead.company_source && <Text fontSize="sm" color="foreground" opacity={0.6}>{lead.company_source}</Text>}
+          </VStack>
+        </HStack>
+        <Button size="sm" variant="outline" onClick={openEdit}>
+          <PencilSimple size={14} /> Edit
+        </Button>
       </HStack>
 
-      <SimpleGrid columns={{ base: 1, lg: 3 }} gap={6}>
-        <Box lg={{ colSpan: 2 }}>
-          <Card.Root bg="white" border="1px solid" borderColor="border">
-            <Card.Header>
-              <HStack justify="space-between">
-                <Heading size="md">{lead.name}</Heading>
-                <Badge colorPalette={lead.tag === "HOT" ? "red" : "blue"}>{lead.tag}</Badge>
-              </HStack>
-            </Card.Header>
-            <Card.Body>
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-                <HStack gap={3}><Buildings size={20} color="#64748B" /><VStack align="start" gap={0}><Text fontSize="xs" color="foreground" opacity={0.6}>Company</Text><Text fontWeight="medium">{lead.company_source || "-"}</Text></VStack></HStack>
-                <HStack gap={3}><Phone size={20} color="#64748B" /><VStack align="start" gap={0}><Text fontSize="xs" color="foreground" opacity={0.6}>Phone</Text><Text fontWeight="medium">{lead.phone_number}</Text></VStack></HStack>
-                <HStack gap={3}><CurrencyDollar size={20} color="#64748B" /><VStack align="start" gap={0}><Text fontSize="xs" color="foreground" opacity={0.6}>Deal Value</Text><Text fontWeight="medium">Rp {Number(lead.potential_value).toLocaleString("id-ID")}</Text></VStack></HStack>
-                <HStack gap={3}><Clock size={20} color="#64748B" /><VStack align="start" gap={0}><Text fontSize="xs" color="foreground" opacity={0.6}>Stage</Text><Text fontWeight="medium">{lead.stage}</Text></VStack></HStack>
-              </SimpleGrid>
-            </Card.Body>
-          </Card.Root>
-        </Box>
+      {/* Info Cards Row */}
+      <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} gap={4}>
+        <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Body py={4}>
+            <HStack gap={3}>
+              <Box bg="blue.50" p={2} borderRadius="md"><Phone size={20} color="#2563EB" /></Box>
+              <VStack align="start" gap={0}>
+                <Text fontSize="xs" color="foreground" opacity={0.5}>Phone</Text>
+                <Text fontWeight="semibold" fontSize="sm">{lead.phone_number}</Text>
+              </VStack>
+            </HStack>
+          </Card.Body>
+        </Card.Root>
 
         <Card.Root bg="white" border="1px solid" borderColor="border">
-          <Card.Header><Heading size="md">Quick Actions</Heading></Card.Header>
-          <Card.Body>
-            <VStack gap={3} align="stretch">
-              <Button variant="outline" justifyContent="flex-start"><Phone size={16} /> Call Contact</Button>
-              <Button variant="outline" justifyContent="flex-start" colorPalette="red" onClick={async () => { await api.post(`/leads/${lead.id}/move_stage/`, { stage: "LOST" }); setLead({ ...lead, stage: "LOST" }); toaster.create({ title: "Marked as Lost", type: "warning" }); }}>Mark as Lost</Button>
-              <Button variant="outline" justifyContent="flex-start" colorPalette="green" onClick={async () => { await api.post(`/leads/${lead.id}/move_stage/`, { stage: "WON" }); setLead({ ...lead, stage: "WON" }); toaster.create({ title: "Marked as Won!", type: "success" }); }}>Mark as Won</Button>
-            </VStack>
+          <Card.Body py={4}>
+            <HStack gap={3}>
+              <Box bg="purple.50" p={2} borderRadius="md"><Envelope size={20} color="#7C3AED" /></Box>
+              <VStack align="start" gap={0}>
+                <Text fontSize="xs" color="foreground" opacity={0.5}>Email</Text>
+                <Text fontWeight="semibold" fontSize="sm">{lead.email || "-"}</Text>
+              </VStack>
+            </HStack>
+          </Card.Body>
+        </Card.Root>
+
+        <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Body py={4}>
+            <HStack gap={3}>
+              <Box bg="green.50" p={2} borderRadius="md"><CurrencyDollar size={20} color="#059669" /></Box>
+              <VStack align="start" gap={0}>
+                <Text fontSize="xs" color="foreground" opacity={0.5}>Deal Value</Text>
+                <Text fontWeight="semibold" fontSize="sm">Rp {Number(lead.potential_value).toLocaleString("id-ID")}</Text>
+              </VStack>
+            </HStack>
+          </Card.Body>
+        </Card.Root>
+
+        <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Body py={4}>
+            <HStack gap={3}>
+              <Box bg="orange.50" p={2} borderRadius="md"><Clock size={20} color="#EA580C" /></Box>
+              <VStack align="start" gap={0}>
+                <Text fontSize="xs" color="foreground" opacity={0.5}>Created</Text>
+                <Text fontWeight="semibold" fontSize="sm">{formatDate(lead.created_at)}</Text>
+              </VStack>
+            </HStack>
           </Card.Body>
         </Card.Root>
       </SimpleGrid>
 
-      <Card.Root bg="white" border="1px solid" borderColor="border">
-        <Card.Header><Heading size="md">Activity Log</Heading></Card.Header>
-        <Card.Body>
-          <Box as="form" onSubmit={handleAddNote} mb={6}>
-            <Field.Root>
-              <Field.Label>Add Note</Field.Label>
-              <Textarea value={newNote} onChange={(e) => setNewNote(e.target.value)} placeholder="Enter activity note..." rows={3} />
-            </Field.Root>
-            <Button type="submit" mt={3} bg="primary" color="white" _hover={{ bg: "secondary" }}>Add Note</Button>
-          </Box>
+      {/* Main Content */}
+      <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+        {/* Left Column */}
+        <Box display="flex" flexDirection="column" gap={6}>
+          {/* Contact Info */}
+          <Card.Root bg="white" border="1px solid" borderColor="border">
+            <Card.Header>
+              <HStack gap={2}><User size={18} color="primary" /><Heading size="sm">Contact Information</Heading></HStack>
+            </Card.Header>
+            <Card.Body>
+              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+                <VStack align="start" gap={1}>
+                  <Text fontSize="xs" color="foreground" opacity={0.5}>Contact Name</Text>
+                  <Text fontWeight="medium">{lead.contact_name}</Text>
+                </VStack>
+                <VStack align="start" gap={1}>
+                  <Text fontSize="xs" color="foreground" opacity={0.5}>Email</Text>
+                  <Text fontWeight="medium">{lead.email || "-"}</Text>
+                </VStack>
+                <VStack align="start" gap={1}>
+                  <Text fontSize="xs" color="foreground" opacity={0.5}>Phone</Text>
+                  <Text fontWeight="medium">{lead.phone_number}</Text>
+                </VStack>
+                <VStack align="start" gap={1}>
+                  <Text fontSize="xs" color="foreground" opacity={0.5}>Assigned To</Text>
+                  <Text fontWeight="medium">{lead.assigned_to_name || "Unassigned"}</Text>
+                </VStack>
+                <VStack align="start" gap={1}>
+                  <Text fontSize="xs" color="foreground" opacity={0.5}>Created</Text>
+                  <Text fontWeight="medium">{formatDate(lead.created_at)}</Text>
+                </VStack>
+                <VStack align="start" gap={1}>
+                  <Text fontSize="xs" color="foreground" opacity={0.5}>Last Updated</Text>
+                  <Text fontWeight="medium">{formatDate(lead.updated_at)}</Text>
+                </VStack>
+              </SimpleGrid>
+            </Card.Body>
+          </Card.Root>
 
-          <VStack gap={4} align="stretch">
-            {logs.length === 0 && <Text color="foreground" opacity={0.5}>No activity logs yet.</Text>}
-            {logs.map((log) => (
-              <Box key={log.id} p={4} bg="muted" borderRadius="md" borderLeft="3px solid" borderColor="primary">
-                <HStack justify="space-between" mb={2}>
-                  <Text fontWeight="medium" fontSize="sm">{log.agent_name}</Text>
-                  <Text fontSize="xs" color="foreground" opacity={0.6}>{new Date(log.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</Text>
-                </HStack>
-                <Text fontSize="sm">{log.notes}</Text>
+          {/* Address + Maps */}
+          <Card.Root bg="white" border="1px solid" borderColor="border">
+            <Card.Header>
+              <HStack gap={2}><MapPin size={18} color="primary" /><Heading size="sm">Location</Heading></HStack>
+            </Card.Header>
+            <Card.Body>
+              {lead.address ? (
+                <VStack align="stretch" gap={4}>
+                  <Text fontSize="sm">{lead.address}</Text>
+                  <Box
+                    as="a"
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    display="block"
+                    borderRadius="lg"
+                    overflow="hidden"
+                    border="1px solid"
+                    borderColor="border"
+                    _hover={{ shadow: "md" }}
+                    transition="all 200ms ease"
+                  >
+                    <Box
+                      as="iframe"
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent(lead.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                      width="100%"
+                      height="250"
+                      border="0"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Google Maps"
+                    />
+                  </Box>
+                  <Button
+                    as="a"
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    size="sm"
+                    variant="outline"
+                    colorPalette="blue"
+                  >
+                    <MapPin size={14} /> Open in Google Maps
+                  </Button>
+                </VStack>
+              ) : (
+                <Text fontSize="sm" color="foreground" opacity={0.5}>No address provided</Text>
+              )}
+            </Card.Body>
+          </Card.Root>
+
+          {/* Activity Log */}
+          <Card.Root bg="white" border="1px solid" borderColor="border">
+            <Card.Header>
+              <HStack gap={2}><Clock size={18} color="primary" /><Heading size="sm">Activity Log</Heading></HStack>
+            </Card.Header>
+            <Card.Body>
+              <Box as="form" onSubmit={handleAddNote} mb={6}>
+                <Field.Root>
+                  <Textarea
+                    value={newNote}
+                    onChange={(e) => setNewNote(e.target.value)}
+                    placeholder="Add a note about this lead..."
+                    rows={3}
+                    borderRadius="lg"
+                  />
+                </Field.Root>
+                <Button type="submit" mt={3} bg="primary" color="white" size="sm" _hover={{ bg: "secondary" }}>
+                  Add Note
+                </Button>
               </Box>
-            ))}
-          </VStack>
-        </Card.Body>
-      </Card.Root>
+
+              <VStack gap={3} align="stretch">
+                {logs.length === 0 && (
+                  <Text fontSize="sm" color="foreground" opacity={0.5}>No activity logs yet.</Text>
+                )}
+                {logs.map((log) => (
+                  <Box key={log.id} p={4} bg="muted" borderRadius="lg" borderLeft="3px solid" borderColor="primary">
+                    <HStack justify="space-between" mb={2}>
+                      <Text fontWeight="medium" fontSize="sm">{log.agent_name}</Text>
+                      <Text fontSize="xs" color="foreground" opacity={0.5}>{formatDate(log.created_at)}</Text>
+                    </HStack>
+                    <Text fontSize="sm">{log.notes}</Text>
+                  </Box>
+                ))}
+              </VStack>
+            </Card.Body>
+          </Card.Root>
+        </Box>
+
+        {/* Right Column (1/3) */}
+        <Box display="flex" flexDirection="column" gap={6}>
+          {/* Quick Actions */}
+          <Card.Root bg="white" border="1px solid" borderColor="border">
+            <Card.Header>
+              <Heading size="sm">Quick Actions</Heading>
+            </Card.Header>
+            <Card.Body>
+              <VStack gap={3} align="stretch">
+                <Button
+                  as="a"
+                  href={`tel:${lead.phone_number}`}
+                  variant="outline"
+                  justifyContent="flex-start"
+                >
+                  <Phone size={16} /> Call Contact
+                </Button>
+                <Button
+                  as="a"
+                  href={`https://wa.me/${lead.phone_number.replace(/[^0-9]/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="outline"
+                  justifyContent="flex-start"
+                  colorPalette="green"
+                >
+                  <WhatsappLogo size={16} /> WhatsApp
+                </Button>
+                <Box h="1px" bg="border" />
+                <Button
+                  variant="outline"
+                  justifyContent="flex-start"
+                  colorPalette="green"
+                  onClick={() => handleMoveStage("WON")}
+                  disabled={lead.stage === "WON"}
+                >
+                  <CheckCircle size={16} /> Mark as Won
+                </Button>
+                <Button
+                  variant="outline"
+                  justifyContent="flex-start"
+                  colorPalette="red"
+                  onClick={() => handleMoveStage("LOST")}
+                  disabled={lead.stage === "LOST"}
+                >
+                  <XCircle size={16} /> Mark as Lost
+                </Button>
+              </VStack>
+            </Card.Body>
+          </Card.Root>
+
+          {/* Deal Summary */}
+          <Card.Root bg="white" border="1px solid" borderColor="border">
+            <Card.Header>
+              <Heading size="sm">Deal Summary</Heading>
+            </Card.Header>
+            <Card.Body>
+              <VStack align="stretch" gap={3}>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Stage</Text>
+                  <Badge colorPalette={STAGE_COLORS[lead.stage]}>{STAGE_LABELS[lead.stage]}</Badge>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Tag</Text>
+                  <Badge colorPalette={lead.tag === "HOT" ? "red" : "blue"}>{lead.tag}</Badge>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Value</Text>
+                  <Text fontWeight="semibold">Rp {Number(lead.potential_value).toLocaleString("id-ID")}</Text>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Assigned</Text>
+                  <Text fontSize="sm">{lead.assigned_to_name || "Unassigned"}</Text>
+                </HStack>
+              </VStack>
+            </Card.Body>
+          </Card.Root>
+        </Box>
+      </SimpleGrid>
+
+      {/* Edit Dialog */}
+      <Dialog.Root open={editOpen} onOpenChange={(e) => setEditOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW={{ base: "90vw", md: "600px" }}>
+              <Dialog.Header>
+                <Dialog.Title>Edit Lead</Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body>
+                <Box as="form" onSubmit={handleEditSubmit}>
+                  <VStack gap={4}>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                      <Field.Root required>
+                        <Field.Label>Company Name</Field.Label>
+                        <Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+                      </Field.Root>
+                      <Field.Root required>
+                        <Field.Label>Contact Name</Field.Label>
+                        <Input value={editForm.contact_name} onChange={(e) => setEditForm({ ...editForm, contact_name: e.target.value })} />
+                      </Field.Root>
+                      <Field.Root required>
+                        <Field.Label>Phone</Field.Label>
+                        <Input value={editForm.phone_number} onChange={(e) => setEditForm({ ...editForm, phone_number: e.target.value })} />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Email</Field.Label>
+                        <Input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Source Company</Field.Label>
+                        <Input value={editForm.company_source} onChange={(e) => setEditForm({ ...editForm, company_source: e.target.value })} />
+                      </Field.Root>
+                      <Field.Root required>
+                        <Field.Label>Deal Value (Rp)</Field.Label>
+                        <Input type="number" value={editForm.potential_value} onChange={(e) => setEditForm({ ...editForm, potential_value: e.target.value })} />
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Tag</Field.Label>
+                        <select
+                          value={editForm.tag}
+                          onChange={(e) => setEditForm({ ...editForm, tag: e.target.value })}
+                          style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}
+                        >
+                          <option value="HOT">Hot</option>
+                          <option value="COLD">Cold</option>
+                        </select>
+                      </Field.Root>
+                      <Field.Root>
+                        <Field.Label>Stage</Field.Label>
+                        <select
+                          value={editForm.stage}
+                          onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })}
+                          style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}
+                        >
+                          <option value="NEW">Prospek Baru</option>
+                          <option value="CONTACTED">Hubungi</option>
+                          <option value="NEGOTIATION">Negosiasi</option>
+                          <option value="WON">Won</option>
+                          <option value="LOST">Lost</option>
+                        </select>
+                      </Field.Root>
+                    </SimpleGrid>
+                    <Field.Root w="full">
+                      <Field.Label>Address</Field.Label>
+                      <Textarea
+                        value={editForm.address}
+                        onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
+                        placeholder="Enter full address for Google Maps..."
+                        rows={3}
+                      />
+                    </Field.Root>
+                  </VStack>
+                </Box>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild>
+                  <Button variant="outline" size="sm">Cancel</Button>
+                </Dialog.CloseTrigger>
+                <Button bg="primary" color="white" size="sm" loading={saving} onClick={handleEditSubmit}>
+                  <FloppyDisk size={14} /> Save Changes
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </VStack>
   );
 }

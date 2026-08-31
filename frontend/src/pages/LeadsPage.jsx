@@ -11,7 +11,6 @@ import {
   Heading,
   Input,
   InputGroup,
-  NativeSelect,
   SimpleGrid,
   Table,
   Text,
@@ -58,8 +57,8 @@ export default function LeadsPage() {
     setPage(1);
   };
 
-  const openCreate = () => { setEditLead(null); setForm({ name: "", contact_name: "", phone_number: "", email: "", company_source: "", potential_value: "", tag: "COLD", stage: "NEW" }); setDialogOpen(true); };
-  const openEdit = (lead) => { setEditLead(lead); setForm({ name: lead.name, contact_name: lead.contact_name, phone_number: lead.phone_number, email: lead.email || "", company_source: lead.company_source || "", potential_value: lead.potential_value, tag: lead.tag, stage: lead.stage }); setDialogOpen(true); };
+  const openCreate = () => { setEditLead(null); setForm({ name: "", contact_name: "", phone_number: "", email: "", company_source: "", potential_value: "", tag: "COLD", stage: "NEW", address: "" }); setDialogOpen(true); };
+  const openEdit = (lead) => { setEditLead(lead); setForm({ name: lead.name, contact_name: lead.contact_name, phone_number: lead.phone_number, email: lead.email || "", company_source: lead.company_source || "", potential_value: lead.potential_value, tag: lead.tag, stage: lead.stage, address: lead.address || "" }); setDialogOpen(true); };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,23 +109,27 @@ export default function LeadsPage() {
             <InputGroup flex={1} minW="200px" startElement={<MagnifyingGlass size={16} />}>
               <Input placeholder="Search leads..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
             </InputGroup>
-            <NativeSelect.Root size="sm" value={filterTag} onChange={(e) => { setFilterTag(e.target.value); setPage(1); }}>
-              <NativeSelect.Field>
-                <option value="">All Tags</option>
-                <option value="HOT">Hot</option>
-                <option value="COLD">Cold</option>
-              </NativeSelect.Field>
-            </NativeSelect.Root>
-            <NativeSelect.Root size="sm" value={filterStage} onChange={(e) => { setFilterStage(e.target.value); setPage(1); }}>
-              <NativeSelect.Field>
-                <option value="">All Stages</option>
-                <option value="NEW">Prospek Baru</option>
-                <option value="CONTACTED">Hubungi</option>
-                <option value="NEGOTIATION">Negosiasi</option>
-                <option value="WON">Won</option>
-                <option value="LOST">Lost</option>
-              </NativeSelect.Field>
-            </NativeSelect.Root>
+            <select
+              value={filterTag}
+              onChange={(e) => { setFilterTag(e.target.value); setPage(1); }}
+              style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "white" }}
+            >
+              <option value="">All Tags</option>
+              <option value="HOT">Hot</option>
+              <option value="COLD">Cold</option>
+            </select>
+            <select
+              value={filterStage}
+              onChange={(e) => { setFilterStage(e.target.value); setPage(1); }}
+              style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "white" }}
+            >
+              <option value="">All Stages</option>
+              <option value="NEW">Prospek Baru</option>
+              <option value="CONTACTED">Hubungi</option>
+              <option value="NEGOTIATION">Negosiasi</option>
+              <option value="WON">Won</option>
+              <option value="LOST">Lost</option>
+            </select>
           </HStack>
 
           <Box overflowX="auto">
@@ -213,21 +216,41 @@ export default function LeadsPage() {
                       </Field.Root>
                       <Field.Root>
                         <Field.Label>Tag</Field.Label>
-                        <NativeSelect.Root value={form.tag} onChange={(e) => setForm({ ...form, tag: e.target.value })}>
-                          <NativeSelect.Field><option value="HOT">Hot</option><option value="COLD">Cold</option></NativeSelect.Field>
-                        </NativeSelect.Root>
+                        <select
+                          value={form.tag}
+                          onChange={(e) => setForm({ ...form, tag: e.target.value })}
+                          style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}
+                        >
+                          <option value="HOT">Hot</option>
+                          <option value="COLD">Cold</option>
+                        </select>
                       </Field.Root>
                       {editLead && (
                         <Field.Root>
                           <Field.Label>Stage</Field.Label>
-                          <NativeSelect.Root value={form.stage} onChange={(e) => setForm({ ...form, stage: e.target.value })}>
-                            <NativeSelect.Field>
-                              <option value="NEW">Prospek Baru</option><option value="CONTACTED">Hubungi</option><option value="NEGOTIATION">Negosiasi</option><option value="WON">Won</option><option value="LOST">Lost</option>
-                            </NativeSelect.Field>
-                          </NativeSelect.Root>
+                          <select
+                            value={form.stage}
+                            onChange={(e) => setForm({ ...form, stage: e.target.value })}
+                            style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}
+                          >
+                            <option value="NEW">Prospek Baru</option>
+                            <option value="CONTACTED">Hubungi</option>
+                            <option value="NEGOTIATION">Negosiasi</option>
+                            <option value="WON">Won</option>
+                            <option value="LOST">Lost</option>
+                          </select>
                         </Field.Root>
                       )}
                     </SimpleGrid>
+                    <Field.Root w="full">
+                      <Field.Label>Address</Field.Label>
+                      <Textarea
+                        value={form.address}
+                        onChange={(e) => setForm({ ...form, address: e.target.value })}
+                        placeholder="Enter full address for Google Maps..."
+                        rows={3}
+                      />
+                    </Field.Root>
                   </VStack>
                 </Box>
               </Dialog.Body>

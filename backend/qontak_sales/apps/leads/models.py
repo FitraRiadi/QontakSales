@@ -34,6 +34,7 @@ class Lead(models.Model):
         blank=True,
         related_name="assigned_leads",
     )
+    address = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
