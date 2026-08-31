@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "qontak_sales.apps.leads",
     "qontak_sales.apps.activities",
     "qontak_sales.apps.notifications",
+    "qontak_sales.apps.broadcasts",
 ]
 
 MIDDLEWARE = [
