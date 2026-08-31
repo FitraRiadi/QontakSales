@@ -23,6 +23,8 @@ import {
   CheckCircle,
   Star,
   ChatCircleText,
+  CaretDown,
+  CaretUp,
 } from "@phosphor-icons/react";
 import brandLogo from "@/assets/brand.png";
 import heroImg from "@/assets/heroImg.png";
@@ -67,6 +69,17 @@ const plans = [
   { name: "Starter", price: "Free", period: "forever", features: ["Up to 100 leads", "1 sales agent", "Basic pipeline", "Email support"], cta: "Get Started", highlighted: false },
   { name: "Professional", price: "Rp 299K", period: "/month", features: ["Unlimited leads", "10 sales agents", "Advanced analytics", "Priority support", "Custom tags"], cta: "Start Free Trial", highlighted: true },
   { name: "Enterprise", price: "Custom", period: "", features: ["Unlimited everything", "Unlimited agents", "API access", "Dedicated support", "Custom integrations"], cta: "Contact Sales", highlighted: false },
+];
+
+const faqs = [
+  { q: "What is QontakSales?", a: "QontakSales is a modern Sales CRM designed for teams to manage leads, track pipelines, and boost revenue — all in one place. It features real-time analytics, Kanban pipeline, WhatsApp broadcast, and role-based access." },
+  { q: "Is QontakSales free to use?", a: "Yes! QontakSales offers a free Starter plan with up to 100 leads and 1 sales agent. No credit card required. You can upgrade to Professional or Enterprise for more features." },
+  { q: "Can I send WhatsApp messages to my leads?", a: "Absolutely. QontakSales has a built-in WhatsApp Broadcast feature powered by Fonnte API. You can send personalized messages using templates with variables like {name}, {company}, and {value}." },
+  { q: "What is the difference between Manager and Agent roles?", a: "Managers have full access to all features including agent management, all leads, and broadcast history. Agents can only access their own assigned leads and broadcasts." },
+  { q: "Can I archive leads instead of deleting them?", a: "Yes. QontakSales supports soft-delete via the Archive feature. Archived leads are hidden from the main Leads list, Pipeline, and Dashboard statistics, but can be restored anytime." },
+  { q: "Does QontakSales support multiple companies?", a: "Yes. Each company has its own isolated data. Users are assigned to a company and can only see data within their organization." },
+  { q: "How does the Pipeline feature work?", a: "The Pipeline is a Kanban-style board with 5 stages: Prospek Baru, Hubungi, Negosiasi, Won, and Lost. You can drag-and-drop leads between stages to track deal progress visually." },
+  { q: "Is my data secure?", a: "Yes. QontakSales uses JWT authentication, company-level data isolation, and HTTPS encryption. Your data is stored securely in PostgreSQL and is never shared with third parties." },
 ];
 
 function InfiniteCarousel() {
@@ -118,6 +131,24 @@ function InfiniteCarousel() {
           </Box>
         ))}
       </Box>
+    </Box>
+  );
+}
+
+function FaqItem({ question, answer }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Box w="full" bg="background" borderRadius="xl" border="1px solid" borderColor="border" overflow="hidden" _hover={{ borderColor: "primary" }} transition="all 200ms ease">
+      <HStack justify="space-between" p={5} cursor="pointer" onClick={() => setOpen(!open)}>
+        <Text fontWeight="semibold" color="foreground" flex={1}>{question}</Text>
+        <Icon color="foreground" opacity={0.5}>{open ? <CaretUp size={18} /> : <CaretDown size={18} />}</Icon>
+      </HStack>
+      {open && (
+        <Box px={5} pb={5}>
+          <Text color="foreground" opacity={0.6} fontSize="sm" lineHeight="tall">{answer}</Text>
+        </Box>
+      )}
     </Box>
   );
 }
@@ -295,6 +326,22 @@ export default function LandingPage() {
         </Container>
       </Box>
 
+      {/* FAQ */}
+      <Box py={20} bg="white">
+        <Container maxW="3xl">
+          <VStack gap={4} mb={12} textAlign="center">
+            <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">FAQ</Box>
+            <Heading size="xl" color="foreground">Frequently Asked Questions</Heading>
+            <Text color="foreground" opacity={0.6}>Everything you need to know about QontakSales.</Text>
+          </VStack>
+          <VStack gap={4}>
+            {faqs.map((faq, i) => (
+              <FaqItem key={i} question={faq.q} answer={faq.a} />
+            ))}
+          </VStack>
+        </Container>
+      </Box>
+
       {/* CTA */}
       <Box py={20} bg="primary" color="white">
         <Container maxW="3xl" textAlign="center">
@@ -312,7 +359,9 @@ export default function LandingPage() {
       <Box py={12} bg="white" borderTop="1px solid" borderColor="border">
         <Container maxW="7xl">
           <Stack direction={{ base: "column", md: "row" }} justify="space-between" align="center" gap={4}>
-            <Heading size="md" color="primary">QontakSales</Heading>
+            <HStack gap={3}>
+              <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />
+            </HStack>
             <HStack gap={6}>
               {["Privacy", "Terms", "Contact"].map((t) => (
                 <Text key={t} fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }}>{t}</Text>
