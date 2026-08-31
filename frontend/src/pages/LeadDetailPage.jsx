@@ -32,6 +32,8 @@ import {
   WhatsappLogo,
   CheckCircle,
   XCircle,
+  Archive,
+  ArrowClockwise,
 } from "@phosphor-icons/react";
 import api from "@/services/api";
 
@@ -131,6 +133,27 @@ export default function LeadDetailPage() {
     }
   };
 
+  const handleArchive = async () => {
+    if (!confirm("Archive this lead? It will be hidden from Leads and Dashboard.")) return;
+    try {
+      const res = await api.post(`/leads/${lead.id}/archive/`);
+      setLead(res.data.lead);
+      toaster.create({ title: "Lead archived", type: "success" });
+    } catch {
+      toaster.create({ title: "Archive failed", type: "error" });
+    }
+  };
+
+  const handleRestore = async () => {
+    try {
+      const res = await api.post(`/leads/${lead.id}/restore/`);
+      setLead(res.data.lead);
+      toaster.create({ title: "Lead restored", type: "success" });
+    } catch {
+      toaster.create({ title: "Restore failed", type: "error" });
+    }
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
     return new Date(dateStr).toLocaleDateString("id-ID", {
@@ -160,13 +183,25 @@ export default function LeadDetailPage() {
               <Heading size={{ base: "md", md: "lg" }}>{lead.name}</Heading>
               <Badge colorPalette={STAGE_COLORS[lead.stage]} size="lg">{STAGE_LABELS[lead.stage]}</Badge>
               <Badge colorPalette={lead.tag === "HOT" ? "red" : "blue"} size="lg">{lead.tag}</Badge>
+              {lead.is_archived && <Badge colorPalette="orange" size="lg">Archived</Badge>}
             </HStack>
             {lead.company_source && <Text fontSize="sm" color="foreground" opacity={0.6}>{lead.company_source}</Text>}
           </VStack>
         </HStack>
-        <Button size="sm" variant="outline" onClick={openEdit}>
-          <PencilSimple size={14} /> Edit
-        </Button>
+        <HStack gap={2}>
+          {lead.is_archived ? (
+            <Button size="sm" variant="outline" colorPalette="green" onClick={handleRestore}>
+              <ArrowClockwise size={14} /> Restore
+            </Button>
+          ) : (
+            <Button size="sm" variant="outline" colorPalette="orange" onClick={handleArchive}>
+              <Archive size={14} /> Archive
+            </Button>
+          )}
+          <Button size="sm" variant="outline" onClick={openEdit}>
+            <PencilSimple size={14} /> Edit
+          </Button>
+        </HStack>
       </HStack>
 
       {/* Info Cards Row */}

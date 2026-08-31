@@ -10,6 +10,7 @@ import SettingsPage from "./pages/SettingsPage";
 import AgentsPage from "./pages/AgentsPage";
 import BroadcastPage from "./pages/BroadcastPage";
 import BroadcastHistoryPage from "./pages/BroadcastHistoryPage";
+import ArchivedLeadsPage from "./pages/ArchivedLeadsPage";
 import MainLayout from "./components/layout/MainLayout";
 import AuthGuard from "./components/layout/AuthGuard";
 
@@ -23,6 +24,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/leads" element={<LeadsPage />} />
+          <Route path="/leads/archived" element={<ArchivedLeadsPage />} />
           <Route path="/pipeline" element={<PipelinePage />} />
           <Route path="/leads/:id" element={<LeadDetailPage />} />
           <Route path="/agents" element={<AgentsPage />} />

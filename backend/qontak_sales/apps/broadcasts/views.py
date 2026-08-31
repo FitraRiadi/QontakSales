@@ -7,13 +7,11 @@ from .models import Broadcast, BroadcastLog
 from .serializers import BroadcastSerializer, BroadcastCreateSerializer, BroadcastLogSerializer
 from .services import BroadcastService
 from qontak_sales.apps.leads.models import Lead
-from qontak_sales.apps.accounts.permissions import IsManager
 
 
 class BroadcastViewSet(viewsets.ModelViewSet):
     queryset = Broadcast.objects.all()
     serializer_class = BroadcastSerializer
-    permission_classes = [IsManager]
 
     def get_queryset(self):
         return Broadcast.objects.filter(sent_by=self.request.user)
@@ -26,6 +24,10 @@ class BroadcastViewSet(viewsets.ModelViewSet):
         lead_ids = serializer.validated_data["lead_ids"]
 
         leads = Lead.objects.filter(id__in=lead_ids)
+
+        if request.user.role == "AGENT":
+            leads = leads.filter(assigned_to=request.user)
+
         if not leads.exists():
             return Response({"error": "No leads found"}, status=status.HTTP_400_BAD_REQUEST)
 

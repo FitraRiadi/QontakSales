@@ -19,7 +19,7 @@ import {
   Portal,
   createToaster,
 } from "@chakra-ui/react";
-import { Plus, MagnifyingGlass, ArrowUp, ArrowDown, Buildings, Phone } from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass, ArrowUp, ArrowDown, Buildings, Phone, Archive } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
@@ -85,6 +85,17 @@ export default function LeadsPage() {
       fetchLeads();
     } catch {
       toaster.create({ title: "Delete failed", type: "error" });
+    }
+  };
+
+  const handleArchive = async (id) => {
+    if (!confirm("Archive this lead? It will be hidden from Leads and Dashboard.")) return;
+    try {
+      await api.post(`/leads/${id}/archive/`);
+      toaster.create({ title: "Lead archived", type: "success" });
+      fetchLeads();
+    } catch {
+      toaster.create({ title: "Archive failed", type: "error" });
     }
   };
 
@@ -157,6 +168,9 @@ export default function LeadsPage() {
                     <Table.Cell>
                       <HStack gap={2}>
                         <Button size="xs" variant="outline" onClick={() => openEdit(lead)}>Edit</Button>
+                        <Button size="xs" variant="outline" colorPalette="orange" onClick={() => handleArchive(lead.id)}>
+                          <Archive size={12} />
+                        </Button>
                         {isManager && (
                           <Button size="xs" variant="outline" colorPalette="red" onClick={() => handleDelete(lead.id)}>Del</Button>
                         )}

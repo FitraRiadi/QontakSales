@@ -18,6 +18,13 @@ class LeadViewSet(viewsets.ModelViewSet):
         queryset = Lead.objects.filter(company=user.company)
         if user.role == "AGENT":
             queryset = queryset.filter(assigned_to=user)
+
+        archived = self.request.query_params.get("archived")
+        if archived == "true":
+            queryset = queryset.filter(is_archived=True)
+        else:
+            queryset = queryset.filter(is_archived=False)
+
         stage = self.request.query_params.get("stage")
         tag = self.request.query_params.get("tag")
         assigned_to = self.request.query_params.get("assigned_to")
@@ -28,6 +35,10 @@ class LeadViewSet(viewsets.ModelViewSet):
         if assigned_to:
             queryset = queryset.filter(assigned_to_id=assigned_to)
         return queryset
+
+    def get_object(self):
+        pk = self.kwargs.get("pk")
+        return Lead.objects.get(pk=pk)
 
     def perform_create(self, serializer):
         lead = serializer.save(
@@ -46,6 +57,24 @@ class LeadViewSet(viewsets.ModelViewSet):
         if request.user.role == "AGENT":
             return Response({"error": "Agents cannot delete leads"}, status=403)
         return super().destroy(request, *args, **kwargs)
+
+    @action(detail=True, methods=["post"])
+    def archive(self, request, pk=None):
+        lead = self.get_object()
+        if request.user.role == "AGENT" and lead.assigned_to != request.user:
+            return Response({"error": "You can only archive your own leads"}, status=403)
+        lead.is_archived = True
+        lead.save()
+        return Response({"message": "Lead archived", "lead": LeadSerializer(lead).data})
+
+    @action(detail=True, methods=["post"])
+    def restore(self, request, pk=None):
+        lead = self.get_object()
+        if request.user.role == "AGENT" and lead.assigned_to != request.user:
+            return Response({"error": "You can only restore your own leads"}, status=403)
+        lead.is_archived = False
+        lead.save()
+        return Response({"message": "Lead restored", "lead": LeadSerializer(lead).data})
 
     @action(detail=True, methods=["post"])
     def move_stage(self, request, pk=None):
@@ -70,9 +99,9 @@ class LeadViewSet(viewsets.ModelViewSet):
 def dashboard_stats(request):
     user = request.user
     if user.role == "AGENT":
-        leads = Lead.objects.filter(company=user.company, assigned_to=user)
+        leads = Lead.objects.filter(company=user.company, assigned_to=user, is_archived=False)
     else:
-        leads = Lead.objects.filter(company=user.company)
+        leads = Lead.objects.filter(company=user.company, is_archived=False)
     total_revenue = leads.filter(stage="WON").aggregate(total=Sum("potential_value"))["total"] or 0
     total_leads = leads.count()
     won_count = leads.filter(stage="WON").count()
