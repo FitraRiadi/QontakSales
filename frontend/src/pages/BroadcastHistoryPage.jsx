@@ -86,6 +86,7 @@ export default function BroadcastHistoryPage() {
                   <Table.Row>
                     <Table.ColumnHeader w="50px">#</Table.ColumnHeader>
                     <Table.ColumnHeader>Message</Table.ColumnHeader>
+                    <Table.ColumnHeader>Sent By</Table.ColumnHeader>
                     <Table.ColumnHeader>Recipients</Table.ColumnHeader>
                     <Table.ColumnHeader>Sent</Table.ColumnHeader>
                     <Table.ColumnHeader>Failed</Table.ColumnHeader>
@@ -95,13 +96,19 @@ export default function BroadcastHistoryPage() {
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                  {broadcasts.map((b) => (
+                  {broadcasts.map((b, index) => (
                     <Table.Row key={b.id} _hover={{ bg: "muted" }}>
-                      <Table.Cell fontWeight="medium">{b.id}</Table.Cell>
+                      <Table.Cell fontWeight="medium">{index + 1}</Table.Cell>
                       <Table.Cell maxW="200px">
                         <Text fontSize="sm" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
                           {truncateMessage(b.message)}
                         </Text>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <VStack align="start" gap={0}>
+                          <Text fontSize="sm" fontWeight="medium">{b.sent_by_name}</Text>
+                          <Text fontSize="xs" color="gray.500">{b.sent_by_role === "MANAGER" ? "Manager" : "Agent"}</Text>
+                        </VStack>
                       </Table.Cell>
                       <Table.Cell>{b.total_recipients}</Table.Cell>
                       <Table.Cell>
@@ -145,11 +152,27 @@ export default function BroadcastHistoryPage() {
           <Dialog.Positioner>
             <Dialog.Content maxW="600px">
               <Dialog.Header>
-                <Dialog.Title>Broadcast #{selectedBroadcast?.id}</Dialog.Title>
+                <Dialog.Title>Broadcast Detail</Dialog.Title>
               </Dialog.Header>
               <Dialog.Body>
                 {selectedBroadcast && (
                   <VStack align="stretch" gap={4}>
+                    <HStack justify="space-between">
+                      <Box p={3} bg="gray.50" borderRadius="md" flex={1}>
+                        <Text fontSize="xs" color="gray.500" mb={1}>Sent By</Text>
+                        <HStack gap={2}>
+                          <Text fontSize="sm" fontWeight="semibold">{selectedBroadcast.sent_by_name}</Text>
+                          <Badge colorPalette={selectedBroadcast.sent_by_role === "MANAGER" ? "blue" : "green"} size="sm">
+                            {selectedBroadcast.sent_by_role === "MANAGER" ? "Manager" : "Agent"}
+                          </Badge>
+                        </HStack>
+                      </Box>
+                      <Box p={3} bg="gray.50" borderRadius="md" flex={1}>
+                        <Text fontSize="xs" color="gray.500" mb={1}>Date</Text>
+                        <Text fontSize="sm">{formatDate(selectedBroadcast.sent_at || selectedBroadcast.created_at)}</Text>
+                      </Box>
+                    </HStack>
+
                     <Box p={3} bg="gray.50" borderRadius="md">
                       <Text fontSize="xs" color="gray.500" mb={1}>Message</Text>
                       <Text fontSize="sm" whiteSpace="pre-wrap">{selectedBroadcast.message}</Text>

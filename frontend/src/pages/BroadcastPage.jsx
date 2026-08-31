@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Card,
-  Checkbox,
   Field,
   HStack,
   Heading,
@@ -62,11 +61,12 @@ export default function BroadcastPage() {
     );
   };
 
-  const toggleAll = () => {
-    if (selectedLeads.length === leads.length) {
-      setSelectedLeads([]);
-    } else {
+  const toggleAll = (details) => {
+    const checked = typeof details === "object" ? details.checked : details;
+    if (checked) {
       setSelectedLeads(leads.map((l) => l.id));
+    } else {
+      setSelectedLeads([]);
     }
   };
 
@@ -205,14 +205,7 @@ export default function BroadcastPage() {
                   <Table.Root size="sm">
                     <Table.Header>
                       <Table.Row>
-                        <Table.Cell w="40px">
-                          <Checkbox.Root
-                            checked={selectedLeads.length === leads.length}
-                            onCheckedChange={toggleAll}
-                          >
-                            <Checkbox.Control />
-                          </Checkbox.Root>
-                        </Table.Cell>
+                        <Table.Cell w="40px" />
                         <Table.Cell>Company</Table.Cell>
                         <Table.Cell>Contact</Table.Cell>
                         <Table.Cell>Phone</Table.Cell>
@@ -223,12 +216,12 @@ export default function BroadcastPage() {
                       {leads.map((lead) => (
                         <Table.Row key={lead.id} _hover={{ bg: "muted" }}>
                           <Table.Cell>
-                            <Checkbox.Root
+                            <input
+                              type="checkbox"
                               checked={selectedLeads.includes(lead.id)}
-                              onCheckedChange={() => toggleLead(lead.id)}
-                            >
-                              <Checkbox.Control />
-                            </Checkbox.Root>
+                              onChange={() => toggleLead(lead.id)}
+                              style={{ width: "16px", height: "16px", cursor: "pointer", position: "relative", zIndex: 10 }}
+                            />
                           </Table.Cell>
                           <Table.Cell fontWeight="medium">{lead.name}</Table.Cell>
                           <Table.Cell>{lead.contact_name}</Table.Cell>
@@ -278,7 +271,7 @@ export default function BroadcastPage() {
                     return (
                       <Box key={lead.id} p={3} bg="gray.50" borderRadius="md" border="1px solid" borderColor="gray.200">
                         <HStack justify="space-between" mb={1}>
-                          <Text fontSize="xs" fontWeight="semibold">{lead.contact_name}</Text>
+                          <Text fontSize="xs" fontWeight="semibold">{lead.name || lead.company_source || "Unknown"}</Text>
                           <Text fontSize="xs" color="gray.500">{lead.phone_number}</Text>
                         </HStack>
                         <Text fontSize="sm" whiteSpace="pre-wrap">{previewMessage(lead)}</Text>

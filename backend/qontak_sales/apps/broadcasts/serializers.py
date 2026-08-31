@@ -17,12 +17,13 @@ class BroadcastLogSerializer(serializers.ModelSerializer):
 class BroadcastSerializer(serializers.ModelSerializer):
     logs = BroadcastLogSerializer(many=True, read_only=True)
     sent_by_name = serializers.CharField(source="sent_by.get_full_name", read_only=True)
+    sent_by_role = serializers.CharField(source="sent_by.role", read_only=True)
 
     class Meta:
         model = Broadcast
         fields = [
             "id", "message", "total_recipients", "total_sent", "total_failed",
-            "status", "sent_by", "sent_by_name", "created_at", "sent_at", "logs",
+            "status", "sent_by", "sent_by_name", "sent_by_role", "created_at", "sent_at", "logs",
         ]
         read_only_fields = ["id", "total_recipients", "total_sent", "total_failed", "status", "sent_at", "created_at"]
 
