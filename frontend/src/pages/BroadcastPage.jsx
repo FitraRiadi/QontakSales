@@ -61,12 +61,11 @@ export default function BroadcastPage() {
     );
   };
 
-  const toggleAll = (details) => {
-    const checked = typeof details === "object" ? details.checked : details;
-    if (checked) {
-      setSelectedLeads(leads.map((l) => l.id));
-    } else {
+  const toggleAll = () => {
+    if (selectedLeads.length === leads.length) {
       setSelectedLeads([]);
+    } else {
+      setSelectedLeads(leads.map((l) => l.id));
     }
   };
 
