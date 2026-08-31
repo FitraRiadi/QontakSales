@@ -363,9 +363,9 @@ export default function LandingPage() {
               <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />
             </HStack>
             <HStack gap={6}>
-              {["Privacy", "Terms", "Contact"].map((t) => (
-                <Text key={t} fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }}>{t}</Text>
-              ))}
+              <Text fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }} onClick={() => navigate("/privacy")}>Privacy</Text>
+              <Text fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }} onClick={() => navigate("/terms")}>Terms</Text>
+              <Text fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }} onClick={() => navigate("/contact")}>Contact</Text>
             </HStack>
             <Text fontSize="sm" color="foreground" opacity={0.4}>© 2026 QontakSales. All rights reserved.</Text>
           </Stack>
