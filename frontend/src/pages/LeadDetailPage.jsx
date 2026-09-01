@@ -217,11 +217,11 @@ export default function LeadDetailPage() {
       <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} gap={4}>
         <Card.Root bg="white" border="1px solid" borderColor="border">
           <Card.Body py={4}>
-            <HStack gap={3}>
+            <HStack gap={3} flexWrap="wrap">
               <Box bg="blue.50" p={2} borderRadius="md"><Phone size={20} color="#2563EB" /></Box>
-              <VStack align="start" gap={0}>
+              <VStack align="start" gap={0} minW={0} flex={1}>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>Phone</Text>
-                <Text fontWeight="semibold" fontSize="sm">{lead.phone_number}</Text>
+                <Text fontWeight="semibold" fontSize="sm" wordBreak="break-all">{lead.phone_number}</Text>
               </VStack>
             </HStack>
           </Card.Body>
@@ -229,11 +229,11 @@ export default function LeadDetailPage() {
 
         <Card.Root bg="white" border="1px solid" borderColor="border">
           <Card.Body py={4}>
-            <HStack gap={3}>
+            <HStack gap={3} flexWrap="wrap">
               <Box bg="purple.50" p={2} borderRadius="md"><Envelope size={20} color="#7C3AED" /></Box>
-              <VStack align="start" gap={0}>
+              <VStack align="start" gap={0} minW={0} flex={1}>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>Email</Text>
-                <Text fontWeight="semibold" fontSize="sm">{lead.email || "-"}</Text>
+                <Text fontWeight="semibold" fontSize="sm" wordBreak="break-all">{lead.email || "-"}</Text>
               </VStack>
             </HStack>
           </Card.Body>
@@ -279,9 +279,9 @@ export default function LeadDetailPage() {
                   <Text fontSize="xs" color="foreground" opacity={0.5}>Contact Name</Text>
                   <Text fontWeight="medium">{lead.contact_name}</Text>
                 </VStack>
-                <VStack align="start" gap={1}>
+                <VStack align="start" gap={1} minW={0}>
                   <Text fontSize="xs" color="foreground" opacity={0.5}>Email</Text>
-                  <Text fontWeight="medium">{lead.email || "-"}</Text>
+                  <Text fontWeight="medium" wordBreak="break-all">{lead.email || "-"}</Text>
                 </VStack>
                 <VStack align="start" gap={1}>
                   <Text fontSize="xs" color="foreground" opacity={0.5}>Phone</Text>
