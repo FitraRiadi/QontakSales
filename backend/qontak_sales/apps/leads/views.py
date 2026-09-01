@@ -160,3 +160,94 @@ def dashboard_stats(request):
         "monthly_revenue": monthly_data,
         "leaderboard": leaderboard[:10],
     })
+
+
+@api_view(["GET"])
+def dashboard_export(request):
+    import io
+    import pandas as pd
+    from django.http import StreamingHttpResponse
+    from django.utils import timezone
+    from django.db.models.functions import TruncMonth
+    from django.contrib.auth import get_user_model
+
+    user = request.user
+    User = get_user_model()
+    all_company_leads = Lead.objects.filter(company=user.company, is_archived=False)
+
+    if user.role == "AGENT":
+        my_leads = all_company_leads.filter(assigned_to=user)
+    else:
+        my_leads = all_company_leads
+
+    total_revenue = my_leads.filter(stage="WON").aggregate(total=Sum("potential_value"))["total"] or 0
+    total_leads = my_leads.count()
+    won_count = my_leads.filter(stage="WON").count()
+    lost_count = my_leads.filter(stage="LOST").count()
+    closed_count = won_count + lost_count
+    win_rate = round((won_count / closed_count * 100) if closed_count > 0 else 0, 1)
+    active_leads = my_leads.exclude(stage__in=["WON", "LOST"]).count()
+
+    monthly = (
+        my_leads.filter(stage="WON")
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
+        .annotate(revenue=Sum("potential_value"), count=Count("id"))
+        .order_by("month")[:12]
+    )
+    monthly_df = pd.DataFrame(list(monthly))
+    if not monthly_df.empty:
+        monthly_df["month"] = monthly_df["month"].dt.strftime("%b %Y")
+        monthly_df.columns = ["Month", "Revenue", "Deals Won"]
+    else:
+        monthly_df = pd.DataFrame(columns=["Month", "Revenue", "Deals Won"])
+
+    summary_data = {
+        "Label": ["Total Revenue", "Win Rate", "Active Leads", "Total Leads", "Won Deals", "Lost Deals"],
+        "Value": [
+            f"Rp {total_revenue:,.0f}",
+            f"{win_rate}%",
+            active_leads,
+            total_leads,
+            won_count,
+            lost_count,
+        ],
+    }
+    summary_df = pd.DataFrame(summary_data)
+
+    STAGE_MAP = dict(Lead.STAGE_CHOICES)
+    TAG_MAP = dict(Lead.TAG_CHOICES)
+
+    leads_data = []
+    for lead in my_leads.select_related("assigned_to"):
+        leads_data.append({
+            "Name": lead.name,
+            "Contact": lead.contact_name,
+            "Phone": lead.phone_number,
+            "Email": lead.email or "",
+            "Company": lead.company_source,
+            "Value": float(lead.potential_value),
+            "Stage": STAGE_MAP.get(lead.stage, lead.stage),
+            "Tag": TAG_MAP.get(lead.tag, lead.tag),
+            "Assigned To": lead.assigned_to.get_full_name() if lead.assigned_to else "Unassigned",
+            "Created": lead.created_at.strftime("%d %b %Y"),
+        })
+    leads_df = pd.DataFrame(leads_data)
+    if leads_df.empty:
+        leads_df = pd.DataFrame(columns=["Name", "Contact", "Phone", "Email", "Company", "Value", "Stage", "Tag", "Assigned To", "Created"])
+
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        summary_df.to_excel(writer, sheet_name="Summary", index=False, startrow=0)
+        monthly_df.to_excel(writer, sheet_name="Summary", index=False, startrow=len(summary_df) + 3)
+        leads_df.to_excel(writer, sheet_name="Leads", index=False)
+
+    output.seek(0)
+    filename = f"dashboard-report-{timezone.now().strftime('%Y%m%d')}.xlsx"
+
+    response = StreamingHttpResponse(
+        output,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response

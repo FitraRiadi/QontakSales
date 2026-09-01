@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Box,
+  Button,
   Card,
   Heading,
   HStack,
@@ -10,7 +11,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { TrendUp, Users, CurrencyDollar, Trophy } from "@phosphor-icons/react";
+import { TrendUp, Users, CurrencyDollar, Trophy, Export } from "@phosphor-icons/react";
 import { Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -38,6 +39,22 @@ export default function DashboardPage() {
 
   if (loading) return <Box display="flex" justifyContent="center" py={20}><Spinner size="xl" color="primary" /></Box>;
   if (!stats) return <Text>Failed to load dashboard</Text>;
+
+  const handleExport = async () => {
+    try {
+      const res = await api.get("/dashboard/export/", { responseType: "blob" });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `dashboard-report-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      console.error("Export failed");
+    }
+  };
 
   const metrics = [
     { label: "Total Revenue", value: `Rp ${(stats.total_revenue / 1000000).toFixed(1)}M`, icon: CurrencyDollar, color: "stageWon" },
@@ -81,7 +98,12 @@ export default function DashboardPage() {
 
   return (
     <VStack gap={6} align="stretch">
-      <Heading size="lg" color="foreground">Dashboard</Heading>
+      <HStack justify="space-between">
+        <Heading size="lg" color="foreground">Dashboard</Heading>
+        <Button bg="accent" color="white" size="sm" onClick={handleExport} _hover={{ bg: "accent", opacity: 0.9 }}>
+          <Export size={16} /> Export Excel
+        </Button>
+      </HStack>
 
       <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
         {metrics.map((m) => {
