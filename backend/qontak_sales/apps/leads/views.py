@@ -243,7 +243,7 @@ def dashboard_export(request):
     ws.column_dimensions["A"].width = 20
     ws.column_dimensions["B"].width = 22
     ws.column_dimensions["C"].width = 14
-    ws.column_dimensions["D"].width = 22
+    ws.column_dimensions["D"].width = 20
     ws.column_dimensions["E"].width = 18
     ws.column_dimensions["F"].width = 16
     ws.column_dimensions["G"].width = 22
@@ -299,15 +299,16 @@ def dashboard_export(request):
 
     # --- Section: MONTHLY REVENUE ---
     monthly_start = row + len(summary_items) + 3
-    ws.merge_cells(f"A{monthly_start}:B{monthly_start}")
-    ws[f"A{monthly_start}"] = "MONTHLY REVENUE"
-    ws[f"A{monthly_start}"].font = section_font
-    ws[f"A{monthly_start}"].fill = section_fill
-    ws[f"A{monthly_start}"].alignment = center_align
+    ws.merge_cells(f"B{monthly_start}:D{monthly_start}")
+    ws[f"B{monthly_start}"] = "MONTHLY REVENUE"
+    ws[f"B{monthly_start}"].font = section_font
     ws[f"B{monthly_start}"].fill = section_fill
+    ws[f"B{monthly_start}"].alignment = center_align
+    ws[f"C{monthly_start}"].fill = section_fill
+    ws[f"D{monthly_start}"].fill = section_fill
 
     mh_row = monthly_start + 1
-    for col_idx, h in enumerate(["Month", "Revenue", "Deals Won"], 1):
+    for col_idx, h in enumerate(["Month", "Revenue", "Deals Won"], 2):
         c = ws.cell(row=mh_row, column=col_idx, value=h)
         c.font = header_font
         c.fill = header_fill
@@ -315,22 +316,22 @@ def dashboard_export(request):
 
     mr = mh_row + 1
     for m in monthly:
-        ws.cell(row=mr, column=1, value=m["month"].strftime("%b %Y")).font = value_font
-        ws.cell(row=mr, column=1).alignment = left_align
-        rev_cell = ws.cell(row=mr, column=2, value=float(m["revenue"]))
+        ws.cell(row=mr, column=2, value=m["month"].strftime("%b %Y")).font = value_font
+        ws.cell(row=mr, column=2).alignment = left_align
+        rev_cell = ws.cell(row=mr, column=3, value=float(m["revenue"]))
         rev_cell.font = value_font
         rev_cell.number_format = '"Rp "#,##0'
         rev_cell.alignment = right_align
-        ws.cell(row=mr, column=3, value=m["count"]).font = value_font
-        ws.cell(row=mr, column=3).alignment = center_align
+        ws.cell(row=mr, column=4, value=m["count"]).font = value_font
+        ws.cell(row=mr, column=4).alignment = center_align
         mr += 1
 
     if mr == mh_row + 1:
-        ws.cell(row=mr, column=1, value="No data").font = Font(italic=True, color="999999")
+        ws.cell(row=mr, column=2, value="No data").font = Font(italic=True, color="999999")
         mr += 1
 
-    apply_border(ws, monthly_start, mr - 1, 1, 3)
-    apply_zebra(ws, mh_row + 1, mr - 1, 1, 3)
+    apply_border(ws, monthly_start, mr - 1, 2, 4)
+    apply_zebra(ws, mh_row + 1, mr - 1, 2, 4)
 
     # --- Section: LEADS DATA ---
     leads_start_col = 4
