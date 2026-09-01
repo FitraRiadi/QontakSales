@@ -30,6 +30,7 @@ import brandLogo from "@/assets/brand.png";
 import heroImg from "@/assets/heroImg.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
+import ctaBg from "@/assets/cta.jpg";
 
 const features = [
   { icon: Kanban, title: "Sales Pipeline", desc: "Visual Kanban board to track every deal from first contact to closed won." },
@@ -381,11 +382,13 @@ export default function LandingPage() {
       </Box>
 
       {/* CTA */}
-      <Box py={20} bg="primary" color="white">
-        <Container maxW="3xl" textAlign="center">
+      <Box py={20} position="relative" overflow="hidden" color="white">
+        <Box as="img" src={ctaBg} position="absolute" inset={0} w="full" h="full" objectFit="cover" />
+        <Box position="absolute" inset={0} bg="blackAlpha.500" />
+        <Container maxW="3xl" textAlign="center" position="relative" zIndex={1}>
           <VStack gap={6}>
             <Heading size="xl">Ready to Boost Your Sales?</Heading>
-            <Text opacity={0.8} fontSize="lg">Join hundreds of teams already closing more deals with QontakSales.</Text>
+            <Text opacity={0.9} fontSize="lg">Join hundreds of teams already closing more deals with QontakSales.</Text>
             <Button size="lg" bg="white" color="primary" onClick={() => navigate("/register")} _hover={{ bg: "muted", transform: "translateY(-1px)" }} px={8}>
               Get Started Free <Icon ml={1}><ArrowRight size={18} /></Icon>
             </Button>
