@@ -279,8 +279,8 @@ export default function LandingPage() {
           </VStack>
           <Stack direction={{ base: "column", lg: "row" }} gap={8} align="stretch">
             {/* Dashboard Image */}
-            <Box flex={1} minH="400px" borderRadius="2xl" overflow="hidden" border="1px solid" borderColor="border" shadow="lg" display="flex" alignItems="center" justifyContent="center" bg="gradient-to-br from-primary/5 to-stageContacted/10">
-              <Box as="img" src={dashboardHighlight} maxH="380px" alt="Dashboard Analytics" />
+            <Box flex={1} minH="500px" borderRadius="2xl" overflow="hidden" shadow="2xl" display="flex" alignItems="center" justifyContent="center" bg="gradient-to-br from-primary/5 to-stageContacted/10">
+              <Box as="img" src={dashboardHighlight} maxH="480px" alt="Dashboard Analytics" />
             </Box>
             {/* Feature Cards Grid */}
             <Box flex={1} display="grid" gridTemplateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
