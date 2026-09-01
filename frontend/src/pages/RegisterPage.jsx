@@ -17,6 +17,7 @@ import {
 import { Eye, EyeClosed, Buildings, User, Envelope, Lock } from "@phosphor-icons/react";
 import api from "@/services/api";
 import brandLogo from "@/assets/brand.png";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -140,6 +141,8 @@ export default function RegisterPage() {
           </VStack>
         </Box>
       </Box>
+
+      <LoadingPopup open={loading} message="Creating account..." />
     </Box>
   );
 }

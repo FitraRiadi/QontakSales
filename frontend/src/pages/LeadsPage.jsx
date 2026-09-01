@@ -42,6 +42,7 @@ export default function LeadsPage() {
   const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
   const [archiveDialog, setArchiveDialog] = useState({ open: false, id: null });
   const [actionLoading, setActionLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const userRole = localStorage.getItem("user_role");
   const isManager = userRole === "MANAGER";
 
@@ -67,6 +68,7 @@ export default function LeadsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoading(true);
     try {
       if (editLead) {
         await api.put(`/leads/${editLead.id}/`, form);
@@ -79,6 +81,8 @@ export default function LeadsPage() {
       fetchLeads();
     } catch (err) {
       toaster.create({ title: "Error", description: err.response?.data?.detail || "Something went wrong", type: "error" });
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -305,6 +309,7 @@ export default function LeadsPage() {
       />
 
       <LoadingPopup open={actionLoading} message="Processing..." />
+      <LoadingPopup open={submitLoading} message={editLead ? "Updating lead..." : "Creating lead..."} />
     </VStack>
   );
 }

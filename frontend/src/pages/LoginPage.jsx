@@ -17,6 +17,7 @@ import {
 import { Eye, EyeClosed, Lightning, ChartLineUp, Kanban } from "@phosphor-icons/react";
 import api from "@/services/api";
 import brandLogo from "@/assets/brand.png";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -183,6 +184,8 @@ export default function LoginPage() {
           </VStack>
         </Box>
       </Box>
+
+      <LoadingPopup open={loading} message="Signing in..." />
     </Box>
   );
 }

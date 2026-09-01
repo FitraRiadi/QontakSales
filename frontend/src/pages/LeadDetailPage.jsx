@@ -571,6 +571,7 @@ export default function LeadDetailPage() {
       />
 
       <LoadingPopup open={actionLoading} message="Processing..." />
+      <LoadingPopup open={saving} message="Saving changes..." />
     </VStack>
   );
 }

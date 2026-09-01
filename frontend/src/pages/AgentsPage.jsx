@@ -36,6 +36,7 @@ export default function AgentsPage() {
   const fileInputRef = useRef(null);
   const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
   const [actionLoading, setActionLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const fetchAgents = () => {
     api.get("/agents/").then((r) => {
@@ -72,6 +73,7 @@ export default function AgentsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoading(true);
     const formData = new FormData();
     formData.append("username", form.username);
     formData.append("email", form.email);
@@ -94,6 +96,8 @@ export default function AgentsPage() {
     } catch (err) {
       const msg = err.response?.data?.detail || Object.values(err.response?.data || {})[0]?.[0] || "Error";
       toaster.create({ title: typeof msg === "string" ? msg : "Error", type: "error" });
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -204,6 +208,7 @@ export default function AgentsPage() {
       />
 
       <LoadingPopup open={actionLoading} message="Deleting agent..." />
+      <LoadingPopup open={submitLoading} message={editAgent ? "Updating agent..." : "Creating agent..."} />
     </VStack>
   );
 }
