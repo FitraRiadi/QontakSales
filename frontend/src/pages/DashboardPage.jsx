@@ -23,12 +23,14 @@ import {
   Legend,
 } from "chart.js";
 import api from "@/services/api";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 export default function DashboardPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     api.get("/dashboard/stats/").then((r) => {
@@ -41,6 +43,7 @@ export default function DashboardPage() {
   if (!stats) return <Text>Failed to load dashboard</Text>;
 
   const handleExport = async () => {
+    setExporting(true);
     try {
       const res = await api.get("/dashboard/export/", { responseType: "blob" });
       const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -53,6 +56,8 @@ export default function DashboardPage() {
       window.URL.revokeObjectURL(url);
     } catch {
       console.error("Export failed");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -171,6 +176,8 @@ export default function DashboardPage() {
           )}
         </Card.Body>
       </Card.Root>
+
+      <LoadingPopup open={exporting} message="Generating Excel report..." />
     </VStack>
   );
 }
