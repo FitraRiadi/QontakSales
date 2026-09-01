@@ -46,15 +46,14 @@ export default function DashboardPage() {
     setExporting(true);
     try {
       const res = await api.get("/dashboard/export/", { responseType: "blob" });
-      const blob = new Blob([res.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-      const url = window.URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(new Blob([res.data]));
       const a = document.createElement("a");
       a.href = url;
       a.download = `dashboard-report-${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a);
       a.click();
-      a.remove();
-      setTimeout(() => window.URL.revokeObjectURL(url), 3000);
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
     } catch {
       console.error("Export failed");
     } finally {
