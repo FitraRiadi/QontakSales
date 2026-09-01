@@ -242,7 +242,7 @@ def dashboard_export(request):
     # Column widths
     ws.column_dimensions["A"].width = 20
     ws.column_dimensions["B"].width = 22
-    ws.column_dimensions["C"].width = 3
+    ws.column_dimensions["C"].width = 14
     ws.column_dimensions["D"].width = 22
     ws.column_dimensions["E"].width = 18
     ws.column_dimensions["F"].width = 16
