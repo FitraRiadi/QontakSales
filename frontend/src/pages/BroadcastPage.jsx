@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { MagnifyingGlass, PaperPlaneRight, CheckCircle, XCircle, Clock } from "@phosphor-icons/react";
 import api from "@/services/api";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -333,6 +334,8 @@ export default function BroadcastPage() {
           )}
         </VStack>
       </SimpleGrid>
+
+      <LoadingPopup open={sending} message="Sending broadcast..." />
     </VStack>
   );
 }

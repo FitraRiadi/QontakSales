@@ -21,6 +21,7 @@ import {
 import { Plus, Pencil, Trash, UserPlus, Camera, X } from "@phosphor-icons/react";
 import api from "@/services/api";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -34,6 +35,7 @@ export default function AgentsPage() {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const fileInputRef = useRef(null);
   const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
+  const [actionLoading, setActionLoading] = useState(false);
 
   const fetchAgents = () => {
     api.get("/agents/").then((r) => {
@@ -96,12 +98,15 @@ export default function AgentsPage() {
   };
 
   const handleDelete = async (id) => {
+    setActionLoading(true);
     try {
       await api.delete(`/agents/${id}/`);
       toaster.create({ title: "Agent deleted", type: "success" });
       fetchAgents();
     } catch {
       toaster.create({ title: "Delete failed", type: "error" });
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -197,6 +202,8 @@ export default function AgentsPage() {
         message="Are you sure you want to delete this agent? All their data will be permanently removed."
         action="delete"
       />
+
+      <LoadingPopup open={actionLoading} message="Deleting agent..." />
     </VStack>
   );
 }

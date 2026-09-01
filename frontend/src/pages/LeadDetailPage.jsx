@@ -37,6 +37,7 @@ import {
 } from "@phosphor-icons/react";
 import api from "@/services/api";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -67,6 +68,7 @@ export default function LeadDetailPage() {
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [archiveDialog, setArchiveDialog] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -136,22 +138,28 @@ export default function LeadDetailPage() {
   };
 
   const handleArchive = async () => {
+    setActionLoading(true);
     try {
       const res = await api.post(`/leads/${lead.id}/archive/`);
       setLead(res.data.lead);
       toaster.create({ title: "Lead archived", type: "success" });
     } catch {
       toaster.create({ title: "Archive failed", type: "error" });
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const handleRestore = async () => {
+    setActionLoading(true);
     try {
       const res = await api.post(`/leads/${lead.id}/restore/`);
       setLead(res.data.lead);
       toaster.create({ title: "Lead restored", type: "success" });
     } catch {
       toaster.create({ title: "Restore failed", type: "error" });
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -561,6 +569,8 @@ export default function LeadDetailPage() {
         message="This lead will be hidden from Leads, Pipeline, and Dashboard. You can restore it later from Archived Leads."
         action="archive"
       />
+
+      <LoadingPopup open={actionLoading} message="Processing..." />
     </VStack>
   );
 }

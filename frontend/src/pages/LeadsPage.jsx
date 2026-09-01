@@ -22,6 +22,7 @@ import {
 import { Plus, MagnifyingGlass, ArrowUp, ArrowDown, Buildings, Phone, Archive } from "@phosphor-icons/react";
 import api from "@/services/api";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -40,6 +41,7 @@ export default function LeadsPage() {
   const [form, setForm] = useState({ name: "", contact_name: "", phone_number: "", email: "", company_source: "", potential_value: "", tag: "COLD", stage: "NEW" });
   const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
   const [archiveDialog, setArchiveDialog] = useState({ open: false, id: null });
+  const [actionLoading, setActionLoading] = useState(false);
   const userRole = localStorage.getItem("user_role");
   const isManager = userRole === "MANAGER";
 
@@ -81,22 +83,28 @@ export default function LeadsPage() {
   };
 
   const handleDelete = async (id) => {
+    setActionLoading(true);
     try {
       await api.delete(`/leads/${id}/`);
       toaster.create({ title: "Lead deleted", type: "success" });
       fetchLeads();
     } catch {
       toaster.create({ title: "Delete failed", type: "error" });
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const handleArchive = async (id) => {
+    setActionLoading(true);
     try {
       await api.post(`/leads/${id}/archive/`);
       toaster.create({ title: "Lead archived", type: "success" });
       fetchLeads();
     } catch {
       toaster.create({ title: "Archive failed", type: "error" });
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -295,6 +303,8 @@ export default function LeadsPage() {
         message="This lead will be hidden from Leads, Pipeline, and Dashboard. You can restore it later from Archived Leads."
         action="archive"
       />
+
+      <LoadingPopup open={actionLoading} message="Processing..." />
     </VStack>
   );
 }
