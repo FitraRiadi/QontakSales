@@ -235,15 +235,29 @@ class DashboardExportView(View):
         right_align = Alignment(horizontal="right", vertical="center")
 
         def apply_border(ws, min_row, max_row, min_col, max_col):
-            for row in ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col):
-                for cell in row:
-                    cell.border = thin_border
+            merged = set()
+            for rng in ws.merged_cells.ranges:
+                for row in range(rng.min_row, rng.max_row + 1):
+                    for col in range(rng.min_col, rng.max_col + 1):
+                        if (row, col) != (rng.min_row, rng.min_col):
+                            merged.add((row, col))
+            for row_cells in ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col):
+                for cell in row_cells:
+                    if (cell.row, cell.column) not in merged:
+                        cell.border = thin_border
 
         def apply_zebra(ws, min_row, max_row, min_col, max_col):
-            for i, row in enumerate(ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col)):
+            merged = set()
+            for rng in ws.merged_cells.ranges:
+                for row in range(rng.min_row, rng.max_row + 1):
+                    for col in range(rng.min_col, rng.max_col + 1):
+                        if (row, col) != (rng.min_row, rng.min_col):
+                            merged.add((row, col))
+            for i, row_cells in enumerate(ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col)):
                 if i % 2 == 1:
-                    for cell in row:
-                        cell.fill = zebra_light
+                    for cell in row_cells:
+                        if (cell.row, cell.column) not in merged:
+                            cell.fill = zebra_light
 
         wb = Workbook()
         ws = wb.active
@@ -282,7 +296,6 @@ class DashboardExportView(View):
         ws[f"A{row}"].font = section_font
         ws[f"A{row}"].fill = section_fill
         ws[f"A{row}"].alignment = center_align
-        ws[f"B{row}"].fill = section_fill
 
         summary_items = [
             ("Total Revenue", f"Rp {total_revenue:,.0f}"),
@@ -311,8 +324,6 @@ class DashboardExportView(View):
         ws[f"B{monthly_start}"].font = section_font
         ws[f"B{monthly_start}"].fill = section_fill
         ws[f"B{monthly_start}"].alignment = center_align
-        ws[f"C{monthly_start}"].fill = section_fill
-        ws[f"D{monthly_start}"].fill = section_fill
 
         mh_row = monthly_start + 1
         for col_idx, h in enumerate(["Month", "Revenue", "Deals Won"], 2):
@@ -349,8 +360,6 @@ class DashboardExportView(View):
         ws[f"D{leads_header_row}"].font = section_font
         ws[f"D{leads_header_row}"].fill = section_fill
         ws[f"D{leads_header_row}"].alignment = center_align
-        for ci in range(leads_start_col + 1, leads_start_col + len(leads_headers)):
-            ws.cell(row=leads_header_row, column=ci).fill = section_fill
 
         lh_row = leads_header_row + 1
         for col_idx, h in enumerate(leads_headers, leads_start_col):
