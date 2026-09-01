@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { User, Lock, Camera, FloppyDisk } from "@phosphor-icons/react";
 import api from "@/services/api";
+import LoadingPopup from "@/components/ui/LoadingPopup";
 
 const toaster = createToaster({ placement: "top-end" });
 
@@ -23,9 +24,10 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profileForm, setProfileForm] = useState({ first_name: "", last_name: "", email: "", phone: "" });
-  const [passwordForm, setPasswordForm] = useState({ old_password: "", new_password: "" });
+  const [passwordForm, setPasswordForm] = useState({ old_password: "", new_password: "", confirm_password: "" });
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -75,12 +77,26 @@ export default function SettingsPage() {
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
+    if (passwordForm.new_password !== passwordForm.confirm_password) {
+      toaster.create({ title: "Passwords do not match", type: "error" });
+      return;
+    }
+    if (passwordForm.new_password.length < 6) {
+      toaster.create({ title: "Password must be at least 6 characters", type: "error" });
+      return;
+    }
+    setChangingPassword(true);
     try {
-      await api.post("/auth/change-password/", passwordForm);
-      setPasswordForm({ old_password: "", new_password: "" });
-      toaster.create({ title: "Password changed", type: "success" });
+      await api.post("/auth/change-password/", {
+        old_password: passwordForm.old_password,
+        new_password: passwordForm.new_password,
+      });
+      setPasswordForm({ old_password: "", new_password: "", confirm_password: "" });
+      toaster.create({ title: "Password changed successfully", type: "success" });
     } catch (err) {
-      toaster.create({ title: err.response?.data?.error || "Failed", type: "error" });
+      toaster.create({ title: err.response?.data?.error || "Failed to change password", type: "error" });
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -144,13 +160,17 @@ export default function SettingsPage() {
         <Card.Body>
           <Box as="form" onSubmit={handlePasswordChange}>
             <VStack gap={4}>
-              <Field.Root w="full"><Field.Label>Current Password</Field.Label><Input type="password" value={passwordForm.old_password} onChange={(e) => setPasswordForm({ ...passwordForm, old_password: e.target.value })} /></Field.Root>
-              <Field.Root w="full"><Field.Label>New Password</Field.Label><Input type="password" value={passwordForm.new_password} onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })} /></Field.Root>
-              <Button type="submit" bg="primary" color="white" w="full" _hover={{ bg: "secondary" }}>Change Password</Button>
+              <Field.Root w="full"><Field.Label>Current Password</Field.Label><Input type="password" value={passwordForm.old_password} onChange={(e) => setPasswordForm({ ...passwordForm, old_password: e.target.value })} required /></Field.Root>
+              <Field.Root w="full"><Field.Label>New Password</Field.Label><Input type="password" value={passwordForm.new_password} onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })} required minLength={6} /></Field.Root>
+              <Field.Root w="full"><Field.Label>Confirm New Password</Field.Label><Input type="password" value={passwordForm.confirm_password} onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })} required minLength={6} /></Field.Root>
+              <Button type="submit" bg="primary" color="white" w="full" loading={changingPassword} _hover={{ bg: "secondary" }}>Change Password</Button>
             </VStack>
           </Box>
         </Card.Body>
       </Card.Root>
+
+      <LoadingPopup open={saving} message="Saving profile..." />
+      <LoadingPopup open={changingPassword} message="Changing password..." />
     </VStack>
   );
 }
