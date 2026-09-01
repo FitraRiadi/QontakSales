@@ -7,7 +7,7 @@ class ActivityLog(models.Model):
         "leads.Lead", on_delete=models.CASCADE, related_name="logs"
     )
     agent = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="activity_logs"
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="activity_logs"
     )
     notes = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

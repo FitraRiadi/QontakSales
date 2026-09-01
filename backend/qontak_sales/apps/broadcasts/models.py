@@ -17,7 +17,9 @@ class Broadcast(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="DRAFT")
     sent_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="broadcasts",
     )
     created_at = models.DateTimeField(auto_now_add=True)
