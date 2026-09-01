@@ -28,6 +28,8 @@ import {
 } from "@phosphor-icons/react";
 import brandLogo from "@/assets/brand.png";
 import heroImg from "@/assets/heroImg.png";
+import dashboardHighlight from "@/assets/dashboard-highlight.png";
+import pipelineHighlight from "@/assets/pipeline-highlight.png";
 
 const features = [
   { icon: Kanban, title: "Sales Pipeline", desc: "Visual Kanban board to track every deal from first contact to closed won." },
@@ -216,6 +218,35 @@ export default function LandingPage() {
         </Container>
       </Box>
 
+      {/* Pipeline Highlight */}
+      <Box py={16} bg="background">
+        <Container maxW="7xl">
+          <VStack gap={8} textAlign="center">
+            <VStack gap={4}>
+              <Heading size="xl" color="foreground">Track Every Deal from Start to Close</Heading>
+              <Text color="foreground" opacity={0.6} maxW="xl">
+                Drag and drop your deals across 5 stages — from first contact to closed won.
+              </Text>
+            </VStack>
+            <Box w="full" borderRadius="2xl" overflow="hidden" border="1px solid" borderColor="border" shadow="2xl">
+              <Box as="img" src={pipelineHighlight} w="full" alt="Pipeline Kanban Board" />
+            </Box>
+            <HStack gap={8} wrap="wrap" justify="center">
+              {[
+                { icon: Kanban, text: "5 visual stages" },
+                { icon: ArrowRight, text: "Drag & drop" },
+                { icon: ChartLineUp, text: "Real-time tracking" },
+              ].map((item) => (
+                <HStack key={item.text} gap={2}>
+                  <Icon color="primary" size={18}><item.icon /></Icon>
+                  <Text fontSize="sm" fontWeight="medium" color="foreground">{item.text}</Text>
+                </HStack>
+              ))}
+            </HStack>
+          </VStack>
+        </Container>
+      </Box>
+
       {/* Logo Carousel */}
       <Box bg="background" py={4}>
         <Container maxW="7xl">
@@ -239,27 +270,34 @@ export default function LandingPage() {
       </Box>
 
       {/* Features */}
-      <Box py={20}>
+      <Box py={20} bg="white">
         <Container maxW="7xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Features</Box>
             <Heading size="xl" color="foreground">Everything You Need</Heading>
             <Text color="foreground" opacity={0.6} maxW="lg">Built for sales teams who want to focus on closing, not data entry.</Text>
           </VStack>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
-            {features.map((f) => {
-              const IconComp = f.icon;
-              return (
-                <Box key={f.title} p={6} bg="white" borderRadius="xl" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", transform: "translateY(-4px)", shadow: "lg" }} transition="all 200ms ease">
-                  <Box w={12} h={12} borderRadius="lg" bg="primary/10" display="flex" alignItems="center" justifyContent="center" mb={4}>
-                    <Icon size={24} color="primary"><IconComp /></Icon>
+          <Stack direction={{ base: "column", lg: "row" }} gap={8} align="stretch">
+            {/* Dashboard Image */}
+            <Box flex={1} minH="400px" borderRadius="2xl" overflow="hidden" border="1px solid" borderColor="border" shadow="lg" display="flex" alignItems="center" justifyContent="center" bg="gradient-to-br from-primary/5 to-stageContacted/10">
+              <Box as="img" src={dashboardHighlight} maxH="380px" alt="Dashboard Analytics" />
+            </Box>
+            {/* Feature Cards Grid */}
+            <Box flex={1} display="grid" gridTemplateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
+              {features.map((f) => {
+                const IconComp = f.icon;
+                return (
+                  <Box key={f.title} p={5} bg="background" borderRadius="xl" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", shadow: "md" }} transition="all 200ms ease">
+                    <Box w={10} h={10} borderRadius="lg" bg="primary/10" display="flex" alignItems="center" justifyContent="center" mb={3}>
+                      <Icon size={20} color="primary"><IconComp /></Icon>
+                    </Box>
+                    <Heading size="sm" mb={1} color="foreground">{f.title}</Heading>
+                    <Text color="foreground" opacity={0.6} fontSize="xs">{f.desc}</Text>
                   </Box>
-                  <Heading size="md" mb={2} color="foreground">{f.title}</Heading>
-                  <Text color="foreground" opacity={0.6} fontSize="sm">{f.desc}</Text>
-                </Box>
-              );
-            })}
-          </SimpleGrid>
+                );
+              })}
+            </Box>
+          </Stack>
         </Container>
       </Box>
 
