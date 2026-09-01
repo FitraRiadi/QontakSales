@@ -98,28 +98,31 @@ class LeadViewSet(viewsets.ModelViewSet):
 @api_view(["GET"])
 def dashboard_stats(request):
     user = request.user
+    all_company_leads = Lead.objects.filter(company=user.company, is_archived=False)
+
     if user.role == "AGENT":
-        leads = Lead.objects.filter(company=user.company, assigned_to=user, is_archived=False)
+        my_leads = all_company_leads.filter(assigned_to=user)
     else:
-        leads = Lead.objects.filter(company=user.company, is_archived=False)
-    total_revenue = leads.filter(stage="WON").aggregate(total=Sum("potential_value"))["total"] or 0
-    total_leads = leads.count()
-    won_count = leads.filter(stage="WON").count()
-    lost_count = leads.filter(stage="LOST").count()
+        my_leads = all_company_leads
+
+    total_revenue = my_leads.filter(stage="WON").aggregate(total=Sum("potential_value"))["total"] or 0
+    total_leads = my_leads.count()
+    won_count = my_leads.filter(stage="WON").count()
+    lost_count = my_leads.filter(stage="LOST").count()
     closed_count = won_count + lost_count
     win_rate = round((won_count / closed_count * 100) if closed_count > 0 else 0, 1)
-    active_leads = leads.exclude(stage__in=["WON", "LOST"]).count()
+    active_leads = my_leads.exclude(stage__in=["WON", "LOST"]).count()
 
     stage_dist = []
     for stage_code, stage_label in Lead.STAGE_CHOICES:
-        count = leads.filter(stage=stage_code).count()
+        count = my_leads.filter(stage=stage_code).count()
         stage_dist.append({"stage": stage_label, "count": count})
 
     monthly_data = []
     from django.utils import timezone
     from django.db.models.functions import TruncMonth
     monthly = (
-        leads.filter(stage="WON")
+        my_leads.filter(stage="WON")
         .annotate(month=TruncMonth("created_at"))
         .values("month")
         .annotate(revenue=Sum("potential_value"), count=Count("id"))
@@ -137,7 +140,7 @@ def dashboard_stats(request):
     agents = User.objects.filter(company=user.company, role="AGENT")
     leaderboard = []
     for agent in agents:
-        agent_won = leads.filter(assigned_to=agent, stage="WON")
+        agent_won = all_company_leads.filter(assigned_to=agent, stage="WON")
         agent_revenue = agent_won.aggregate(total=Sum("potential_value"))["total"] or 0
         leaderboard.append({
             "name": agent.get_full_name() or agent.username,
