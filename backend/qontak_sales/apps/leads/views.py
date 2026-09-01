@@ -174,11 +174,9 @@ class DashboardExportView(View):
         from openpyxl import Workbook
         from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
-        # JWT Authentication
         auth_header = request.META.get("HTTP_AUTHORIZATION", "")
         if not auth_header.startswith("Bearer "):
             return JsonResponse({"error": "Authentication required"}, status=401)
-        
         token = auth_header.split(" ")[1]
         try:
             access_token = AccessToken(token)
@@ -187,12 +185,9 @@ class DashboardExportView(View):
             user = User.objects.get(id=user_id)
         except Exception:
             return JsonResponse({"error": "Invalid token"}, status=401)
-        all_company_leads = Lead.objects.filter(company=user.company, is_archived=False)
 
-        if user.role == "AGENT":
-            my_leads = all_company_leads.filter(assigned_to=user)
-        else:
-            my_leads = all_company_leads
+        all_company_leads = Lead.objects.filter(company=user.company, is_archived=False)
+        my_leads = all_company_leads.filter(assigned_to=user) if user.role == "AGENT" else all_company_leads
 
         total_revenue = my_leads.filter(stage="WON").aggregate(total=Sum("potential_value"))["total"] or 0
         total_leads = my_leads.count()
@@ -234,30 +229,14 @@ class DashboardExportView(View):
         left_align = Alignment(horizontal="left", vertical="center")
         right_align = Alignment(horizontal="right", vertical="center")
 
-        def apply_border(ws, min_row, max_row, min_col, max_col):
-            merged = set()
-            for rng in ws.merged_cells.ranges:
-                for row in range(rng.min_row, rng.max_row + 1):
-                    for col in range(rng.min_col, rng.max_col + 1):
-                        if (row, col) != (rng.min_row, rng.min_col):
-                            merged.add((row, col))
-            for row_cells in ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col):
-                for cell in row_cells:
-                    if (cell.row, cell.column) not in merged:
-                        cell.border = thin_border
-
-        def apply_zebra(ws, min_row, max_row, min_col, max_col):
-            merged = set()
-            for rng in ws.merged_cells.ranges:
-                for row in range(rng.min_row, rng.max_row + 1):
-                    for col in range(rng.min_col, rng.max_col + 1):
-                        if (row, col) != (rng.min_row, rng.min_col):
-                            merged.add((row, col))
-            for i, row_cells in enumerate(ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col)):
-                if i % 2 == 1:
-                    for cell in row_cells:
-                        if (cell.row, cell.column) not in merged:
-                            cell.fill = zebra_light
+        def style_range(ws, min_row, max_row, min_col, max_col, font=None, fill=None, alignment=None, number_format=None):
+            for r in range(min_row, max_row + 1):
+                for c in range(min_col, max_col + 1):
+                    cell = ws.cell(row=r, column=c)
+                    if font: cell.font = font
+                    if fill: cell.fill = fill
+                    if alignment: cell.alignment = alignment
+                    if number_format: cell.number_format = number_format
 
         wb = Workbook()
         ws = wb.active
@@ -277,25 +256,20 @@ class DashboardExportView(View):
         ws.column_dimensions["K"].width = 10
         ws.column_dimensions["L"].width = 16
 
-        ws.merge_cells("A1:B1")
+        ws.merge_cells("A1:L1")
         ws["A1"] = "QontakSales Dashboard Report"
         ws["A1"].font = title_font
         ws["A1"].alignment = left_align
 
-        ws.merge_cells("A2:B2")
-        ws["A2"] = f"Generated: {timezone.now().strftime('%d %B %Y, %H:%M')}"
+        ws.merge_cells("A2:L2")
+        ws["A2"] = f"Generated: {timezone.now().strftime('%d %B %Y, %H:%M')}  |  Agent: {user.get_full_name() or user.username} ({user.role})"
         ws["A2"].font = subtitle_font
 
-        ws.merge_cells("A3:B3")
-        ws["A3"] = f"Agent: {user.get_full_name() or user.username} ({user.role})"
-        ws["A3"].font = subtitle_font
-
-        row = 5
-        ws.merge_cells(f"A{row}:B{row}")
-        ws[f"A{row}"] = "SUMMARY"
-        ws[f"A{row}"].font = section_font
-        ws[f"A{row}"].fill = section_fill
-        ws[f"A{row}"].alignment = center_align
+        # === SECTION 1: SUMMARY (row 4) ===
+        sec_row = 4
+        ws.merge_cells(f"A{sec_row}:B{sec_row}")
+        ws[f"A{sec_row}"] = "SUMMARY"
+        style_range(ws, sec_row, sec_row, 1, 2, font=section_font, fill=section_fill, alignment=center_align)
 
         summary_items = [
             ("Total Revenue", f"Rp {total_revenue:,.0f}"),
@@ -305,103 +279,106 @@ class DashboardExportView(View):
             ("Won Deals", str(won_count)),
             ("Lost Deals", str(lost_count)),
         ]
-
         for i, (label, val) in enumerate(summary_items):
-            r = row + 1 + i
-            ws[f"A{r}"] = label
-            ws[f"A{r}"].font = label_font
-            ws[f"A{r}"].alignment = left_align
-            ws[f"B{r}"] = val
-            ws[f"B{r}"].font = metric_value_font if i < 2 else value_font
-            ws[f"B{r}"].alignment = right_align
+            r = sec_row + 1 + i
+            ws.cell(row=r, column=1, value=label).font = label_font
+            ws.cell(row=r, column=1).alignment = left_align
+            ws.cell(row=r, column=2, value=val).font = metric_value_font if i < 2 else value_font
+            ws.cell(row=r, column=2).alignment = right_align
+        style_range(ws, sec_row, sec_row + len(summary_items), 1, 1, border=thin_border)
+        style_range(ws, sec_row, sec_row + len(summary_items), 2, 2, border=thin_border)
+        for r in range(sec_row + 1, sec_row + len(summary_items) + 1):
+            ws.cell(row=r, column=1).border = thin_border
+            ws.cell(row=r, column=2).border = thin_border
+            if r % 2 == 0:
+                ws.cell(row=r, column=1).fill = zebra_light
+                ws.cell(row=r, column=2).fill = zebra_light
 
-        apply_border(ws, row, row + len(summary_items), 1, 2)
-        apply_zebra(ws, row + 1, row + len(summary_items), 1, 2)
+        # === SECTION 2: MONTHLY REVENUE (row 12) ===
+        monthly_header_row = sec_row + len(summary_items) + 2
+        ws.merge_cells(f"A{monthly_header_row}:C{monthly_header_row}")
+        ws[f"A{monthly_header_row}"] = "MONTHLY REVENUE"
+        style_range(ws, monthly_header_row, monthly_header_row, 1, 3, font=section_font, fill=section_fill, alignment=center_align)
 
-        monthly_start = row + len(summary_items) + 3
-        ws.merge_cells(f"B{monthly_start}:D{monthly_start}")
-        ws[f"B{monthly_start}"] = "MONTHLY REVENUE"
-        ws[f"B{monthly_start}"].font = section_font
-        ws[f"B{monthly_start}"].fill = section_fill
-        ws[f"B{monthly_start}"].alignment = center_align
-
-        mh_row = monthly_start + 1
-        for col_idx, h in enumerate(["Month", "Revenue", "Deals Won"], 2):
+        mh_row = monthly_header_row + 1
+        for col_idx, h in enumerate(["Month", "Revenue", "Deals Won"], 1):
             c = ws.cell(row=mh_row, column=col_idx, value=h)
             c.font = header_font
             c.fill = header_fill
             c.alignment = center_align
+            c.border = thin_border
 
         mr = mh_row + 1
         for m in monthly:
-            ws.cell(row=mr, column=2, value=m["month"].strftime("%b %Y")).font = value_font
-            ws.cell(row=mr, column=2).alignment = left_align
-            rev_cell = ws.cell(row=mr, column=3, value=float(m["revenue"]))
+            ws.cell(row=mr, column=1, value=m["month"].strftime("%b %Y")).font = value_font
+            ws.cell(row=mr, column=1).alignment = left_align
+            ws.cell(row=mr, column=1).border = thin_border
+            rev_cell = ws.cell(row=mr, column=2, value=float(m["revenue"]))
             rev_cell.font = value_font
             rev_cell.number_format = '"Rp "#,##0'
             rev_cell.alignment = right_align
-            ws.cell(row=mr, column=4, value=m["count"]).font = value_font
-            ws.cell(row=mr, column=4).alignment = center_align
+            rev_cell.border = thin_border
+            ws.cell(row=mr, column=3, value=m["count"]).font = value_font
+            ws.cell(row=mr, column=3).alignment = center_align
+            ws.cell(row=mr, column=3).border = thin_border
+            if mr % 2 == 0:
+                for c in range(1, 4):
+                    ws.cell(row=mr, column=c).fill = zebra_light
             mr += 1
 
         if mr == mh_row + 1:
-            ws.cell(row=mr, column=2, value="No data").font = Font(italic=True, color="999999")
+            ws.cell(row=mr, column=1, value="No data").font = Font(italic=True, color="999999")
             mr += 1
 
-        apply_border(ws, monthly_start, mr - 1, 2, 4)
-        apply_zebra(ws, mh_row + 1, mr - 1, 2, 4)
+        # === SECTION 3: LEADS DATA (below monthly) ===
+        leads_sec_row = mr + 1
+        ws.merge_cells(f"A{leads_sec_row}:L{leads_sec_row}")
+        ws[f"A{leads_sec_row}"] = "LEADS DATA"
+        style_range(ws, leads_sec_row, leads_sec_row, 1, 12, font=section_font, fill=section_fill, alignment=center_align)
 
-        leads_start_col = 4
-        leads_header_row = 5
         leads_headers = ["Name", "Contact", "Phone", "Email", "Company", "Value", "Stage", "Tag", "Assigned To", "Created"]
-
-        ws.merge_cells(f"D{leads_header_row}:L{leads_header_row}")
-        ws[f"D{leads_header_row}"] = "LEADS DATA"
-        ws[f"D{leads_header_row}"].font = section_font
-        ws[f"D{leads_header_row}"].fill = section_fill
-        ws[f"D{leads_header_row}"].alignment = center_align
-
-        lh_row = leads_header_row + 1
-        for col_idx, h in enumerate(leads_headers, leads_start_col):
+        lh_row = leads_sec_row + 1
+        for col_idx, h in enumerate(leads_headers, 1):
             c = ws.cell(row=lh_row, column=col_idx, value=h)
             c.font = header_font
             c.fill = header_fill
             c.alignment = center_align
+            c.border = thin_border
 
         lr = lh_row + 1
         for lead in my_leads.select_related("assigned_to"):
-            ws.cell(row=lr, column=4, value=lead.name).font = value_font
+            ws.cell(row=lr, column=1, value=lead.name).font = value_font
+            ws.cell(row=lr, column=1).alignment = left_align
+            ws.cell(row=lr, column=2, value=lead.contact_name).font = value_font
+            ws.cell(row=lr, column=2).alignment = left_align
+            ws.cell(row=lr, column=3, value=lead.phone_number).font = value_font
+            ws.cell(row=lr, column=3).alignment = left_align
+            ws.cell(row=lr, column=4, value=lead.email or "").font = value_font
             ws.cell(row=lr, column=4).alignment = left_align
-            ws.cell(row=lr, column=5, value=lead.contact_name).font = value_font
+            ws.cell(row=lr, column=5, value=lead.company_source).font = value_font
             ws.cell(row=lr, column=5).alignment = left_align
-            ws.cell(row=lr, column=6, value=lead.phone_number).font = value_font
-            ws.cell(row=lr, column=6).alignment = left_align
-            ws.cell(row=lr, column=7, value=lead.email or "").font = value_font
-            ws.cell(row=lr, column=7).alignment = left_align
-            ws.cell(row=lr, column=8, value=lead.company_source).font = value_font
-            ws.cell(row=lr, column=8).alignment = left_align
-            val_cell = ws.cell(row=lr, column=9, value=float(lead.potential_value))
+            val_cell = ws.cell(row=lr, column=6, value=float(lead.potential_value))
             val_cell.font = value_font
             val_cell.number_format = '"Rp "#,##0'
             val_cell.alignment = right_align
-            ws.cell(row=lr, column=10, value=STAGE_MAP.get(lead.stage, lead.stage)).font = value_font
+            ws.cell(row=lr, column=7, value=STAGE_MAP.get(lead.stage, lead.stage)).font = value_font
+            ws.cell(row=lr, column=7).alignment = center_align
+            ws.cell(row=lr, column=8, value=TAG_MAP.get(lead.tag, lead.tag)).font = value_font
+            ws.cell(row=lr, column=8).alignment = center_align
+            ws.cell(row=lr, column=9, value=lead.assigned_to.get_full_name() if lead.assigned_to else "Unassigned").font = value_font
+            ws.cell(row=lr, column=9).alignment = left_align
+            ws.cell(row=lr, column=10, value=lead.created_at.strftime("%d %b %Y")).font = value_font
             ws.cell(row=lr, column=10).alignment = center_align
-            ws.cell(row=lr, column=11, value=TAG_MAP.get(lead.tag, lead.tag)).font = value_font
-            ws.cell(row=lr, column=11).alignment = center_align
-            ws.cell(row=lr, column=12, value=lead.assigned_to.get_full_name() if lead.assigned_to else "Unassigned").font = value_font
-            ws.cell(row=lr, column=12).alignment = left_align
-            ws.cell(row=lr, column=13, value=lead.created_at.strftime("%d %b %Y")).font = value_font
-            ws.cell(row=lr, column=13).alignment = center_align
+            for c in range(1, 11):
+                ws.cell(row=lr, column=c).border = thin_border
+            if lr % 2 == 0:
+                for c in range(1, 11):
+                    ws.cell(row=lr, column=c).fill = zebra_light
             lr += 1
 
         if lr == lh_row + 1:
-            ws.cell(row=lr, column=4, value="No leads found").font = Font(italic=True, color="999999")
+            ws.cell(row=lr, column=1, value="No leads found").font = Font(italic=True, color="999999")
             lr += 1
-
-        apply_border(ws, leads_header_row, lr - 1, 4, 13)
-        apply_zebra(ws, lh_row + 1, lr - 1, 4, 13)
-
-        ws.freeze_panes = "D6"
 
         output = io.BytesIO()
         wb.save(output)
