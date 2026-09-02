@@ -19,6 +19,7 @@
 | Fitur | Deskripsi |
 |-------|-----------|
 | **Dashboard** | Statistik real-time: revenue, win rate, stage distribution, leaderboard agent |
+| **Dashboard Export** | Export laporan dashboard ke Excel (.xlsx) dengan styling profesional |
 | **Leads Management** | CRUD leads lengkap dengan search, filter, sort, pagination |
 | **Pipeline (Kanban)** | Visualisasi pipeline 5 stage: Prospek Baru → Hubungi → Negosiasi → Won/Lost |
 | **WhatsApp Broadcast** | Kirim pesan massal ke leads dengan template personal (`{name}`, `{phone}`, `{company}`, `{value}`) |
@@ -27,7 +28,8 @@
 | **Agent Management** | Kelola tim sales agent (Manager only) |
 | **Role-Based Access** | 2 role: Manager (full access) & Agent (limited access) |
 | **Switch Account** | Manager bisa impersonate agent untuk review |
-| **Profile & Avatar** | Upload avatar, edit profil |
+| **Landing Page** | Halaman publik dengan Hero, Features, CTA, FAQ, Privacy, Terms, Contact |
+| **Profile & Avatar** | Upload avatar, edit profil, change password |
 
 ---
 
@@ -240,6 +242,13 @@ php artisan serve --port=8001
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/dashboard/stats/` | Dashboard statistics |
+| GET | `/api/dashboard/export/` | Export dashboard report to Excel |
+
+### Profile
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| PUT | `/api/auth/profile/` | Update profile (name, email, avatar) |
+| POST | `/api/auth/change-password/` | Change password |
 
 ---
 
