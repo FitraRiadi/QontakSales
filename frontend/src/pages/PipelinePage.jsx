@@ -12,6 +12,7 @@ import {
   createToaster,
 } from "@chakra-ui/react";
 import { ArrowRight, CurrencyDollar, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { isThisMonth, isThisYear, parseISO } from "date-fns";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
@@ -92,6 +93,7 @@ function KanbanCard({ lead, onMove }) {
 export default function PipelinePage() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterPeriod, setFilterPeriod] = useState("YEAR");
 
   const fetchLeads = () => {
     api.get("/leads/")
@@ -106,6 +108,14 @@ export default function PipelinePage() {
   };
 
   useEffect(() => { fetchLeads(); }, []);
+
+  const filteredLeads = leads.filter((l) => {
+    if (!l.created_at) return true;
+    const date = parseISO(l.created_at);
+    if (filterPeriod === "MONTH") return isThisMonth(date);
+    if (filterPeriod === "YEAR") return isThisYear(date);
+    return true;
+  });
 
   const handleMove = async (leadId, newStage) => {
     try {
@@ -129,10 +139,17 @@ export default function PipelinePage() {
 
   return (
     <VStack gap={6} align="stretch">
-      <Heading size="lg">Sales Pipeline</Heading>
+      <HStack justify="space-between">
+        <Heading size="lg">Sales Pipeline</Heading>
+        <HStack gap={2}>
+          <Button size="sm" variant={filterPeriod === "ALL" ? "solid" : "outline"} bg={filterPeriod === "ALL" ? "primary" : "transparent"} color={filterPeriod === "ALL" ? "white" : "gray.600"} onClick={() => setFilterPeriod("ALL")}>All</Button>
+          <Button size="sm" variant={filterPeriod === "MONTH" ? "solid" : "outline"} bg={filterPeriod === "MONTH" ? "primary" : "transparent"} color={filterPeriod === "MONTH" ? "white" : "gray.600"} onClick={() => setFilterPeriod("MONTH")}>This Month</Button>
+          <Button size="sm" variant={filterPeriod === "YEAR" ? "solid" : "outline"} bg={filterPeriod === "YEAR" ? "primary" : "transparent"} color={filterPeriod === "YEAR" ? "white" : "gray.600"} onClick={() => setFilterPeriod("YEAR")}>This Year</Button>
+        </HStack>
+      </HStack>
       <HStack gap={4} align="start" overflowX="auto" pb={4}>
         {stages.map((stage) => {
-          const stageLeads = leads.filter((l) => l.stage === stage.id);
+          const stageLeads = filteredLeads.filter((l) => l.stage === stage.id);
           return (
             <Box key={stage.id} minW="300px" flex={1} bg="muted" borderRadius="lg" p={4}>
               <HStack mb={4} justify="space-between">
