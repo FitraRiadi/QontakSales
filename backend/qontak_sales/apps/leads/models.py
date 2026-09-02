@@ -4,9 +4,9 @@ from django.conf import settings
 
 class Lead(models.Model):
     STAGE_CHOICES = [
-        ("NEW", "Prospek Baru"),
-        ("CONTACTED", "Hubungi"),
-        ("NEGOTIATION", "Presentasi/Negosiasi"),
+        ("NEW", "New Lead"),
+        ("CONTACTED", "Contacted"),
+        ("NEGOTIATION", "Negotiation"),
         ("WON", "Won"),
         ("LOST", "Lost"),
     ]
