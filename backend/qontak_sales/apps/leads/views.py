@@ -1,4 +1,5 @@
 from rest_framework import viewsets, filters, permissions
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.db.models import Sum, Count, Q
@@ -6,8 +7,15 @@ from .models import Lead
 from .serializers import LeadSerializer
 
 
+class LeadPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class LeadViewSet(viewsets.ModelViewSet):
     serializer_class = LeadSerializer
+    pagination_class = LeadPagination
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name", "contact_name", "phone_number", "email", "company_source"]
     ordering_fields = ["name", "potential_value", "created_at", "stage", "tag"]
