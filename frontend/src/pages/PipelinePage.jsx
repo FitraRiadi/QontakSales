@@ -12,7 +12,7 @@ import {
   createToaster,
 } from "@chakra-ui/react";
 import { ArrowRight, CurrencyDollar, CheckCircle, XCircle } from "@phosphor-icons/react";
-import { isThisMonth, isThisYear, parseISO } from "date-fns";
+import { startOfDay, endOfDay, startOfMonth, parseISO, format } from "date-fns";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
@@ -93,7 +93,8 @@ function KanbanCard({ lead, onMove }) {
 export default function PipelinePage() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterPeriod, setFilterPeriod] = useState("YEAR");
+  const [dateFrom, setDateFrom] = useState(() => format(startOfMonth(new Date()), "yyyy-MM-dd"));
+  const [dateTo, setDateTo] = useState(() => format(new Date(), "yyyy-MM-dd"));
 
   const fetchLeads = () => {
     api.get("/leads/")
@@ -111,10 +112,9 @@ export default function PipelinePage() {
 
   const filteredLeads = leads.filter((l) => {
     if (!l.created_at) return true;
-    const date = parseISO(l.created_at);
-    if (filterPeriod === "MONTH") return isThisMonth(date);
-    if (filterPeriod === "YEAR") return isThisYear(date);
-    return true;
+    if (!dateFrom || !dateTo) return true;
+    const created = parseISO(l.created_at);
+    return created >= startOfDay(parseISO(dateFrom)) && created <= endOfDay(parseISO(dateTo));
   });
 
   const handleMove = async (leadId, newStage) => {
@@ -141,10 +141,34 @@ export default function PipelinePage() {
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
         <Heading size="lg">Sales Pipeline</Heading>
-        <HStack gap={2}>
-          <Button size="sm" variant={filterPeriod === "ALL" ? "solid" : "outline"} bg={filterPeriod === "ALL" ? "primary" : "transparent"} color={filterPeriod === "ALL" ? "white" : "gray.600"} onClick={() => setFilterPeriod("ALL")}>All</Button>
-          <Button size="sm" variant={filterPeriod === "MONTH" ? "solid" : "outline"} bg={filterPeriod === "MONTH" ? "primary" : "transparent"} color={filterPeriod === "MONTH" ? "white" : "gray.600"} onClick={() => setFilterPeriod("MONTH")}>This Month</Button>
-          <Button size="sm" variant={filterPeriod === "YEAR" ? "solid" : "outline"} bg={filterPeriod === "YEAR" ? "primary" : "transparent"} color={filterPeriod === "YEAR" ? "white" : "gray.600"} onClick={() => setFilterPeriod("YEAR")}>This Year</Button>
+        <HStack gap={3} align="center">
+          <Button
+            size="sm"
+            variant={dateFrom === "" && dateTo === "" ? "solid" : "outline"}
+            bg={dateFrom === "" && dateTo === "" ? "primary" : "transparent"}
+            color={dateFrom === "" && dateTo === "" ? "white" : "gray.600"}
+            onClick={() => { setDateFrom(""); setDateTo(""); }}
+          >
+            All
+          </Button>
+          <HStack gap={1} align="center">
+            <Text fontSize="sm" color="gray.500">From</Text>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              style={{ padding: "6px 10px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "white" }}
+            />
+          </HStack>
+          <HStack gap={1} align="center">
+            <Text fontSize="sm" color="gray.500">To</Text>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              style={{ padding: "6px 10px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "white" }}
+            />
+          </HStack>
         </HStack>
       </HStack>
       <HStack gap={4} align="start" overflowX="auto" pb={4}>
