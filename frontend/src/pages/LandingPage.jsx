@@ -81,7 +81,7 @@ const faqs = [
   { q: "What is the difference between Manager and Agent roles?", a: "Managers have full access to all features including agent management, all leads, and broadcast history. Agents can only access their own assigned leads and broadcasts." },
   { q: "Can I archive leads instead of deleting them?", a: "Yes. QontakSales supports soft-delete via the Archive feature. Archived leads are hidden from the main Leads list, Pipeline, and Dashboard statistics, but can be restored anytime." },
   { q: "Does QontakSales support multiple companies?", a: "Yes. Each company has its own isolated data. Users are assigned to a company and can only see data within their organization." },
-  { q: "How does the Pipeline feature work?", a: "The Pipeline is a Kanban-style board with 5 stages: Prospek Baru, Hubungi, Negosiasi, Won, and Lost. You can drag-and-drop leads between stages to track deal progress visually." },
+  { q: "How does the Pipeline feature work?", a: "The Pipeline is a Kanban-style board with 5 stages: New Lead, Contacted, Negotiation, Won, and Lost. You can drag-and-drop leads between stages to track deal progress visually." },
   { q: "Is my data secure?", a: "Yes. QontakSales uses JWT authentication, company-level data isolation, and HTTPS encryption. Your data is stored securely in PostgreSQL and is never shared with third parties." },
 ];
 

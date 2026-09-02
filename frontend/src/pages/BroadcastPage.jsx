@@ -188,9 +188,9 @@ export default function BroadcastPage() {
                   style={{ padding: "6px 10px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "13px", backgroundColor: "white" }}
                 >
                   <option value="">All Stages</option>
-                  <option value="NEW">Prospek Baru</option>
-                  <option value="CONTACTED">Hubungi</option>
-                  <option value="NEGOTIATION">Negosiasi</option>
+                  <option value="NEW">New Lead</option>
+                  <option value="CONTACTED">Contacted</option>
+                  <option value="NEGOTIATION">Negotiation</option>
                   <option value="WON">Won</option>
                   <option value="LOST">Lost</option>
                 </select>

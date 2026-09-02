@@ -17,9 +17,9 @@ import api from "@/services/api";
 const toaster = createToaster({ placement: "top-end" });
 
 const stages = [
-  { id: "NEW", label: "Prospek Baru", color: "stageNew", next: "CONTACTED" },
-  { id: "CONTACTED", label: "Hubungi", color: "stageContacted", next: "NEGOTIATION" },
-  { id: "NEGOTIATION", label: "Negosiasi", color: "stageNegotiation", next: "WON" },
+  { id: "NEW", label: "New Lead", color: "stageNew", next: "CONTACTED" },
+  { id: "CONTACTED", label: "Contacted", color: "stageContacted", next: "NEGOTIATION" },
+  { id: "NEGOTIATION", label: "Negotiation", color: "stageNegotiation", next: "WON" },
   { id: "WON", label: "Won", color: "stageWon", next: null },
   { id: "LOST", label: "Lost", color: "stageLost", next: null },
 ];
