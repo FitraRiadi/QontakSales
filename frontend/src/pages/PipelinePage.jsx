@@ -97,7 +97,7 @@ export default function PipelinePage() {
   const [dateTo, setDateTo] = useState(() => format(new Date(), "yyyy-MM-dd"));
 
   const fetchLeads = () => {
-    api.get("/leads/")
+    api.get("/leads/", { params: { page_size: 100 } })
       .then((r) => {
         setLeads(r.data.results || r.data);
         setLoading(false);
