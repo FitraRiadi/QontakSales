@@ -11,6 +11,7 @@ import AgentsPage from "./pages/AgentsPage";
 import BroadcastPage from "./pages/BroadcastPage";
 import BroadcastHistoryPage from "./pages/BroadcastHistoryPage";
 import ArchivedLeadsPage from "./pages/ArchivedLeadsPage";
+import CalendarPage from "./pages/CalendarPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
 import ContactPage from "./pages/ContactPage";
@@ -32,6 +33,7 @@ function App() {
           <Route path="/leads" element={<LeadsPage />} />
           <Route path="/leads/archived" element={<ArchivedLeadsPage />} />
           <Route path="/pipeline" element={<PipelinePage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/leads/:id" element={<LeadDetailPage />} />
           <Route path="/agents" element={<AgentsPage />} />
           <Route path="/broadcasts" element={<BroadcastPage />} />

@@ -32,6 +32,7 @@ import {
   WhatsappLogo,
   CheckCircle,
   XCircle,
+  X,
   Archive,
   ArrowClockwise,
 } from "@phosphor-icons/react";
@@ -42,9 +43,9 @@ import LoadingPopup from "@/components/ui/LoadingPopup";
 const toaster = createToaster({ placement: "top-end" });
 
 const STAGE_LABELS = {
-  NEW: "Prospek Baru",
-  CONTACTED: "Hubungi",
-  NEGOTIATION: "Negosiasi",
+  NEW: "New Lead",
+  CONTACTED: "Contacted",
+  NEGOTIATION: "Negotiation",
   WON: "Won",
   LOST: "Lost",
 };
@@ -64,6 +65,9 @@ export default function LeadDetailPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newNote, setNewNote] = useState("");
+  const [activityType, setActivityType] = useState("NOTE");
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
@@ -88,12 +92,17 @@ export default function LeadDetailPage() {
     e.preventDefault();
     if (!newNote.trim()) return;
     try {
-      const res = await api.post("/activities/", { lead: lead.id, notes: newNote });
+      const payload = { lead: lead.id, notes: newNote, activity_type: activityType };
+      if (scheduledDate && scheduledTime) payload.scheduled_at = `${scheduledDate}T${scheduledTime}:00+07:00`;
+      const res = await api.post("/activities/", payload);
       setLogs([res.data, ...logs]);
       setNewNote("");
-      toaster.create({ title: "Note added", type: "success" });
+      setActivityType("NOTE");
+      setScheduledDate("");
+      setScheduledTime("");
+      toaster.create({ title: "Activity added", type: "success" });
     } catch {
-      toaster.create({ title: "Failed to add note", type: "error" });
+      toaster.create({ title: "Failed to add activity", type: "error" });
     }
   };
 
@@ -160,6 +169,17 @@ export default function LeadDetailPage() {
       toaster.create({ title: "Restore failed", type: "error" });
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleCancelActivity = async (activityId) => {
+    try {
+      await api.post(`/activities/${activityId}/cancel/`);
+      toaster.create({ title: "Schedule cancelled", type: "success" });
+      const res = await api.get("/activities/", { params: { lead_id: id } });
+      setLogs(res.data.results || res.data);
+    } catch {
+      toaster.create({ title: "Failed to cancel", type: "error" });
     }
   };
 
@@ -361,6 +381,33 @@ export default function LeadDetailPage() {
             </Card.Header>
             <Card.Body>
               <Box as="form" onSubmit={handleAddNote} mb={6}>
+                <HStack gap={3} mb={3} wrap="wrap">
+                  <select
+                    value={activityType}
+                    onChange={(e) => setActivityType(e.target.value)}
+                    style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "white" }}
+                  >
+                    <option value="NOTE">Note</option>
+                    <option value="CALL">Call</option>
+                    <option value="EMAIL">Email</option>
+                    <option value="MEETING">Meeting</option>
+                    <option value="FOLLOW_UP">Follow Up</option>
+                  </select>
+                  <Input
+                    type="date"
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    size="sm"
+                    maxW="170px"
+                  />
+                  <Input
+                    type="time"
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                    size="sm"
+                    maxW="120px"
+                  />
+                </HStack>
                 <Field.Root>
                   <Textarea
                     value={newNote}
@@ -371,7 +418,7 @@ export default function LeadDetailPage() {
                   />
                 </Field.Root>
                 <Button type="submit" mt={3} bg="primary" color="white" size="sm" _hover={{ bg: "secondary" }}>
-                  Add Note
+                  Add Activity
                 </Button>
               </Box>
 
@@ -379,15 +426,40 @@ export default function LeadDetailPage() {
                 {logs.length === 0 && (
                   <Text fontSize="sm" color="foreground" opacity={0.5}>No activity logs yet.</Text>
                 )}
-                {logs.map((log) => (
-                  <Box key={log.id} p={4} bg="muted" borderRadius="lg" borderLeft="3px solid" borderColor="primary">
-                    <HStack justify="space-between" mb={2}>
-                      <Text fontWeight="medium" fontSize="sm">{log.agent_name}</Text>
-                      <Text fontSize="xs" color="foreground" opacity={0.5}>{formatDate(log.created_at)}</Text>
-                    </HStack>
-                    <Text fontSize="sm">{log.notes}</Text>
-                  </Box>
-                ))}
+                {logs.map((log) => {
+                  const TYPE_COLORS = { CALL: "blue", EMAIL: "purple", MEETING: "yellow", NOTE: "gray", FOLLOW_UP: "green" };
+                  const TYPE_LABELS = { CALL: "Call", EMAIL: "Email", MEETING: "Meeting", NOTE: "Note", FOLLOW_UP: "Follow Up" };
+                  return (
+                    <Box key={log.id} p={4} bg="muted" borderRadius="lg" borderLeft="3px solid" borderColor="primary">
+                      <HStack justify="space-between" mb={2}>
+                        <Text fontWeight="medium" fontSize="sm">{log.agent_name}</Text>
+                        <Text fontSize="xs" color="foreground" opacity={0.5}>{formatDate(log.created_at)}</Text>
+                      </HStack>
+                      <HStack gap={2} mb={2} wrap="wrap">
+                        <Badge colorPalette={TYPE_COLORS[log.activity_type] || "gray"} size="sm">
+                          {TYPE_LABELS[log.activity_type] || log.activity_type}
+                        </Badge>
+                        {log.scheduled_at && (
+                          <HStack gap={1}>
+                            <Badge colorPalette="purple" size="sm">
+                              {formatDate(log.scheduled_at)}
+                            </Badge>
+                            <Button
+                              size="xs"
+                              variant="ghost"
+                              colorPalette="red"
+                              onClick={() => handleCancelActivity(log.id)}
+                              title="Cancel schedule"
+                            >
+                              <X size={12} />
+                            </Button>
+                          </HStack>
+                        )}
+                      </HStack>
+                      <Text fontSize="sm">{log.notes}</Text>
+                    </Box>
+                  );
+                })}
               </VStack>
             </Card.Body>
           </Card.Root>
@@ -528,9 +600,9 @@ export default function LeadDetailPage() {
                           onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })}
                           style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}
                         >
-                          <option value="NEW">Prospek Baru</option>
-                          <option value="CONTACTED">Hubungi</option>
-                          <option value="NEGOTIATION">Negosiasi</option>
+                          <option value="NEW">New Lead</option>
+                          <option value="CONTACTED">Contacted</option>
+                          <option value="NEGOTIATION">Negotiation</option>
                           <option value="WON">Won</option>
                           <option value="LOST">Lost</option>
                         </select>

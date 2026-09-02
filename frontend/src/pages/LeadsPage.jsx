@@ -260,9 +260,9 @@ export default function LeadsPage() {
                             onChange={(e) => setForm({ ...form, stage: e.target.value })}
                             style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}
                           >
-                            <option value="NEW">Prospek Baru</option>
-                            <option value="CONTACTED">Hubungi</option>
-                            <option value="NEGOTIATION">Negosiasi</option>
+                            <option value="NEW">New Lead</option>
+                            <option value="CONTACTED">Contacted</option>
+                            <option value="NEGOTIATION">Negotiation</option>
                             <option value="WON">Won</option>
                             <option value="LOST">Lost</option>
                           </select>

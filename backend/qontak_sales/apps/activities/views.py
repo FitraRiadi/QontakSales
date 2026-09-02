@@ -1,4 +1,6 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .models import ActivityLog
 from .serializers import ActivityLogSerializer
 
@@ -16,3 +18,10 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(agent=self.request.user)
+
+    @action(detail=True, methods=["post"])
+    def cancel(self, request, pk=None):
+        activity = self.get_object()
+        activity.scheduled_at = None
+        activity.save(update_fields=["scheduled_at"])
+        return Response({"status": "cancelled"})

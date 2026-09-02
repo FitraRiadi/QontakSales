@@ -22,6 +22,7 @@ class LeadSerializer(serializers.ModelSerializer):
             "assigned_to",
             "assigned_to_name",
             "address",
+            "next_follow_up",
             "is_archived",
             "created_at",
             "updated_at",

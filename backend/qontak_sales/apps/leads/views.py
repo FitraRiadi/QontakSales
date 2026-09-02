@@ -102,6 +102,13 @@ class LeadViewSet(viewsets.ModelViewSet):
         )
         return Response(LeadSerializer(lead).data)
 
+    @action(detail=True, methods=["post"])
+    def cancel_follow_up(self, request, pk=None):
+        lead = self.get_object()
+        lead.next_follow_up = None
+        lead.save(update_fields=["next_follow_up"])
+        return Response({"status": "cancelled"})
+
 
 @api_view(["GET"])
 def dashboard_stats(request):
@@ -168,6 +175,88 @@ def dashboard_stats(request):
         "monthly_revenue": monthly_data,
         "leaderboard": leaderboard[:10],
     })
+
+
+@api_view(["GET"])
+def calendar_events(request):
+    from django.utils import timezone
+    from qontak_sales.apps.activities.models import ActivityLog
+
+    user = request.user
+    start = request.query_params.get("start")
+    end = request.query_params.get("end")
+
+    if not start or not end:
+        return Response({"error": "start and end params required"}, status=400)
+
+    leads = Lead.objects.filter(
+        company=user.company, is_archived=False, next_follow_up__isnull=False,
+        next_follow_up__date__gte=start, next_follow_up__date__lte=end,
+    )
+    if user.role == "AGENT":
+        leads = leads.filter(assigned_to=user)
+
+    follow_up_events = []
+    for lead in leads:
+        local_fup = timezone.localtime(lead.next_follow_up)
+        follow_up_events.append({
+            "id": f"lead-{lead.id}",
+            "type": "FOLLOW_UP",
+            "title": f"Follow up: {lead.name}",
+            "date": local_fup.date().isoformat(),
+            "time": local_fup.strftime("%I:%M %p"),
+            "lead_id": lead.id,
+            "lead_name": lead.name,
+            "color": "#059669",
+        })
+
+    activities = ActivityLog.objects.filter(
+        lead__company=user.company,
+        scheduled_at__isnull=False,
+        scheduled_at__date__gte=start,
+        scheduled_at__date__lte=end,
+    )
+    if user.role == "AGENT":
+        activities = activities.filter(agent=user)
+
+    activity_events = []
+    TYPE_COLORS = {"CALL": "#2563EB", "EMAIL": "#8B5CF6", "MEETING": "#F59E0B", "NOTE": "#64748B", "FOLLOW_UP": "#059669"}
+    for act in activities:
+        local_sa = timezone.localtime(act.scheduled_at)
+        activity_events.append({
+            "id": f"activity-{act.id}",
+            "type": act.activity_type,
+            "title": f"{act.get_activity_type_display()}: {act.lead.name}",
+            "date": local_sa.date().isoformat(),
+            "time": local_sa.strftime("%I:%M %p"),
+            "lead_id": act.lead_id,
+            "lead_name": act.lead.name,
+            "notes": act.notes,
+            "is_completed": act.is_completed,
+            "color": TYPE_COLORS.get(act.activity_type, "#64748B"),
+        })
+
+    new_leads = Lead.objects.filter(
+        company=user.company, is_archived=False,
+        created_at__date__gte=start, created_at__date__lte=end,
+    )
+    if user.role == "AGENT":
+        new_leads = new_leads.filter(assigned_to=user)
+
+    new_lead_events = []
+    for lead in new_leads:
+        new_lead_events.append({
+            "id": f"new-{lead.id}",
+            "type": "NEW_LEAD",
+            "title": f"New: {lead.name}",
+            "date": lead.created_at.date().isoformat(),
+            "time": lead.created_at.strftime("%I:%M %p"),
+            "lead_id": lead.id,
+            "lead_name": lead.name,
+            "color": "#3B82F6",
+        })
+
+    return Response(follow_up_events + activity_events + new_lead_events)
 
 
 @api_view(["GET"])
