@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-conn = psycopg2.connect(dbname='postgres', user='postgres', password='237634118', host='localhost')
+conn = psycopg2.connect(dbname='postgres', user='postgres', password='admin123', host='localhost')
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cur = conn.cursor()
 cur.execute("SELECT 1 FROM pg_database WHERE datname='qontak_sales'")
