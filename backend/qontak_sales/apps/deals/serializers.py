@@ -50,7 +50,7 @@ class DealSerializer(serializers.ModelSerializer):
             "contact_count", "contacts", "line_items", "total_line_value",
             "is_archived", "created_at", "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at", "company"]
 
     def get_contact_count(self, obj):
         return obj.contact_deals.count()
