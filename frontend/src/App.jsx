@@ -19,6 +19,7 @@ import AccountsPage from "./pages/AccountsPage";
 import AccountDetailPage from "./pages/AccountDetailPage";
 import ContactsPage from "./pages/ContactsPage";
 import DealsPage from "./pages/DealsPage";
+import DealDetailPage from "./pages/DealDetailPage";
 import ProductsPage from "./pages/ProductsPage";
 import MainLayout from "./components/layout/MainLayout";
 import AuthGuard from "./components/layout/AuthGuard";
@@ -39,7 +40,7 @@ function App() {
           <Route path="/accounts/:id" element={<AccountDetailPage />} />
           <Route path="/contacts" element={<ContactsPage />} />
           <Route path="/deals" element={<DealsPage />} />
-          <Route path="/deals/:id" element={<DealsPage />} />
+          <Route path="/deals/:id" element={<DealDetailPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/leads" element={<LeadsPage />} />
           <Route path="/leads/archived" element={<ArchivedLeadsPage />} />
