@@ -177,7 +177,12 @@ export default function AccountDetailPage() {
           </Card.Root>
 
           <Card.Root bg="white" border="1px solid" borderColor="border">
-            <Card.Header><Heading size="sm">Deals ({account.deals?.length || 0})</Heading></Card.Header>
+            <Card.Header>
+              <HStack justify="space-between">
+                <Heading size="sm">Deals ({account.deals?.length || 0})</Heading>
+                <Button size="xs" bg="primary" color="white" onClick={() => navigate("/deals")}><Plus size={12} /> New Deal</Button>
+              </HStack>
+            </Card.Header>
             <Card.Body>
               {(!account.deals || account.deals.length === 0) ? (
                 <Text fontSize="sm" color="gray.500">No deals yet</Text>

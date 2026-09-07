@@ -4,15 +4,20 @@ import {
   Box,
   Button,
   Card,
+  Dialog,
+  Field,
   Heading,
   HStack,
+  Input,
+  Portal,
+  SimpleGrid,
   Spinner,
   Text,
   VStack,
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { ArrowRight, CurrencyDollar, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { ArrowRight, CurrencyDollar, CheckCircle, XCircle, Plus } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
@@ -72,6 +77,10 @@ export default function DealsPage() {
   const navigate = useNavigate();
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [accounts, setAccounts] = useState([]);
+  const [form, setForm] = useState({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "" });
+  const [saving, setSaving] = useState(false);
 
   const fetchDeals = () => {
     api.get("/deals/", { params: { page_size: 200 } })
@@ -80,6 +89,31 @@ export default function DealsPage() {
   };
 
   useEffect(() => { fetchDeals(); }, []);
+
+  const openCreate = async () => {
+    setForm({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "" });
+    try {
+      const res = await api.get("/accounts/");
+      const data = res.data;
+      setAccounts(data.results || data);
+    } catch { setAccounts([]); }
+    setCreateOpen(true);
+  };
+
+  const handleCreate = async () => {
+    if (!form.name || !form.company) return toaster.create({ title: "Name and Company are required", type: "error" });
+    setSaving(true);
+    try {
+      const res = await api.post("/deals/", { ...form, amount: form.amount || 0 });
+      toaster.create({ title: "Deal created", type: "success" });
+      setCreateOpen(false);
+      navigate(`/deals/${res.data.id}`);
+    } catch {
+      toaster.create({ title: "Failed to create deal", type: "error" });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleMove = async (dealId, newStage) => {
     try {
@@ -96,7 +130,10 @@ export default function DealsPage() {
 
   return (
     <VStack gap={6} align="stretch">
-      <Heading size="lg">Deal Pipeline</Heading>
+      <HStack justify="space-between">
+        <Heading size="lg">Deal Pipeline</Heading>
+        <Button bg="primary" color="white" onClick={openCreate}><Plus size={16} /> New Deal</Button>
+      </HStack>
       <HStack gap={4} align="start" overflowX="auto" pb={4}>
         {stages.map((stage) => {
           const stageDeals = deals.filter((d) => d.stage === stage.id);
@@ -125,6 +162,39 @@ export default function DealsPage() {
           );
         })}
       </HStack>
+
+      <Dialog.Root open={createOpen} onOpenChange={(e) => setCreateOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="500px">
+              <Dialog.Header><Dialog.Title>Create New Deal</Dialog.Title></Dialog.Header>
+              <Dialog.Body>
+                <VStack gap={4}>
+                  <Field.Root required><Field.Label>Deal Name</Field.Label><Input placeholder="e.g. CRM Implementation" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field.Root>
+                  <Field.Root required>
+                    <Field.Label>Company</Field.Label>
+                    <select value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <option value="">Select company...</option>
+                      {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                    </select>
+                  </Field.Root>
+                  <HStack gap={4} w="full">
+                    <Field.Root flex={1}><Field.Label>Amount (Rp)</Field.Label><Input type="number" placeholder="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Expected Close</Field.Label><Input type="date" value={form.expected_close_date} onChange={(e) => setForm({ ...form, expected_close_date: e.target.value })} /></Field.Root>
+                  </HStack>
+                  <Field.Root w="full"><Field.Label>Source</Field.Label><Input placeholder="e.g. Website, Referral, Cold Call" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Description</Field.Label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
+                </VStack>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild><Button variant="outline" mr={3}>Cancel</Button></Dialog.CloseTrigger>
+                <Button bg="primary" color="white" onClick={handleCreate} loading={saving}>Create Deal</Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </VStack>
   );
 }
