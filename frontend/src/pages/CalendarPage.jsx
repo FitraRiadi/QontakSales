@@ -61,12 +61,7 @@ const TYPE_COLORS = {
   NEW_LEAD: "blue",
 };
 
-const MONTHS_GRID = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [9, 10, 11],
-];
+const MONTHS_ALL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -377,22 +372,18 @@ export default function CalendarPage() {
               {loading ? (
                 <Box display="flex" justifyContent="center" py={10}><Spinner size="lg" color="primary" /></Box>
               ) : (
-                <VStack gap={3} align="stretch">
-                  {MONTHS_GRID.map((row, ri) => (
-                    <HStack key={ri} gap={3} justify="center">
-                      {row.map((mi) => (
-                        <Box key={mi} flex={1} maxW="180px">
-                          <MiniCalendar
-                            year={year}
-                            month={mi}
-                            events={events}
-                            onSelect={handleMonthSelect}
-                          />
-                        </Box>
-                      ))}
-                    </HStack>
+                <Box display="grid" gridTemplateColumns="repeat(5, 1fr)" gap={3} overflowX="auto" pb={4}>
+                  {MONTHS_ALL.map((mi) => (
+                    <Box key={mi} minW="150px">
+                      <MiniCalendar
+                        year={year}
+                        month={mi}
+                        events={events}
+                        onSelect={handleMonthSelect}
+                      />
+                    </Box>
                   ))}
-                </VStack>
+                </Box>
               )}
             </>
           )}
