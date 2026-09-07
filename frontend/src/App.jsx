@@ -15,6 +15,11 @@ import CalendarPage from "./pages/CalendarPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
 import ContactPage from "./pages/ContactPage";
+import AccountsPage from "./pages/AccountsPage";
+import AccountDetailPage from "./pages/AccountDetailPage";
+import ContactsPage from "./pages/ContactsPage";
+import DealsPage from "./pages/DealsPage";
+import ProductsPage from "./pages/ProductsPage";
 import MainLayout from "./components/layout/MainLayout";
 import AuthGuard from "./components/layout/AuthGuard";
 
@@ -30,6 +35,12 @@ function App() {
       <Route element={<AuthGuard />}>
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/accounts" element={<AccountsPage />} />
+          <Route path="/accounts/:id" element={<AccountDetailPage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/deals" element={<DealsPage />} />
+          <Route path="/deals/:id" element={<DealsPage />} />
+          <Route path="/products" element={<ProductsPage />} />
           <Route path="/leads" element={<LeadsPage />} />
           <Route path="/leads/archived" element={<ArchivedLeadsPage />} />
           <Route path="/pipeline" element={<PipelinePage />} />

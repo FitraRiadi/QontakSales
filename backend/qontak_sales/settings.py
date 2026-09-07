@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework_simplejwt",
     "qontak_sales.apps.accounts",
+    "qontak_sales.apps.companies",
+    "qontak_sales.apps.deals",
     "qontak_sales.apps.leads",
     "qontak_sales.apps.activities",
     "qontak_sales.apps.notifications",
