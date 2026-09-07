@@ -159,6 +159,8 @@ export default function CalendarPage() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [filterType, setFilterType] = useState("ALL");
   const [viewMode, setViewMode] = useState("month");
+  const [yearPickerOpen, setYearPickerOpen] = useState(false);
+  const [decadeStart, setDecadeStart] = useState(() => Math.floor(new Date().getFullYear() / 10) * 10);
 
   const fetchMonthEvents = useCallback(() => {
     setLoading(true);
@@ -363,7 +365,17 @@ export default function CalendarPage() {
                 <Button size="sm" variant="outline" onClick={() => setCurrentDate(subYears(currentDate, 1))}>
                   <CaretLeft size={16} />
                 </Button>
-                <Heading size="md" color="foreground">{year}</Heading>
+                <Button
+                  size="md"
+                  variant="ghost"
+                  fontWeight="bold"
+                  fontSize="md"
+                  color="foreground"
+                  onClick={() => { setDecadeStart(Math.floor(year / 10) * 10); setYearPickerOpen(true); }}
+                  _hover={{ bg: "gray.100" }}
+                >
+                  {year}
+                </Button>
                 <Button size="sm" variant="outline" onClick={() => setCurrentDate(addYears(currentDate, 1))}>
                   <CaretRight size={16} />
                 </Button>
@@ -453,6 +465,58 @@ export default function CalendarPage() {
                     ))}
                   </VStack>
                 )}
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild>
+                  <Button variant="outline" size="sm">Close</Button>
+                </Dialog.CloseTrigger>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+
+      <Dialog.Root open={yearPickerOpen} onOpenChange={(e) => setYearPickerOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="320px">
+              <Dialog.Header>
+                <Dialog.Title>
+                  <HStack justify="space-between" w="full">
+                    <Button size="xs" variant="ghost" onClick={() => setDecadeStart(decadeStart - 10)}>
+                      <CaretLeft size={14} />
+                    </Button>
+                    <Text fontWeight="bold">{decadeStart}s</Text>
+                    <Button size="xs" variant="ghost" onClick={() => setDecadeStart(decadeStart + 10)}>
+                      <CaretRight size={14} />
+                    </Button>
+                  </HStack>
+                </Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body>
+                <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={2}>
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+                    const y = decadeStart + i;
+                    const isActive = y === year;
+                    return (
+                      <Button
+                        key={y}
+                        size="sm"
+                        variant={isActive ? "solid" : "outline"}
+                        bg={isActive ? "primary" : "transparent"}
+                        color={isActive ? "white" : "gray.700"}
+                        fontWeight={isActive ? "bold" : "normal"}
+                        onClick={() => {
+                          setCurrentDate(new Date(y, getMonth(currentDate), 1));
+                          setYearPickerOpen(false);
+                        }}
+                      >
+                        {y}
+                      </Button>
+                    );
+                  })}
+                </Box>
               </Dialog.Body>
               <Dialog.Footer>
                 <Dialog.CloseTrigger asChild>
