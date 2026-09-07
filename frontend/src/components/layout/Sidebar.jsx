@@ -47,7 +47,7 @@ export default function Sidebar({ open, onClose }) {
           <Box display={{ base: "block", md: "none" }} cursor="pointer" onClick={onClose}><X size={20} /></Box>
         </HStack>
 
-        <VStack flex={1} align="stretch" px={3} gap={1}>
+        <VStack flex={1} align="stretch" px={3} gap={1} overflowY="auto" pb={4}>
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
