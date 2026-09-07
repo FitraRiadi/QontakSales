@@ -114,7 +114,6 @@ export default function DealDetailPage() {
       expected_close_date: deal.expected_close_date || "",
       lost_reason: deal.lost_reason || "",
       lost_notes: deal.lost_notes || "",
-      competitors: deal.competitors || "",
       description: deal.description || "",
       source: deal.source || "",
     });
@@ -431,7 +430,6 @@ export default function DealDetailPage() {
                       <Field.Root flex={1}><Field.Label>Lost Notes</Field.Label><Input value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
                     </HStack>
                   )}
-                  <Field.Root w="full"><Field.Label>Competitors</Field.Label><Input value={editForm.competitors || ""} onChange={(e) => setEditForm({ ...editForm, competitors: e.target.value })} /></Field.Root>
                   <Field.Root w="full"><Field.Label>Description</Field.Label><textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
                 </VStack>
               </Dialog.Body>

@@ -79,7 +79,7 @@ export default function DealsPage() {
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [accounts, setAccounts] = useState([]);
-  const [form, setForm] = useState({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "", competitors: "" });
+  const [form, setForm] = useState({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "" });
   const [saving, setSaving] = useState(false);
 
   const fetchDeals = () => {
@@ -91,7 +91,7 @@ export default function DealsPage() {
   useEffect(() => { fetchDeals(); }, []);
 
   const openCreate = async () => {
-    setForm({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "", competitors: "" });
+    setForm({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "" });
     try {
       const res = await api.get("/accounts/");
       const data = res.data;
@@ -184,7 +184,6 @@ export default function DealsPage() {
                     <Field.Root flex={1}><Field.Label>Expected Close</Field.Label><Input type="date" value={form.expected_close_date} onChange={(e) => setForm({ ...form, expected_close_date: e.target.value })} /></Field.Root>
                   </HStack>
                   <Field.Root w="full"><Field.Label>Source</Field.Label><Input placeholder="e.g. Website, Referral, Cold Call" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} /></Field.Root>
-                  <Field.Root w="full"><Field.Label>Competitors</Field.Label><Input placeholder="e.g. Mekari Qontak, Salesmo" value={form.competitors} onChange={(e) => setForm({ ...form, competitors: e.target.value })} /></Field.Root>
                   <Field.Root w="full"><Field.Label>Description</Field.Label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
                 </VStack>
               </Dialog.Body>
