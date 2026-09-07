@@ -241,7 +241,7 @@ export default function LeadDetailPage() {
               <Box bg="blue.50" p={2} borderRadius="md"><Phone size={20} color="#2563EB" /></Box>
               <VStack align="start" gap={0} minW={0} flex={1}>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>Phone</Text>
-                <Text fontWeight="semibold" fontSize="sm" wordBreak="break-all">{lead.phone_number}</Text>
+                <Text  fontSize="sm" wordBreak="break-all">{lead.phone_number}</Text>
               </VStack>
             </HStack>
           </Card.Body>
@@ -253,7 +253,7 @@ export default function LeadDetailPage() {
               <Box bg="purple.50" p={2} borderRadius="md"><Envelope size={20} color="#7C3AED" /></Box>
               <VStack align="start" gap={0} minW={0} flex={1}>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>Email</Text>
-                <Text fontWeight="semibold" fontSize="sm" wordBreak="break-all">{lead.email || "-"}</Text>
+                <Text fontSize="sm" wordBreak="break-all">{lead.email || "-"}</Text>
               </VStack>
             </HStack>
           </Card.Body>
@@ -265,7 +265,7 @@ export default function LeadDetailPage() {
               <Box bg="green.50" p={2} borderRadius="md"><CurrencyDollar size={20} color="#059669" /></Box>
               <VStack align="start" gap={0}>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>Deal Value</Text>
-                <Text fontWeight="semibold" fontSize="sm">Rp {Number(lead.potential_value).toLocaleString("id-ID")}</Text>
+                <Text  fontSize="sm">Rp {Number(lead.potential_value).toLocaleString("id-ID")}</Text>
               </VStack>
             </HStack>
           </Card.Body>
@@ -277,7 +277,7 @@ export default function LeadDetailPage() {
               <Box bg="orange.50" p={2} borderRadius="md"><Clock size={20} color="#EA580C" /></Box>
               <VStack align="start" gap={0}>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>Created</Text>
-                <Text fontWeight="semibold" fontSize="sm">{formatDate(lead.created_at)}</Text>
+                <Text  fontSize="sm">{formatDate(lead.created_at)}</Text>
               </VStack>
             </HStack>
           </Card.Body>
