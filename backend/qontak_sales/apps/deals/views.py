@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
 from .models import Deal, ContactDeal, Product, LineItem
 from .serializers import (
     DealSerializer, ContactDealSerializer,
@@ -226,3 +226,336 @@ class LineItemViewSet(viewsets.ModelViewSet):
             total=models.Sum("total_price")
         )["total"] or 0
         deal.save()
+
+
+@api_view(["GET"])
+def dashboard_stats(request):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+
+    user = request.user
+    all_deals = Deal.objects.filter(company__company=user.company, is_archived=False)
+
+    total_revenue = all_deals.filter(stage="WON").aggregate(total=Sum("amount"))["total"] or 0
+    total_deals = all_deals.count()
+    won_count = all_deals.filter(stage="WON").count()
+    lost_count = all_deals.filter(stage="LOST").count()
+    closed_count = won_count + lost_count
+    win_rate = round((won_count / closed_count * 100) if closed_count > 0 else 0, 1)
+    active_deals = all_deals.exclude(stage__in=["WON", "LOST"]).count()
+
+    stage_dist = []
+    for stage_code, stage_label in Deal.STAGE_CHOICES:
+        count = all_deals.filter(stage=stage_code).count()
+        stage_dist.append({"stage": stage_label, "count": count})
+
+    monthly_data = []
+    from django.db.models.functions import TruncMonth
+    monthly = (
+        all_deals.filter(stage="WON")
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
+        .annotate(revenue=Sum("amount"), count=Count("id"))
+        .order_by("month")[:12]
+    )
+    for m in monthly:
+        monthly_data.append({
+            "month": m["month"].strftime("%b %Y"),
+            "revenue": float(m["revenue"]),
+            "count": m["count"],
+        })
+
+    agents = User.objects.filter(company=user.company, role="AGENT")
+    leaderboard = []
+    for agent in agents:
+        agent_won = all_deals.filter(owner=agent, stage="WON")
+        agent_revenue = agent_won.aggregate(total=Sum("amount"))["total"] or 0
+        leaderboard.append({
+            "name": agent.get_full_name() or agent.username,
+            "deals": agent_won.count(),
+            "revenue": float(agent_revenue),
+        })
+    leaderboard.sort(key=lambda x: x["revenue"], reverse=True)
+
+    return Response({
+        "total_revenue": float(total_revenue),
+        "win_rate": win_rate,
+        "active_leads": active_deals,
+        "total_leads": total_deals,
+        "won_count": won_count,
+        "lost_count": lost_count,
+        "stage_distribution": stage_dist,
+        "monthly_revenue": monthly_data,
+        "leaderboard": leaderboard[:10],
+    })
+
+
+@api_view(["GET"])
+def calendar_events(request):
+    from django.utils import timezone
+    from qontak_sales.apps.activities.models import ActivityLog
+
+    user = request.user
+    start = request.query_params.get("start")
+    end = request.query_params.get("end")
+
+    if not start or not end:
+        return Response({"error": "start and end params required"}, status=400)
+
+    deals = Deal.objects.filter(
+        company__company=user.company, is_archived=False,
+        expected_close_date__gte=start, expected_close_date__lte=end,
+    )
+
+    deal_events = []
+    for deal in deals:
+        deal_events.append({
+            "id": f"deal-{deal.id}",
+            "type": "DEAL",
+            "title": f"Deal: {deal.name}",
+            "date": deal.expected_close_date.isoformat(),
+            "time": "All Day",
+            "deal_id": deal.id,
+            "deal_name": deal.name,
+            "color": "#2563EB",
+        })
+
+    activities = ActivityLog.objects.filter(
+        deal__company=user.company,
+        scheduled_at__isnull=False,
+        scheduled_at__date__gte=start,
+        scheduled_at__date__lte=end,
+    )
+    if user.role == "AGENT":
+        activities = activities.filter(agent=user)
+
+    activity_events = []
+    TYPE_COLORS = {"CALL": "#2563EB", "EMAIL": "#8B5CF6", "MEETING": "#F59E0B", "NOTE": "#64748B", "FOLLOW_UP": "#059669"}
+    for act in activities:
+        local_sa = timezone.localtime(act.scheduled_at)
+        activity_events.append({
+            "id": f"activity-{act.id}",
+            "type": act.activity_type,
+            "title": f"{act.get_activity_type_display()}: {act.deal.name}",
+            "date": local_sa.date().isoformat(),
+            "time": local_sa.strftime("%I:%M %p"),
+            "deal_id": act.deal_id,
+            "deal_name": act.deal.name,
+            "notes": act.notes,
+            "is_completed": act.is_completed,
+            "color": TYPE_COLORS.get(act.activity_type, "#64748B"),
+        })
+
+    return Response(deal_events + activity_events)
+
+
+@api_view(["GET"])
+def dashboard_export(request):
+    import io
+    from django.http import StreamingHttpResponse
+    from django.utils import timezone
+    from django.db.models.functions import TruncMonth
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+
+    user = request.user
+    all_deals = Deal.objects.filter(company__company=user.company, is_archived=False)
+
+    total_revenue = all_deals.filter(stage="WON").aggregate(total=Sum("amount"))["total"] or 0
+    total_deals = all_deals.count()
+    won_count = all_deals.filter(stage="WON").count()
+    lost_count = all_deals.filter(stage="LOST").count()
+    closed_count = won_count + lost_count
+    win_rate = round((won_count / closed_count * 100) if closed_count > 0 else 0, 1)
+    active_deals = all_deals.exclude(stage__in=["WON", "LOST"]).count()
+
+    monthly = (
+        all_deals.filter(stage="WON")
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
+        .annotate(revenue=Sum("amount"), count=Count("id"))
+        .order_by("month")[:12]
+    )
+
+    STAGE_MAP = dict(Deal.STAGE_CHOICES)
+
+    primary_color = "2563EB"
+    header_fill = PatternFill(start_color=primary_color, end_color=primary_color, fill_type="solid")
+    header_font = Font(name="Calibri", bold=True, color="FFFFFF", size=11)
+    title_font = Font(name="Calibri", bold=True, color=primary_color, size=16)
+    subtitle_font = Font(name="Calibri", color="666666", size=10)
+    section_font = Font(name="Calibri", bold=True, color="FFFFFF", size=11)
+    section_fill = PatternFill(start_color="1E40AF", end_color="1E40AF", fill_type="solid")
+    label_font = Font(name="Calibri", bold=True, size=10)
+    value_font = Font(name="Calibri", size=10)
+    metric_value_font = Font(name="Calibri", bold=True, size=12, color=primary_color)
+    zebra_light = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
+    thin_border = Border(
+        left=Side(style="thin", color="D1D5DB"),
+        right=Side(style="thin", color="D1D5DB"),
+        top=Side(style="thin", color="D1D5DB"),
+        bottom=Side(style="thin", color="D1D5DB"),
+    )
+    center_align = Alignment(horizontal="center", vertical="center")
+    left_align = Alignment(horizontal="left", vertical="center")
+    right_align = Alignment(horizontal="right", vertical="center")
+
+    def apply_border(ws, min_row, max_row, min_col, max_col):
+        for row in ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col):
+            for cell in row:
+                cell.border = thin_border
+
+    def apply_zebra(ws, min_row, max_row, min_col, max_col):
+        for i, row in enumerate(ws.iter_rows(min_row=min_row, max_row=max_row, min_col=min_col, max_col=max_col)):
+            if i % 2 == 1:
+                for cell in row:
+                    cell.fill = zebra_light
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Dashboard Report"
+    ws.sheet_properties.tabColor = primary_color
+
+    ws.column_dimensions["A"].width = 20
+    ws.column_dimensions["B"].width = 22
+    ws.column_dimensions["C"].width = 14
+    ws.column_dimensions["D"].width = 22
+    ws.column_dimensions["E"].width = 18
+    ws.column_dimensions["F"].width = 16
+    ws.column_dimensions["G"].width = 22
+
+    ws.merge_cells("A1:B1")
+    ws["A1"] = "QontakSales Dashboard Report"
+    ws["A1"].font = title_font
+    ws["A1"].alignment = left_align
+
+    ws.merge_cells("A2:B2")
+    ws["A2"] = f"Generated: {timezone.now().strftime('%d %B %Y, %H:%M')}"
+    ws["A2"].font = subtitle_font
+
+    ws.merge_cells("A3:B3")
+    ws["A3"] = f"Agent: {user.get_full_name() or user.username} ({user.role})"
+    ws["A3"].font = subtitle_font
+
+    row = 5
+    ws.merge_cells(f"A{row}:B{row}")
+    ws[f"A{row}"] = "SUMMARY"
+    ws[f"A{row}"].font = section_font
+    ws[f"A{row}"].fill = section_fill
+    ws[f"A{row}"].alignment = center_align
+    ws[f"B{row}"].fill = section_fill
+
+    summary_items = [
+        ("Total Revenue", f"Rp {total_revenue:,.0f}"),
+        ("Win Rate", f"{win_rate}%"),
+        ("Active Deals", str(active_deals)),
+        ("Total Deals", str(total_deals)),
+        ("Won Deals", str(won_count)),
+        ("Lost Deals", str(lost_count)),
+    ]
+
+    for i, (label, val) in enumerate(summary_items):
+        r = row + 1 + i
+        ws[f"A{r}"] = label
+        ws[f"A{r}"].font = label_font
+        ws[f"A{r}"].alignment = left_align
+        ws[f"B{r}"] = val
+        ws[f"B{r}"].font = metric_value_font if i < 2 else value_font
+        ws[f"B{r}"].alignment = right_align
+
+    apply_border(ws, row, row + len(summary_items), 1, 2)
+    apply_zebra(ws, row + 1, row + len(summary_items), 1, 2)
+
+    monthly_start = row + len(summary_items) + 3
+    ws.merge_cells(f"A{monthly_start}:B{monthly_start}")
+    ws[f"A{monthly_start}"] = "MONTHLY REVENUE"
+    ws[f"A{monthly_start}"].font = section_font
+    ws[f"A{monthly_start}"].fill = section_fill
+    ws[f"A{monthly_start}"].alignment = center_align
+    ws[f"B{monthly_start}"].fill = section_fill
+
+    mh_row = monthly_start + 1
+    for col_idx, h in enumerate(["Month", "Revenue", "Deals Won"], 1):
+        c = ws.cell(row=mh_row, column=col_idx, value=h)
+        c.font = header_font
+        c.fill = header_fill
+        c.alignment = center_align
+
+    mr = mh_row + 1
+    for m in monthly:
+        ws.cell(row=mr, column=1, value=m["month"].strftime("%b %Y")).font = value_font
+        ws.cell(row=mr, column=1).alignment = left_align
+        rev_cell = ws.cell(row=mr, column=2, value=float(m["revenue"]))
+        rev_cell.font = value_font
+        rev_cell.number_format = '"Rp "#,##0'
+        rev_cell.alignment = right_align
+        ws.cell(row=mr, column=3, value=m["count"]).font = value_font
+        ws.cell(row=mr, column=3).alignment = center_align
+        mr += 1
+
+    if mr == mh_row + 1:
+        ws.cell(row=mr, column=1, value="No data").font = Font(italic=True, color="999999")
+        mr += 1
+
+    apply_border(ws, monthly_start, mr - 1, 1, 3)
+    apply_zebra(ws, mh_row + 1, mr - 1, 1, 3)
+
+    deals_start_col = 4
+    deals_header_row = 5
+    deals_headers = ["Name", "Company", "Amount", "Stage", "Probability", "Expected Close", "Owner"]
+
+    ws.merge_cells(f"D{deals_header_row}:G{deals_header_row}")
+    ws[f"D{deals_header_row}"] = "DEALS DATA"
+    ws[f"D{deals_header_row}"].font = section_font
+    ws[f"D{deals_header_row}"].fill = section_fill
+    ws[f"D{deals_header_row}"].alignment = center_align
+    for ci in range(deals_start_col + 1, deals_start_col + len(deals_headers)):
+        ws.cell(row=deals_header_row, column=ci).fill = section_fill
+
+    dh_row = deals_header_row + 1
+    for col_idx, h in enumerate(deals_headers, deals_start_col):
+        c = ws.cell(row=dh_row, column=col_idx, value=h)
+        c.font = header_font
+        c.fill = header_fill
+        c.alignment = center_align
+
+    dr = dh_row + 1
+    for deal in all_deals.select_related("owner", "company"):
+        ws.cell(row=dr, column=4, value=deal.name).font = value_font
+        ws.cell(row=dr, column=4).alignment = left_align
+        ws.cell(row=dr, column=5, value=deal.company.name if deal.company else "").font = value_font
+        ws.cell(row=dr, column=5).alignment = left_align
+        val_cell = ws.cell(row=dr, column=6, value=float(deal.amount))
+        val_cell.font = value_font
+        val_cell.number_format = '"Rp "#,##0'
+        val_cell.alignment = right_align
+        ws.cell(row=dr, column=7, value=STAGE_MAP.get(deal.stage, deal.stage)).font = value_font
+        ws.cell(row=dr, column=7).alignment = center_align
+        ws.cell(row=dr, column=8, value=f"{deal.probability}%").font = value_font
+        ws.cell(row=dr, column=8).alignment = center_align
+        ws.cell(row=dr, column=9, value=deal.expected_close_date.strftime("%d %b %Y") if deal.expected_close_date else "").font = value_font
+        ws.cell(row=dr, column=9).alignment = center_align
+        ws.cell(row=dr, column=10, value=deal.owner.get_full_name() if deal.owner else "Unassigned").font = value_font
+        ws.cell(row=dr, column=10).alignment = left_align
+        dr += 1
+
+    if dr == dh_row + 1:
+        ws.cell(row=dr, column=4, value="No deals found").font = Font(italic=True, color="999999")
+        dr += 1
+
+    apply_border(ws, deals_header_row, dr - 1, 4, 10)
+    apply_zebra(ws, dh_row + 1, dr - 1, 4, 10)
+
+    ws.freeze_panes = "D6"
+
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    filename = f"dashboard-report-{timezone.now().strftime('%Y%m%d')}.xlsx"
+
+    response = StreamingHttpResponse(
+        output,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response

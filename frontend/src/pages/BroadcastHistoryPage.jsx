@@ -206,7 +206,7 @@ export default function BroadcastHistoryPage() {
                               borderColor="gray.100"
                             >
                               <VStack align="start" gap={0}>
-                                <Text fontSize="sm">{log.lead_name || "Unknown"}</Text>
+                                <Text fontSize="sm">{log.contact_name || "Unknown"}</Text>
                                 <Text fontSize="xs" color="gray.500">{log.phone_number}</Text>
                               </VStack>
                               <VStack align="end" gap={0}>

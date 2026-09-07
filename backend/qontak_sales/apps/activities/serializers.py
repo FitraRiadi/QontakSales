@@ -7,13 +7,13 @@ class ActivityLogSerializer(serializers.ModelSerializer):
     agent_name = serializers.CharField(
         source="agent.get_full_name", read_only=True
     )
-    lead_name = serializers.CharField(
-        source="lead.name", read_only=True
+    deal_name = serializers.CharField(
+        source="deal.name", read_only=True
     )
 
     class Meta:
         model = ActivityLog
-        fields = ["id", "lead", "lead_name", "agent", "agent_name", "activity_type", "notes", "scheduled_at", "is_completed", "created_at"]
+        fields = ["id", "deal", "deal_name", "agent", "agent_name", "activity_type", "notes", "scheduled_at", "is_completed", "created_at"]
         read_only_fields = ["id", "agent", "created_at"]
 
     def to_representation(self, instance):

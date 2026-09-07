@@ -6,7 +6,7 @@ from django.db import transaction
 from .models import Broadcast, BroadcastLog
 from .serializers import BroadcastSerializer, BroadcastCreateSerializer, BroadcastLogSerializer
 from .services import BroadcastService
-from qontak_sales.apps.leads.models import Lead
+from qontak_sales.apps.companies.models import Contact
 
 
 class BroadcastViewSet(viewsets.ModelViewSet):
@@ -21,34 +21,34 @@ class BroadcastViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         message = serializer.validated_data["message"]
-        lead_ids = serializer.validated_data["lead_ids"]
+        contact_ids = serializer.validated_data["contact_ids"]
 
-        leads = Lead.objects.filter(id__in=lead_ids)
+        contacts = Contact.objects.filter(id__in=contact_ids)
 
-        if request.user.role == "AGENT":
-            leads = leads.filter(assigned_to=request.user)
-
-        if not leads.exists():
-            return Response({"error": "No leads found"}, status=status.HTTP_400_BAD_REQUEST)
+        if not contacts.exists():
+            return Response({"error": "No contacts found"}, status=status.HTTP_400_BAD_REQUEST)
 
         broadcast = Broadcast.objects.create(
             message=message,
-            total_recipients=leads.count(),
+            total_recipients=contacts.count(),
             status="SENDING",
             sent_by=request.user,
         )
 
         logs = []
-        for lead in leads:
-            phone = lead.phone_number
-            formatted_message = message.replace("{name}", lead.contact_name)
-            formatted_message = formatted_message.replace("{phone}", lead.phone_number)
-            formatted_message = formatted_message.replace("{company}", lead.company_source or "")
-            formatted_message = formatted_message.replace("{value}", str(lead.potential_value))
+        for contact in contacts:
+            phone = contact.phone or ""
+            if not phone:
+                continue
+            full_name = f"{contact.first_name} {contact.last_name}"
+            company_name = contact.account.name if contact.account else ""
+            formatted_message = message.replace("{name}", full_name)
+            formatted_message = formatted_message.replace("{phone}", phone)
+            formatted_message = formatted_message.replace("{company}", company_name)
 
             log = BroadcastLog.objects.create(
                 broadcast=broadcast,
-                lead=lead,
+                contact=contact,
                 phone_number=phone,
                 status="PENDING",
             )

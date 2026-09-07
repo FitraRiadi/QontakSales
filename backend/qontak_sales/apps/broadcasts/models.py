@@ -42,8 +42,9 @@ class BroadcastLog(models.Model):
     broadcast = models.ForeignKey(
         Broadcast, on_delete=models.CASCADE, related_name="logs"
     )
-    lead = models.ForeignKey(
-        "leads.Lead", on_delete=models.CASCADE, related_name="broadcast_logs"
+    contact = models.ForeignKey(
+        "companies.Contact", on_delete=models.CASCADE, related_name="broadcast_logs",
+        null=True, blank=True
     )
     phone_number = models.CharField(max_length=20)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")

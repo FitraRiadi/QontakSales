@@ -49,7 +49,7 @@ const TYPE_LABELS = {
   EMAIL: "Email",
   MEETING: "Meeting",
   NOTE: "Note",
-  NEW_LEAD: "New Lead",
+  DEAL: "Deal",
 };
 
 const TYPE_COLORS = {
@@ -58,7 +58,7 @@ const TYPE_COLORS = {
   EMAIL: "purple",
   MEETING: "yellow",
   NOTE: "gray",
-  NEW_LEAD: "blue",
+  DEAL: "blue",
 };
 
 const MONTHS_ALL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
@@ -216,11 +216,8 @@ export default function CalendarPage() {
   const handleCancel = async (ev, e) => {
     e.stopPropagation();
     try {
-      if (ev.type === "NEW_LEAD") return;
-      if (ev.id.startsWith("lead-")) {
-        const leadId = ev.lead_id;
-        await api.post(`/leads/${leadId}/cancel_follow_up/`);
-      } else if (ev.id.startsWith("activity-")) {
+      if (ev.type === "DEAL") return;
+      if (ev.id.startsWith("activity-")) {
         const activityId = ev.id.replace("activity-", "");
         await api.post(`/activities/${activityId}/cancel/`);
       }
@@ -273,7 +270,7 @@ export default function CalendarPage() {
                   { value: "EMAIL", label: "Email" },
                   { value: "MEETING", label: "Meeting" },
                   { value: "NOTE", label: "Note" },
-                  { value: "NEW_LEAD", label: "New Lead" },
+                  { value: "DEAL", label: "Deal" },
                 ].map((opt) => (
                   <Button
                     key={opt.value}
@@ -342,7 +339,7 @@ export default function CalendarPage() {
                                 borderRadius="md"
                                 fontSize="xs"
                                 cursor="pointer"
-                                onClick={(e) => { e.stopPropagation(); navigate(`/leads/${ev.lead_id}`); }}
+                                onClick={(e) => { e.stopPropagation(); navigate(`/deals/${ev.deal_id}`); }}
                               >
                                 <Text noOfLines={1}>{ev.title}</Text>
                                 {ev.time && <Text fontSize="xs" opacity={0.8}>{ev.time}</Text>}
@@ -430,7 +427,7 @@ export default function CalendarPage() {
                       >
                         <Card.Body py={3}>
                           <HStack justify="space-between">
-                            <VStack align="start" gap={1} cursor="pointer" flex={1} onClick={() => { setDetailOpen(false); navigate(`/leads/${ev.lead_id}`); }}>
+                            <VStack align="start" gap={1} cursor="pointer" flex={1} onClick={() => { setDetailOpen(false); navigate(`/deals/${ev.deal_id}`); }}>
                               <Text fontWeight="bold" fontSize="sm">{ev.title}</Text>
                               <HStack gap={2}>
                                 <Badge colorPalette={TYPE_COLORS[ev.type] || "gray"} size="sm">
@@ -448,7 +445,7 @@ export default function CalendarPage() {
                                 )}
                               </HStack>
                             </VStack>
-                            {ev.type !== "NEW_LEAD" && (
+                            {ev.type !== "DEAL" && (
                               <Button
                                 size="xs"
                                 variant="ghost"

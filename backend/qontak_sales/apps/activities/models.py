@@ -11,8 +11,9 @@ class ActivityLog(models.Model):
         ("FOLLOW_UP", "Follow Up"),
     ]
 
-    lead = models.ForeignKey(
-        "leads.Lead", on_delete=models.CASCADE, related_name="logs"
+    deal = models.ForeignKey(
+        "deals.Deal", on_delete=models.CASCADE, related_name="activities",
+        null=True, blank=True
     )
     agent = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="activity_logs"
@@ -27,4 +28,4 @@ class ActivityLog(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.activity_type} for {self.lead.name} by {self.agent.get_full_name() if self.agent else 'Unknown'}"
+        return f"{self.activity_type} for {self.deal.name} by {self.agent.get_full_name() if self.agent else 'Unknown'}"

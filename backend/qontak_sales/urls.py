@@ -8,7 +8,6 @@ urlpatterns = [
     path("api/", include("qontak_sales.apps.accounts.urls")),
     path("api/", include("qontak_sales.apps.companies.urls")),
     path("api/", include("qontak_sales.apps.deals.urls")),
-    path("api/", include("qontak_sales.apps.leads.urls")),
     path("api/", include("qontak_sales.apps.activities.urls")),
     path("api/", include("qontak_sales.apps.notifications.urls")),
     path("api/", include("qontak_sales.apps.broadcasts.urls")),

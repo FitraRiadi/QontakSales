@@ -29,16 +29,3 @@ class BroadcastService:
             return {"results": [{"to": p, "status": "error", "error": "Unknown response"} for p in cleaned]}
         except requests.exceptions.RequestException as e:
             return {"results": [{"to": p, "status": "error", "error": str(e)} for p in cleaned]}
-
-    def send_to_leads(self, leads: list, message: str) -> list[dict]:
-        results = []
-        for lead in leads:
-            result = self.send_batch([lead.phone_number], message)
-            results.append({
-                "lead_id": lead.id,
-                "phone_number": lead.phone_number,
-                "status": result["results"][0]["status"],
-                "error": result["results"][0].get("error", ""),
-            })
-            time.sleep(1)
-        return results

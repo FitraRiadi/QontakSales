@@ -3,14 +3,10 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
-import LeadsPage from "./pages/LeadsPage";
-import PipelinePage from "./pages/PipelinePage";
-import LeadDetailPage from "./pages/LeadDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import AgentsPage from "./pages/AgentsPage";
 import BroadcastPage from "./pages/BroadcastPage";
 import BroadcastHistoryPage from "./pages/BroadcastHistoryPage";
-import ArchivedLeadsPage from "./pages/ArchivedLeadsPage";
 import CalendarPage from "./pages/CalendarPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
@@ -42,11 +38,7 @@ function App() {
           <Route path="/deals" element={<DealsPage />} />
           <Route path="/deals/:id" element={<DealDetailPage />} />
           <Route path="/products" element={<ProductsPage />} />
-          <Route path="/leads" element={<LeadsPage />} />
-          <Route path="/leads/archived" element={<ArchivedLeadsPage />} />
-          <Route path="/pipeline" element={<PipelinePage />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/leads/:id" element={<LeadDetailPage />} />
           <Route path="/agents" element={<AgentsPage />} />
           <Route path="/broadcasts" element={<BroadcastPage />} />
           <Route path="/broadcasts/history" element={<BroadcastHistoryPage />} />
