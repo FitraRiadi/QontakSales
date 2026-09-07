@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -14,7 +14,7 @@ import {
   Spinner,
   createToaster,
 } from "@chakra-ui/react";
-import { CaretLeft, CaretRight, CalendarBlank, X } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, CalendarBlank, X, SquaresFour, List } from "@phosphor-icons/react";
 import {
   format,
   startOfMonth,
@@ -24,17 +24,24 @@ import {
   addDays,
   addMonths,
   subMonths,
+  addYears,
+  subYears,
   isSameMonth,
   isSameDay,
   isToday,
   parseISO,
+  getYear,
+  getMonth,
+  startOfYear,
+  endOfYear,
 } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
+const DAYS_FULL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const TYPE_LABELS = {
   FOLLOW_UP: "Follow Up",
@@ -54,6 +61,100 @@ const TYPE_COLORS = {
   NEW_LEAD: "blue",
 };
 
+const MONTHS_GRID = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [9, 10, 11],
+];
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+function MiniCalendar({ year, month, events, onSelect }) {
+  const monthDate = new Date(year, month, 1);
+  const mStart = startOfMonth(monthDate);
+  const mEnd = endOfMonth(monthDate);
+  const calStart = startOfWeek(mStart, { weekStartsOn: 0 });
+  const calEnd = endOfWeek(mEnd, { weekStartsOn: 0 });
+
+  const days = [];
+  let d = calStart;
+  while (d <= calEnd) {
+    days.push(d);
+    d = addDays(d, 1);
+  }
+
+  const getEventsCount = (date) => {
+    return events.filter((e) => isSameDay(parseISO(e.date), date)).length;
+  };
+
+  const hasEvents = (date) => getEventsCount(date) > 0;
+
+  return (
+    <Card.Root
+      size="sm"
+      bg="white"
+      border="1px solid"
+      borderColor="border"
+      cursor="pointer"
+      _hover={{ borderColor: "primary", transform: "translateY(-2px)" }}
+      transition="all 150ms ease"
+      onClick={() => onSelect(new Date(year, month, 1))}
+    >
+      <Card.Body p={2}>
+        <Text textAlign="center" fontWeight="semibold" fontSize="xs" color="primary" mb={1}>
+          {MONTH_NAMES[month]}
+        </Text>
+        <HStack mb={1} justify="center">
+          {DAYS.map((d) => (
+            <Box key={d} w="20px" textAlign="center" fontSize="9px" fontWeight="bold" color="gray.400">
+              {d}
+            </Box>
+          ))}
+        </HStack>
+        <Box display="grid" gridTemplateColumns="repeat(7, 1fr)" gap="1px">
+          {days.map((day, i) => {
+            const inMonth = isSameMonth(day, monthDate);
+            const today = isToday(day);
+            const eventsOnDay = getEventsCount(day);
+            return (
+              <Box
+                key={i}
+                w="20px"
+                h="20px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                fontSize="9px"
+                borderRadius="full"
+                bg={today ? "primary" : "transparent"}
+                color={today ? "white" : inMonth ? "gray.700" : "gray.300"}
+                fontWeight={today ? "bold" : "normal"}
+                position="relative"
+              >
+                {format(day, "d")}
+                {eventsOnDay > 0 && (
+                  <Box
+                    position="absolute"
+                    bottom="0px"
+                    w="4px"
+                    h="4px"
+                    borderRadius="full"
+                    bg={eventsOnDay > 2 ? "red.500" : "primary"}
+                  />
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+      </Card.Body>
+    </Card.Root>
+  );
+}
+
 export default function CalendarPage() {
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -62,8 +163,9 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [filterType, setFilterType] = useState("ALL");
+  const [viewMode, setViewMode] = useState("month");
 
-  const fetchEvents = useCallback(() => {
+  const fetchMonthEvents = useCallback(() => {
     setLoading(true);
     const start = format(startOfWeek(startOfMonth(currentDate), { weekStartsOn: 0 }), "yyyy-MM-dd");
     const end = format(endOfWeek(endOfMonth(currentDate), { weekStartsOn: 0 }), "yyyy-MM-dd");
@@ -72,7 +174,20 @@ export default function CalendarPage() {
       .catch(() => { setLoading(false); });
   }, [currentDate]);
 
-  useEffect(() => { fetchEvents(); }, [fetchEvents]);
+  const fetchYearEvents = useCallback(() => {
+    setLoading(true);
+    const year = getYear(currentDate);
+    const start = `${year}-01-01`;
+    const end = `${year}-12-31`;
+    api.get("/calendar/events/", { params: { start, end } })
+      .then((r) => { setEvents(r.data); setLoading(false); })
+      .catch(() => { setLoading(false); });
+  }, [currentDate]);
+
+  useEffect(() => {
+    if (viewMode === "month") fetchMonthEvents();
+    else fetchYearEvents();
+  }, [viewMode, fetchMonthEvents, fetchYearEvents]);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -96,6 +211,11 @@ export default function CalendarPage() {
     setDetailOpen(true);
   };
 
+  const handleMonthSelect = (date) => {
+    setCurrentDate(date);
+    setViewMode("month");
+  };
+
   const handleCancel = async (ev, e) => {
     e.stopPropagation();
     try {
@@ -108,125 +228,173 @@ export default function CalendarPage() {
         await api.post(`/activities/${activityId}/cancel/`);
       }
       toaster.create({ title: "Schedule cancelled", type: "success" });
-      fetchEvents();
+      if (viewMode === "month") fetchMonthEvents();
+      else fetchYearEvents();
     } catch {
       toaster.create({ title: "Failed to cancel", type: "error" });
     }
   };
 
+  const year = getYear(currentDate);
+
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
         <Heading size="lg" color="foreground">Calendar</Heading>
+        <Button
+          size="sm"
+          variant="outline"
+          leftIcon={viewMode === "month" ? <SquaresFour size={16} /> : <List size={16} />}
+          onClick={() => setViewMode(viewMode === "month" ? "year" : "month")}
+        >
+          {viewMode === "month" ? "Year View" : "Month View"}
+        </Button>
       </HStack>
 
       <Card.Root bg="white" border="1px solid" borderColor="border">
         <Card.Body>
-          <HStack justify="space-between" mb={4}>
-            <Button size="sm" variant="outline" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
-              <CaretLeft size={16} />
-            </Button>
-            <Heading size="md" color="foreground">
-              {format(currentDate, "MMMM yyyy", { locale: idLocale })}
-            </Heading>
-            <Button size="sm" variant="outline" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
-              <CaretRight size={16} />
-            </Button>
-          </HStack>
+          {viewMode === "month" ? (
+            <>
+              <HStack justify="space-between" mb={4}>
+                <Button size="sm" variant="outline" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
+                  <CaretLeft size={16} />
+                </Button>
+                <Heading size="md" color="foreground">
+                  {format(currentDate, "MMMM yyyy", { locale: idLocale })}
+                </Heading>
+                <Button size="sm" variant="outline" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
+                  <CaretRight size={16} />
+                </Button>
+              </HStack>
 
-          <HStack mb={4} gap={2} wrap="wrap">
-            <Text fontSize="sm" fontWeight="medium" color="gray.600">Filter:</Text>
-            {[
-              { value: "ALL", label: "All" },
-              { value: "FOLLOW_UP", label: "Follow Up" },
-              { value: "CALL", label: "Call" },
-              { value: "EMAIL", label: "Email" },
-              { value: "MEETING", label: "Meeting" },
-              { value: "NOTE", label: "Note" },
-              { value: "NEW_LEAD", label: "New Lead" },
-            ].map((opt) => (
-              <Button
-                key={opt.value}
-                size="xs"
-                variant={filterType === opt.value ? "solid" : "outline"}
-                bg={filterType === opt.value ? "primary" : "transparent"}
-                color={filterType === opt.value ? "white" : "gray.600"}
-                onClick={() => setFilterType(opt.value)}
-              >
-                {opt.label}
-              </Button>
-            ))}
-          </HStack>
-
-          {loading ? (
-            <Box display="flex" justifyContent="center" py={10}><Spinner size="lg" color="primary" /></Box>
-          ) : (
-            <Box>
-              <HStack mb={2}>
-                {DAYS.map((d) => (
-                  <Box key={d} flex={1} textAlign="center" fontWeight="bold" fontSize="sm" color="gray.500" py={2}>
-                    {d}
-                  </Box>
+              <HStack mb={4} gap={2} wrap="wrap">
+                <Text fontSize="sm" fontWeight="medium" color="gray.600">Filter:</Text>
+                {[
+                  { value: "ALL", label: "All" },
+                  { value: "FOLLOW_UP", label: "Follow Up" },
+                  { value: "CALL", label: "Call" },
+                  { value: "EMAIL", label: "Email" },
+                  { value: "MEETING", label: "Meeting" },
+                  { value: "NOTE", label: "Note" },
+                  { value: "NEW_LEAD", label: "New Lead" },
+                ].map((opt) => (
+                  <Button
+                    key={opt.value}
+                    size="xs"
+                    variant={filterType === opt.value ? "solid" : "outline"}
+                    bg={filterType === opt.value ? "primary" : "transparent"}
+                    color={filterType === opt.value ? "white" : "gray.600"}
+                    onClick={() => setFilterType(opt.value)}
+                  >
+                    {opt.label}
+                  </Button>
                 ))}
               </HStack>
 
-              <Box display="grid" gridTemplateColumns="repeat(7, 1fr)" gap="1px" bg="gray.100" borderRadius="lg" overflow="hidden">
-                {days.map((d, i) => {
-                  const dayEvents = getEventsForDate(d);
-                  const inMonth = isSameMonth(d, currentDate);
-                  const today = isToday(d);
-                  return (
-                    <Box
-                      key={i}
-                      bg="white"
-                      minH="100px"
-                      p={2}
-                      cursor="pointer"
-                      opacity={inMonth ? 1 : 0.4}
-                      _hover={{ bg: "gray.50" }}
-                      onClick={() => handleDayClick(d)}
-                    >
-                      <Text
-                        fontSize="sm"
-                        fontWeight={today ? "bold" : "normal"}
-                        color={today ? "white" : "gray.700"}
-                        bg={today ? "primary" : "transparent"}
-                        borderRadius="full"
-                        w="24px"
-                        h="24px"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        mb={1}
-                      >
-                        {format(d, "d")}
-                      </Text>
-                      <VStack gap={1} align="stretch">
-                        {dayEvents.slice(0, 3).map((ev) => (
-                          <Box
-                            key={ev.id}
-                            bg={ev.color || "gray.100"}
-                            color="white"
-                            px={2}
-                            py={0.5}
-                            borderRadius="md"
-                            fontSize="xs"
-                            cursor="pointer"
-                            onClick={(e) => { e.stopPropagation(); navigate(`/leads/${ev.lead_id}`); }}
+              {loading ? (
+                <Box display="flex" justifyContent="center" py={10}><Spinner size="lg" color="primary" /></Box>
+              ) : (
+                <Box>
+                  <HStack mb={2}>
+                    {DAYS_FULL.map((d) => (
+                      <Box key={d} flex={1} textAlign="center" fontWeight="bold" fontSize="sm" color="gray.500" py={2}>
+                        {d}
+                      </Box>
+                    ))}
+                  </HStack>
+
+                  <Box display="grid" gridTemplateColumns="repeat(7, 1fr)" gap="1px" bg="gray.100" borderRadius="lg" overflow="hidden">
+                    {days.map((d, i) => {
+                      const dayEvents = getEventsForDate(d);
+                      const inMonth = isSameMonth(d, currentDate);
+                      const today = isToday(d);
+                      return (
+                        <Box
+                          key={i}
+                          bg="white"
+                          minH="100px"
+                          p={2}
+                          cursor="pointer"
+                          opacity={inMonth ? 1 : 0.4}
+                          _hover={{ bg: "gray.50" }}
+                          onClick={() => handleDayClick(d)}
+                        >
+                          <Text
+                            fontSize="sm"
+                            fontWeight={today ? "bold" : "normal"}
+                            color={today ? "white" : "gray.700"}
+                            bg={today ? "primary" : "transparent"}
+                            borderRadius="full"
+                            w="24px"
+                            h="24px"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            mb={1}
                           >
-                            <Text noOfLines={1}>{ev.title}</Text>
-                            {ev.time && <Text fontSize="xs" opacity={0.8}>{ev.time}</Text>}
-                          </Box>
-                        ))}
-                        {dayEvents.length > 3 && (
-                          <Text fontSize="xs" color="gray.500">+{dayEvents.length - 3} more</Text>
-                        )}
-                      </VStack>
-                    </Box>
-                  );
-                })}
-              </Box>
-            </Box>
+                            {format(d, "d")}
+                          </Text>
+                          <VStack gap={1} align="stretch">
+                            {dayEvents.slice(0, 3).map((ev) => (
+                              <Box
+                                key={ev.id}
+                                bg={ev.color || "gray.100"}
+                                color="white"
+                                px={2}
+                                py={0.5}
+                                borderRadius="md"
+                                fontSize="xs"
+                                cursor="pointer"
+                                onClick={(e) => { e.stopPropagation(); navigate(`/leads/${ev.lead_id}`); }}
+                              >
+                                <Text noOfLines={1}>{ev.title}</Text>
+                                {ev.time && <Text fontSize="xs" opacity={0.8}>{ev.time}</Text>}
+                              </Box>
+                            ))}
+                            {dayEvents.length > 3 && (
+                              <Text fontSize="xs" color="gray.500">+{dayEvents.length - 3} more</Text>
+                            )}
+                          </VStack>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              )}
+            </>
+          ) : (
+            <>
+              <HStack justify="space-between" mb={4}>
+                <Button size="sm" variant="outline" onClick={() => setCurrentDate(subYears(currentDate, 1))}>
+                  <CaretLeft size={16} />
+                </Button>
+                <Heading size="md" color="foreground">{year}</Heading>
+                <Button size="sm" variant="outline" onClick={() => setCurrentDate(addYears(currentDate, 1))}>
+                  <CaretRight size={16} />
+                </Button>
+              </HStack>
+
+              {loading ? (
+                <Box display="flex" justifyContent="center" py={10}><Spinner size="lg" color="primary" /></Box>
+              ) : (
+                <VStack gap={3} align="stretch">
+                  {MONTHS_GRID.map((row, ri) => (
+                    <HStack key={ri} gap={3} justify="center">
+                      {row.map((mi) => (
+                        <Box key={mi} flex={1} maxW="180px">
+                          <MiniCalendar
+                            year={year}
+                            month={mi}
+                            events={events}
+                            onSelect={handleMonthSelect}
+                          />
+                        </Box>
+                      ))}
+                    </HStack>
+                  ))}
+                </VStack>
+              )}
+            </>
           )}
         </Card.Body>
       </Card.Root>
