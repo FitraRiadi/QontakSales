@@ -9,7 +9,7 @@ from .serializers import (
     ProductSerializer, LineItemSerializer,
 )
 from qontak_sales.apps.notifications.views import create_notification
-from qontak_sales.apps.accounts.permissions import IsOwnerOrManager
+from qontak_sales.apps.accounts.permissions import IsOwnerOrManager, IsManagerOrReadOnly
 
 
 class DealViewSet(viewsets.ModelViewSet):
@@ -203,6 +203,7 @@ class ContactDealViewSet(viewsets.ModelViewSet):
 
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
+    permission_classes = [IsManagerOrReadOnly]
 
     def get_queryset(self):
         user = self.request.user

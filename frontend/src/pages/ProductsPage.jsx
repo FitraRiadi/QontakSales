@@ -44,6 +44,7 @@ export default function ProductsPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  const userRole = localStorage.getItem("user_role");
   const [deleteDialog, setDeleteDialog] = useState(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -120,7 +121,7 @@ export default function ProductsPage() {
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
         <Heading size="lg">Products</Heading>
-        <Button bg="primary" color="white" _hover={{ bg: "secondary" }} onClick={openCreate}><Plus size={16} /> Add Product</Button>
+        {userRole === "MANAGER" && <Button bg="primary" color="white" _hover={{ bg: "secondary" }} onClick={openCreate}><Plus size={16} /> Add Product</Button>}
       </HStack>
       <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} maxW="400px" />
 
@@ -144,10 +145,12 @@ export default function ProductsPage() {
                     <Text fontSize="xs" color="gray.500">Base Price</Text>
                     <Text fontWeight="bold" fontSize="sm" color="primary">Rp {Number(p.base_price).toLocaleString("id-ID")}</Text>
                   </VStack>
-                  <HStack gap={1}>
-                    <Button size="xs" variant="ghost" onClick={(e) => { e.stopPropagation(); openEdit(p, e); }}><PencilSimple size={12} /></Button>
-                    <Button size="xs" variant="ghost" color="red.500" onClick={(e) => { e.stopPropagation(); setDeleteDialog(p); }}><Trash size={12} /></Button>
-                  </HStack>
+                  {userRole === "MANAGER" && (
+                    <HStack gap={1}>
+                      <Button size="xs" variant="ghost" onClick={(e) => { e.stopPropagation(); openEdit(p, e); }}><PencilSimple size={12} /></Button>
+                      <Button size="xs" variant="ghost" color="red.500" onClick={(e) => { e.stopPropagation(); setDeleteDialog(p); }}><Trash size={12} /></Button>
+                    </HStack>
+                  )}
                 </HStack>
               </Card.Body>
             </Card.Root>
