@@ -4,10 +4,12 @@ from rest_framework.response import Response
 from django.db.models import Q
 from .models import BusinessAccount, Contact
 from .serializers import BusinessAccountSerializer, BusinessAccountDetailSerializer, ContactSerializer
+from qontak_sales.apps.accounts.permissions import IsOwnerOrManager
 
 
 class BusinessAccountViewSet(viewsets.ModelViewSet):
     serializer_class = BusinessAccountSerializer
+    permission_classes = [IsOwnerOrManager]
 
     def get_queryset(self):
         user = self.request.user
@@ -69,6 +71,7 @@ class BusinessAccountViewSet(viewsets.ModelViewSet):
 
 class ContactViewSet(viewsets.ModelViewSet):
     serializer_class = ContactSerializer
+    permission_classes = [IsOwnerOrManager]
 
     def get_queryset(self):
         user = self.request.user

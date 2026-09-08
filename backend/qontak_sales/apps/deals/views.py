@@ -9,14 +9,18 @@ from .serializers import (
     ProductSerializer, LineItemSerializer,
 )
 from qontak_sales.apps.notifications.views import create_notification
+from qontak_sales.apps.accounts.permissions import IsOwnerOrManager
 
 
 class DealViewSet(viewsets.ModelViewSet):
     serializer_class = DealSerializer
+    permission_classes = [IsOwnerOrManager]
 
     def get_queryset(self):
         user = self.request.user
         qs = Deal.objects.filter(company__company=user.company, is_archived=False)
+        if user.role == "AGENT":
+            qs = qs.filter(owner=user)
 
         search = self.request.query_params.get("search")
         if search:
@@ -131,6 +135,8 @@ class DealViewSet(viewsets.ModelViewSet):
         deals = Deal.objects.filter(
             company__company=user.company, is_archived=False
         ).exclude(stage__in=["WON", "LOST"])
+        if user.role == "AGENT":
+            deals = deals.filter(owner=user)
 
         pipeline_data = {}
         for stage_code, stage_name in Deal.STAGE_CHOICES:
@@ -150,6 +156,9 @@ class DealViewSet(viewsets.ModelViewSet):
         lost_deals = Deal.objects.filter(
             company__company=user.company, is_archived=False, stage="LOST"
         )
+        if user.role == "AGENT":
+            won_deals = won_deals.filter(owner=user)
+            lost_deals = lost_deals.filter(owner=user)
 
         pipeline_data["WON"] = {
             "label": "Won",
@@ -171,7 +180,8 @@ class ContactDealViewSet(viewsets.ModelViewSet):
     serializer_class = ContactDealSerializer
 
     def get_queryset(self):
-        qs = ContactDeal.objects.all()
+        user = self.request.user
+        qs = ContactDeal.objects.filter(deal__company__company=user.company)
         deal_id = self.request.query_params.get("deal_id")
         if deal_id:
             qs = qs.filter(deal_id=deal_id)
@@ -224,7 +234,8 @@ class LineItemViewSet(viewsets.ModelViewSet):
     serializer_class = LineItemSerializer
 
     def get_queryset(self):
-        qs = LineItem.objects.all()
+        user = self.request.user
+        qs = LineItem.objects.filter(deal__company__company=user.company)
         deal_id = self.request.query_params.get("deal_id")
         if deal_id:
             qs = qs.filter(deal_id=deal_id)
@@ -269,6 +280,8 @@ def dashboard_stats(request):
 
     user = request.user
     all_deals = Deal.objects.filter(company__company=user.company, is_archived=False)
+    if user.role == "AGENT":
+        all_deals = all_deals.filter(owner=user)
 
     total_revenue = all_deals.filter(stage="WON").aggregate(total=Sum("amount"))["total"] or 0
     total_deals = all_deals.count()
@@ -340,6 +353,8 @@ def calendar_events(request):
         company__company=user.company, is_archived=False,
         expected_close_date__gte=start, expected_close_date__lte=end,
     )
+    if user.role == "AGENT":
+        deals = deals.filter(owner=user)
 
     deal_events = []
     for deal in deals:
@@ -394,6 +409,8 @@ def dashboard_export(request):
 
     user = request.user
     all_deals = Deal.objects.filter(company__company=user.company, is_archived=False)
+    if user.role == "AGENT":
+        all_deals = all_deals.filter(owner=user)
 
     total_revenue = all_deals.filter(stage="WON").aggregate(total=Sum("amount"))["total"] or 0
     total_deals = all_deals.count()

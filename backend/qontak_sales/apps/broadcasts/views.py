@@ -23,7 +23,7 @@ class BroadcastViewSet(viewsets.ModelViewSet):
         message = serializer.validated_data["message"]
         contact_ids = serializer.validated_data["contact_ids"]
 
-        contacts = Contact.objects.filter(id__in=contact_ids)
+        contacts = Contact.objects.filter(id__in=contact_ids, account__company=request.user.company)
 
         if not contacts.exists():
             return Response({"error": "No contacts found"}, status=status.HTTP_400_BAD_REQUEST)

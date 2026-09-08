@@ -3,16 +3,20 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import ActivityLog
 from .serializers import ActivityLogSerializer
+from qontak_sales.apps.accounts.permissions import IsOwnerOrManager
 
 
 class ActivityLogViewSet(viewsets.ModelViewSet):
     serializer_class = ActivityLogSerializer
+    permission_classes = [IsOwnerOrManager]
 
     def get_queryset(self):
         user = self.request.user
         deal_id = self.request.query_params.get("deal_id")
         account_id = self.request.query_params.get("account_id")
         queryset = ActivityLog.objects.filter(deal__company__company=user.company)
+        if user.role == "AGENT":
+            queryset = queryset.filter(agent=user)
         if deal_id:
             queryset = queryset.filter(deal_id=deal_id)
         if account_id:
