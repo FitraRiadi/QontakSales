@@ -311,21 +311,21 @@ export default function AccountDetailPage() {
               <Dialog.Header><Dialog.Title>Edit Account</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required><Field.Label>Company Name</Field.Label><Input value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field.Root>
+                  <Field.Root required><Field.Label>Company Name</Field.Label><Input placeholder="Company name" value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field.Root>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Industry</Field.Label><select value={form.industry || ""} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
                     <Field.Root flex={1}><Field.Label>Size</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Phone</Field.Label><Input value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Email</Field.Label><Input type="email" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Phone</Field.Label><Input placeholder="+62 xxx" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Email</Field.Label><Input type="email" placeholder="name@company.com" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field.Root>
                   </HStack>
-                  <Field.Root w="full"><Field.Label>Website</Field.Label><Input value={form.website || ""} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field.Root>
-                  <Field.Root w="full"><Field.Label>Address</Field.Label><Input value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Website</Field.Label><Input placeholder="https://..." value={form.website || ""} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Address</Field.Label><Input placeholder="Street address" value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>City</Field.Label><Input value={form.city || ""} onChange={(e) => setForm({ ...form, city: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Country</Field.Label><Input value={form.country || ""} onChange={(e) => setForm({ ...form, country: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Revenue</Field.Label><Input type="number" value={form.annual_revenue || ""} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>City</Field.Label><Input placeholder="Jakarta" value={form.city || ""} onChange={(e) => setForm({ ...form, city: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Country</Field.Label><Input placeholder="Indonesia" value={form.country || ""} onChange={(e) => setForm({ ...form, country: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Revenue</Field.Label><Input type="number" placeholder="0" value={form.annual_revenue || ""} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} /></Field.Root>
                   </HStack>
                 </VStack>
               </Dialog.Body>
@@ -347,15 +347,15 @@ export default function AccountDetailPage() {
               <Dialog.Body>
                 <VStack gap={4}>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1} required><Field.Label>First Name</Field.Label><Input value={contactForm.first_name} onChange={(e) => setContactForm({ ...contactForm, first_name: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Last Name</Field.Label><Input value={contactForm.last_name} onChange={(e) => setContactForm({ ...contactForm, last_name: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1} required><Field.Label>First Name</Field.Label><Input placeholder="John" value={contactForm.first_name} onChange={(e) => setContactForm({ ...contactForm, first_name: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Last Name</Field.Label><Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => setContactForm({ ...contactForm, last_name: e.target.value })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Email</Field.Label><Input type="email" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Phone</Field.Label><Input value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Email</Field.Label><Input type="email" placeholder="john@company.com" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Phone</Field.Label><Input placeholder="+62 xxx" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Job Title</Field.Label><Input value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Job Title</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
                     <Field.Root flex={1}><Field.Label>Role in Deal</Field.Label><select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
                   </HStack>
                 </VStack>
@@ -400,7 +400,7 @@ export default function AccountDetailPage() {
                   </Field.Root>
                   <Field.Root w="full">
                     <Field.Label>Notes</Field.Label>
-                    <textarea value={activityForm.notes} onChange={(e) => setActivityForm({ ...activityForm, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                    <textarea placeholder="Activity notes..." value={activityForm.notes} onChange={(e) => setActivityForm({ ...activityForm, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
                   </Field.Root>
                 </VStack>
               </Dialog.Body>

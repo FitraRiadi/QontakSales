@@ -415,10 +415,10 @@ export default function DealDetailPage() {
               <Dialog.Header><Dialog.Title>Edit Deal</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required><Field.Label>Deal Name</Field.Label><Input value={editForm.name || ""} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} /></Field.Root>
+                  <Field.Root required><Field.Label>Deal Name</Field.Label><Input placeholder="Deal name" value={editForm.name || ""} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} /></Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Amount (Rp)</Field.Label><Input type="number" value={editForm.amount || ""} onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Probability (%)</Field.Label><Input type="number" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Amount (Rp)</Field.Label><Input type="number" placeholder="0" value={editForm.amount || ""} onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Probability (%)</Field.Label><Input type="number" placeholder="0-100" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Stage</Field.Label><select value={editForm.stage || ""} onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{STAGE_CHOICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></Field.Root>
@@ -427,10 +427,10 @@ export default function DealDetailPage() {
                   {editForm.stage === "LOST" && (
                     <HStack gap={4} w="full">
                       <Field.Root flex={1}><Field.Label>Lost Reason</Field.Label><select value={editForm.lost_reason || ""} onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{LOST_REASON_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field.Root>
-                      <Field.Root flex={1}><Field.Label>Lost Notes</Field.Label><Input value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
+                      <Field.Root flex={1}><Field.Label>Lost Notes</Field.Label><Input placeholder="Why was this deal lost?" value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
                     </HStack>
                   )}
-                  <Field.Root w="full"><Field.Label>Description</Field.Label><textarea value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Description</Field.Label><textarea placeholder="Deal description..." value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
                 </VStack>
               </Dialog.Body>
               <Dialog.Footer>
@@ -493,10 +493,10 @@ export default function DealDetailPage() {
                     </select>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Quantity</Field.Label><Input type="number" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Unit Price (Rp)</Field.Label><Input type="number" value={lineItemForm.unit_price} onChange={(e) => setLineItemForm({ ...lineItemForm, unit_price: parseFloat(e.target.value) || 0 })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Quantity</Field.Label><Input type="number" placeholder="1" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Unit Price (Rp)</Field.Label><Input type="number" placeholder="0" value={lineItemForm.unit_price} onChange={(e) => setLineItemForm({ ...lineItemForm, unit_price: parseFloat(e.target.value) || 0 })} /></Field.Root>
                   </HStack>
-                   <Field.Root w="full"><Field.Label>Discount (%)</Field.Label><Input type="number" min={0} max={100} value={lineItemForm.discount} onChange={(e) => { const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)); setLineItemForm({ ...lineItemForm, discount: v }); }} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Discount (%)</Field.Label><Input type="number" placeholder="0" min={0} max={100} value={lineItemForm.discount} onChange={(e) => { const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)); setLineItemForm({ ...lineItemForm, discount: v }); }} /></Field.Root>
                   <HStack justify="space-between" w="full" p={3} bg="muted" borderRadius="lg">
                     <Text fontSize="sm" fontWeight="bold">Total:</Text>
                     <Text fontSize="sm" fontWeight="bold" color="primary">Rp {Math.round(lineItemForm.unit_price * lineItemForm.quantity * (1 - lineItemForm.discount / 100)).toLocaleString("id-ID")}</Text>

@@ -234,7 +234,7 @@ export default function AccountsPage() {
                 <VStack gap={4}>
                   <Field.Root required>
                     <Field.Label>Company Name</Field.Label>
-                    <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <Input placeholder="Company name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4} w="full">
                     <Field.Root>
@@ -265,11 +265,11 @@ export default function AccountsPage() {
                   <SimpleGrid columns={2} gap={4} w="full">
                     <Field.Root>
                       <Field.Label>Phone</Field.Label>
-                      <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                      <Input placeholder="+62 xxx" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Email</Field.Label>
-                      <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                      <Input type="email" placeholder="name@company.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                     </Field.Root>
                   </SimpleGrid>
                   <Field.Root>
@@ -278,25 +278,25 @@ export default function AccountsPage() {
                   </Field.Root>
                   <Field.Root>
                     <Field.Label>Address</Field.Label>
-                    <Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+                    <Input placeholder="Street address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
                   </Field.Root>
                   <SimpleGrid columns={3} gap={4} w="full">
                     <Field.Root>
                       <Field.Label>City</Field.Label>
-                      <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                      <Input placeholder="Jakarta" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Country</Field.Label>
-                      <Input value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} />
+                      <Input placeholder="Indonesia" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} />
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Annual Revenue</Field.Label>
-                      <Input type="number" value={form.annual_revenue} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} />
+                      <Input type="number" placeholder="0" value={form.annual_revenue} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} />
                     </Field.Root>
                   </SimpleGrid>
                   <Field.Root w="full">
                     <Field.Label>Notes</Field.Label>
-                    <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                    <textarea placeholder="Additional notes..." value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
                   </Field.Root>
                 </VStack>
               </Dialog.Body>
