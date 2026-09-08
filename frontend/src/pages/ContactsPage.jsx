@@ -17,7 +17,7 @@ import {
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { Plus, MagnifyingGlass, Phone, Envelope, User, PhoneCall, ChatCircle, X } from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass, Phone, Envelope, User, PhoneCall, ChatCircle, X, PencilSimple, Trash } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
@@ -33,6 +33,12 @@ export default function ContactsPage() {
   const [filterRole, setFilterRole] = useState("");
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editContact, setEditContact] = useState(null);
+  const [contactForm, setContactForm] = useState({ first_name: "", last_name: "", email: "", phone: "", job_title: "", department: "", role_in_deal: "OTHER", notes: "" });
+  const [contactErrors, setContactErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(null);
 
   const fetchContacts = () => {
     setLoading(true);
@@ -45,6 +51,66 @@ export default function ContactsPage() {
   };
 
   useEffect(() => { fetchContacts(); }, [search, filterRole]);
+
+  const openEdit = (contact) => {
+    setEditContact(contact);
+    setContactForm({
+      first_name: contact.first_name || "",
+      last_name: contact.last_name || "",
+      email: contact.email || "",
+      phone: contact.phone || "",
+      job_title: contact.job_title || "",
+      department: contact.department || "",
+      role_in_deal: contact.role_in_deal || "OTHER",
+      notes: contact.notes || "",
+    });
+    setContactErrors({});
+    setContactDialogOpen(false);
+    setEditDialogOpen(true);
+  };
+
+  const handleEditContact = async () => {
+    const errs = {};
+    if (!contactForm.first_name.trim()) errs.first_name = "First name is required";
+    if (!contactForm.last_name.trim()) errs.last_name = "Last name is required";
+    if (!contactForm.email.trim()) errs.email = "Email is required";
+    if (!contactForm.phone.trim()) errs.phone = "Phone is required";
+    if (Object.keys(errs).length > 0) { setContactErrors(errs); return; }
+    setContactErrors({});
+    setSaving(true);
+    try {
+      await api.put(`/contacts/${editContact.id}/`, contactForm);
+      toaster.create({ title: "Contact updated", type: "success" });
+      setEditDialogOpen(false);
+      fetchContacts();
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data && typeof data === "object") {
+        const fieldErrors = {};
+        for (const [key, val] of Object.entries(data)) {
+          if (Array.isArray(val)) fieldErrors[key] = val[0];
+          else if (typeof val === "string") fieldErrors[key] = val;
+        }
+        if (Object.keys(fieldErrors).length > 0) { setContactErrors(fieldErrors); return; }
+      }
+      toaster.create({ title: "Failed to update contact", type: "error" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteContact = async () => {
+    if (!deleteDialog) return;
+    try {
+      await api.delete(`/contacts/${deleteDialog.id}/`);
+      toaster.create({ title: "Contact deleted", type: "success" });
+      setDeleteDialog(null);
+      setContactDialogOpen(false);
+      fetchContacts();
+    } catch {
+      toaster.create({ title: "Failed to delete contact", type: "error" });
+    }
+  };
 
   return (
     <VStack gap={6} align="stretch">
@@ -94,13 +160,26 @@ export default function ContactsPage() {
               {selectedContact && (
                 <>
                   <Box bg="primary" px={6} pt={6} pb={10} position="relative">
-                    <Button
-                      position="absolute" top={3} right={3}
-                      size="xs" variant="ghost" color="white" _hover={{ bg: "whiteAlpha.200" }}
-                      onClick={() => setContactDialogOpen(false)}
-                    >
-                      <X size={16} />
-                    </Button>
+                    <VStack position="absolute" top={3} right={3} gap={1}>
+                      <Button
+                        size="xs" variant="ghost" color="white" _hover={{ bg: "whiteAlpha.200" }}
+                        onClick={() => openEdit(selectedContact)}
+                      >
+                        <PencilSimple size={14} />
+                      </Button>
+                      <Button
+                        size="xs" variant="ghost" color="white" _hover={{ bg: "redAlpha.400" }}
+                        onClick={() => { setContactDialogOpen(false); setDeleteDialog(selectedContact); }}
+                      >
+                        <Trash size={14} />
+                      </Button>
+                      <Button
+                        size="xs" variant="ghost" color="white" _hover={{ bg: "whiteAlpha.200" }}
+                        onClick={() => setContactDialogOpen(false)}
+                      >
+                        <X size={16} />
+                      </Button>
+                    </VStack>
                     <VStack align="center" gap={3}>
                       <Box
                         w={16} h={16} borderRadius="full" bg="whiteAlpha.200"
@@ -226,6 +305,77 @@ export default function ContactsPage() {
                   </Box>
                 </>
               )}
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+
+      <Dialog.Root open={editDialogOpen} onOpenChange={(e) => setEditDialogOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="500px">
+              <Dialog.Header><Dialog.Title>Edit Contact</Dialog.Title></Dialog.Header>
+              <Dialog.Body>
+                <VStack gap={4}>
+                  <HStack gap={4} w="full">
+                    <Field.Root flex={1} required invalid={!!contactErrors.first_name}>
+                      <Field.Label>First Name</Field.Label>
+                      <Input placeholder="John" value={contactForm.first_name} onChange={(e) => { setContactErrors({ ...contactErrors, first_name: undefined }); setContactForm({ ...contactForm, first_name: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.first_name}</Field.ErrorText>
+                    </Field.Root>
+                    <Field.Root flex={1} required invalid={!!contactErrors.last_name}>
+                      <Field.Label>Last Name</Field.Label>
+                      <Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => { setContactErrors({ ...contactErrors, last_name: undefined }); setContactForm({ ...contactForm, last_name: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.last_name}</Field.ErrorText>
+                    </Field.Root>
+                  </HStack>
+                  <HStack gap={4} w="full">
+                    <Field.Root flex={1} required invalid={!!contactErrors.email}>
+                      <Field.Label>Email</Field.Label>
+                      <Input type="email" placeholder="john@company.com" value={contactForm.email} onChange={(e) => { setContactErrors({ ...contactErrors, email: undefined }); setContactForm({ ...contactForm, email: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.email}</Field.ErrorText>
+                    </Field.Root>
+                    <Field.Root flex={1} required invalid={!!contactErrors.phone}>
+                      <Field.Label>Phone</Field.Label>
+                      <Input placeholder="+62 xxx" value={contactForm.phone} onChange={(e) => { setContactErrors({ ...contactErrors, phone: undefined }); setContactForm({ ...contactForm, phone: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.phone}</Field.ErrorText>
+                    </Field.Root>
+                  </HStack>
+                  <HStack gap={4} w="full">
+                    <Field.Root flex={1}><Field.Label>Job Title (optional)</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}>
+                      <Field.Label>Role in Deal (optional)</Field.Label>
+                      <select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                        {Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                      </select>
+                    </Field.Root>
+                  </HStack>
+                  <Field.Root w="full"><Field.Label>Notes (optional)</Field.Label><textarea placeholder="Contact notes..." value={contactForm.notes} onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
+                </VStack>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild><Button variant="outline" mr={3}>Cancel</Button></Dialog.CloseTrigger>
+                <Button bg="primary" color="white" onClick={handleEditContact} loading={saving}>Update</Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+
+      <Dialog.Root open={!!deleteDialog} onOpenChange={(e) => { if (!e.open) setDeleteDialog(null); }}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="400px">
+              <Dialog.Header><Dialog.Title>Delete Contact</Dialog.Title></Dialog.Header>
+              <Dialog.Body>
+                <Text>Are you sure you want to delete <strong>{deleteDialog?.first_name} {deleteDialog?.last_name}</strong>? This action cannot be undone.</Text>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild><Button variant="outline" mr={3}>Cancel</Button></Dialog.CloseTrigger>
+                <Button bg="red.500" color="white" _hover={{ bg: "red.600" }} onClick={handleDeleteContact}>Delete</Button>
+              </Dialog.Footer>
             </Dialog.Content>
           </Dialog.Positioner>
         </Portal>
