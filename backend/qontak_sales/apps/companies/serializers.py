@@ -16,6 +16,11 @@ class ContactSerializer(serializers.ModelSerializer):
             "created_at", "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+        extra_kwargs = {
+            "last_name": {"required": True},
+            "email": {"required": True},
+            "phone": {"required": True},
+        }
 
     def get_full_name(self, obj):
         return obj.full_name
@@ -37,6 +42,11 @@ class BusinessAccountSerializer(serializers.ModelSerializer):
             "is_archived", "created_at", "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+        extra_kwargs = {
+            "phone": {"required": True},
+            "email": {"required": True},
+            "industry": {"required": True},
+        }
 
 
 class BusinessAccountDetailSerializer(serializers.ModelSerializer):

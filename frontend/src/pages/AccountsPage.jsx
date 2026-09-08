@@ -121,6 +121,9 @@ export default function AccountsPage() {
   const handleSave = async () => {
     const errs = {};
     if (!form.name.trim()) errs.name = "Name is required";
+    if (!form.industry) errs.industry = "Industry is required";
+    if (!form.phone.trim()) errs.phone = "Phone is required";
+    if (!form.email.trim()) errs.email = "Email is required";
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setSaving(true);
@@ -253,12 +256,13 @@ export default function AccountsPage() {
                     <Field.ErrorText>{errors.name}</Field.ErrorText>
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4} w="full">
-                    <Field.Root>
-                      <Field.Label>Industry (optional)</Field.Label>
-                      <select value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <Field.Root required invalid={!!errors.industry}>
+                      <Field.Label>Industry</Field.Label>
+                      <select value={form.industry} onChange={(e) => { setErrors({ ...errors, industry: undefined }); setForm({ ...form, industry: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                         <option value="">Select...</option>
                         {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                       </select>
+                      <Field.ErrorText>{errors.industry}</Field.ErrorText>
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Size (optional)</Field.Label>
@@ -279,13 +283,15 @@ export default function AccountsPage() {
                     </select>
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4} w="full">
-                    <Field.Root>
-                      <Field.Label>Phone (optional)</Field.Label>
-                      <Input placeholder="+62 xxx" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                    <Field.Root required invalid={!!errors.phone}>
+                      <Field.Label>Phone</Field.Label>
+                      <Input placeholder="+62 xxx" value={form.phone} onChange={(e) => { setErrors({ ...errors, phone: undefined }); setForm({ ...form, phone: e.target.value }); }} />
+                      <Field.ErrorText>{errors.phone}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root>
-                      <Field.Label>Email (optional)</Field.Label>
-                      <Input type="email" placeholder="name@company.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                    <Field.Root required invalid={!!errors.email}>
+                      <Field.Label>Email</Field.Label>
+                      <Input type="email" placeholder="name@company.com" value={form.email} onChange={(e) => { setErrors({ ...errors, email: undefined }); setForm({ ...form, email: e.target.value }); }} />
+                      <Field.ErrorText>{errors.email}</Field.ErrorText>
                     </Field.Root>
                   </SimpleGrid>
                   <Field.Root>

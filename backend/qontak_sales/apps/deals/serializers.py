@@ -13,6 +13,9 @@ class LineItemSerializer(serializers.ModelSerializer):
             "quantity", "unit_price", "discount", "total_price", "notes",
         ]
         read_only_fields = ["id", "total_price"]
+        extra_kwargs = {
+            "unit_price": {"required": True},
+        }
 
 
 class ContactDealSerializer(serializers.ModelSerializer):
@@ -51,6 +54,10 @@ class DealSerializer(serializers.ModelSerializer):
             "is_archived", "created_at", "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+        extra_kwargs = {
+            "amount": {"required": True},
+            "expected_close_date": {"required": True},
+        }
 
     def get_contact_count(self, obj):
         return obj.contact_deals.count()
@@ -75,3 +82,8 @@ class ProductSerializer(serializers.ModelSerializer):
             "category", "unit", "tax_rate", "status", "created_at", "updated_at",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
+        extra_kwargs = {
+            "code": {"required": True},
+            "base_price": {"required": True},
+            "unit": {"required": True},
+        }

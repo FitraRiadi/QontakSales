@@ -71,6 +71,9 @@ export default function ProductsPage() {
   const handleSave = async () => {
     const errs = {};
     if (!form.name.trim()) errs.name = "Name is required";
+    if (!form.code.trim()) errs.code = "Code/SKU is required";
+    if (!form.base_price || parseFloat(form.base_price) <= 0) errs.base_price = "Base price is required";
+    if (!form.unit) errs.unit = "Unit is required";
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setSaving(true);
@@ -232,7 +235,11 @@ export default function ProductsPage() {
                     <Field.ErrorText>{errors.name}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Code/SKU (optional)</Field.Label><Input placeholder="SKU or code" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1} required invalid={!!errors.code}>
+                      <Field.Label>Code/SKU</Field.Label>
+                      <Input placeholder="SKU or code" value={form.code} onChange={(e) => { setErrors({ ...errors, code: undefined }); setForm({ ...form, code: e.target.value }); }} />
+                      <Field.ErrorText>{errors.code}</Field.ErrorText>
+                    </Field.Root>
                     <Field.Root flex={1}>
                       <Field.Label>Category (optional)</Field.Label>
                       <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
@@ -242,16 +249,21 @@ export default function ProductsPage() {
                     </Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Base Price (optional)</Field.Label><Input type="number" placeholder="0" value={form.base_price} onChange={(e) => setForm({ ...form, base_price: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1} required invalid={!!errors.base_price}>
+                      <Field.Label>Base Price</Field.Label>
+                      <Input type="number" placeholder="0" value={form.base_price} onChange={(e) => { setErrors({ ...errors, base_price: undefined }); setForm({ ...form, base_price: e.target.value }); }} />
+                      <Field.ErrorText>{errors.base_price}</Field.ErrorText>
+                    </Field.Root>
                     <Field.Root flex={1}><Field.Label>Cost (optional)</Field.Label><Input type="number" placeholder="0" value={form.cost} onChange={(e) => setForm({ ...form, cost: e.target.value })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}>
-                      <Field.Label>Unit (optional)</Field.Label>
-                      <select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <Field.Root flex={1} required invalid={!!errors.unit}>
+                      <Field.Label>Unit</Field.Label>
+                      <select value={form.unit} onChange={(e) => { setErrors({ ...errors, unit: undefined }); setForm({ ...form, unit: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                         <option value="">Select unit...</option>
                         {UNIT_OPTIONS.map((u) => <option key={u} value={u}>{u}</option>)}
                       </select>
+                      <Field.ErrorText>{errors.unit}</Field.ErrorText>
                     </Field.Root>
                     <Field.Root flex={1}><Field.Label>Tax Rate (%) (optional)</Field.Label><Input type="number" placeholder="0" value={form.tax_rate} onChange={(e) => setForm({ ...form, tax_rate: e.target.value })} /></Field.Root>
                   </HStack>

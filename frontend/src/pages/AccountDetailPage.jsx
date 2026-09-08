@@ -69,6 +69,9 @@ export default function AccountDetailPage() {
   const handleUpdate = async () => {
     const errs = {};
     if (!form.name?.trim()) errs.name = "Name is required";
+    if (!form.industry) errs.industry = "Industry is required";
+    if (!form.phone?.trim()) errs.phone = "Phone is required";
+    if (!form.email?.trim()) errs.email = "Email is required";
     if (Object.keys(errs).length > 0) { setEditErrors(errs); return; }
     setEditErrors({});
     setSaving(true);
@@ -128,6 +131,9 @@ export default function AccountDetailPage() {
   const handleSaveContact = async () => {
     const errs = {};
     if (!contactForm.first_name.trim()) errs.first_name = "First name is required";
+    if (!contactForm.last_name.trim()) errs.last_name = "Last name is required";
+    if (!contactForm.email.trim()) errs.email = "Email is required";
+    if (!contactForm.phone.trim()) errs.phone = "Phone is required";
     if (Object.keys(errs).length > 0) { setContactErrors(errs); return; }
     setContactErrors({});
     setContactSaving(true);
@@ -360,12 +366,24 @@ export default function AccountDetailPage() {
                     <Field.ErrorText>{editErrors.name}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Industry (optional)</Field.Label><select value={form.industry || ""} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
+                    <Field.Root flex={1} required invalid={!!editErrors.industry}>
+                      <Field.Label>Industry</Field.Label>
+                      <select value={form.industry || ""} onChange={(e) => { setEditErrors({ ...editErrors, industry: undefined }); setForm({ ...form, industry: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
+                      <Field.ErrorText>{editErrors.industry}</Field.ErrorText>
+                    </Field.Root>
                     <Field.Root flex={1}><Field.Label>Size (optional)</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Phone (optional)</Field.Label><Input placeholder="+62 xxx" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Email (optional)</Field.Label><Input type="email" placeholder="name@company.com" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1} required invalid={!!editErrors.phone}>
+                      <Field.Label>Phone</Field.Label>
+                      <Input placeholder="+62 xxx" value={form.phone || ""} onChange={(e) => { setEditErrors({ ...editErrors, phone: undefined }); setForm({ ...form, phone: e.target.value }); }} />
+                      <Field.ErrorText>{editErrors.phone}</Field.ErrorText>
+                    </Field.Root>
+                    <Field.Root flex={1} required invalid={!!editErrors.email}>
+                      <Field.Label>Email</Field.Label>
+                      <Input type="email" placeholder="name@company.com" value={form.email || ""} onChange={(e) => { setEditErrors({ ...editErrors, email: undefined }); setForm({ ...form, email: e.target.value }); }} />
+                      <Field.ErrorText>{editErrors.email}</Field.ErrorText>
+                    </Field.Root>
                   </HStack>
                   <Field.Root w="full"><Field.Label>Website (optional)</Field.Label><Input placeholder="https://..." value={form.website || ""} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field.Root>
                   <Field.Root w="full"><Field.Label>Address (optional)</Field.Label><Input placeholder="Street address" value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></Field.Root>
@@ -399,11 +417,23 @@ export default function AccountDetailPage() {
                       <Input placeholder="John" value={contactForm.first_name} onChange={(e) => { setContactErrors({}); setContactForm({ ...contactForm, first_name: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.first_name}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1}><Field.Label>Last Name (optional)</Field.Label><Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => setContactForm({ ...contactForm, last_name: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1} required invalid={!!contactErrors.last_name}>
+                      <Field.Label>Last Name</Field.Label>
+                      <Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => { setContactErrors({ ...contactErrors, last_name: undefined }); setContactForm({ ...contactForm, last_name: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.last_name}</Field.ErrorText>
+                    </Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Email (optional)</Field.Label><Input type="email" placeholder="john@company.com" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Phone (optional)</Field.Label><Input placeholder="+62 xxx" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1} required invalid={!!contactErrors.email}>
+                      <Field.Label>Email</Field.Label>
+                      <Input type="email" placeholder="john@company.com" value={contactForm.email} onChange={(e) => { setContactErrors({ ...contactErrors, email: undefined }); setContactForm({ ...contactForm, email: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.email}</Field.ErrorText>
+                    </Field.Root>
+                    <Field.Root flex={1} required invalid={!!contactErrors.phone}>
+                      <Field.Label>Phone</Field.Label>
+                      <Input placeholder="+62 xxx" value={contactForm.phone} onChange={(e) => { setContactErrors({ ...contactErrors, phone: undefined }); setContactForm({ ...contactForm, phone: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.phone}</Field.ErrorText>
+                    </Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Job Title (optional)</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
