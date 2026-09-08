@@ -10,11 +10,15 @@ class ActivityLogSerializer(serializers.ModelSerializer):
     deal_name = serializers.CharField(
         source="deal.name", read_only=True
     )
+    activity_type_display = serializers.SerializerMethodField()
 
     class Meta:
         model = ActivityLog
-        fields = ["id", "deal", "deal_name", "agent", "agent_name", "activity_type", "notes", "scheduled_at", "is_completed", "created_at"]
+        fields = ["id", "deal", "deal_name", "agent", "agent_name", "activity_type", "activity_type_display", "notes", "scheduled_at", "is_completed", "created_at"]
         read_only_fields = ["id", "agent", "created_at"]
+
+    def get_activity_type_display(self, obj):
+        return obj.get_activity_type_display()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

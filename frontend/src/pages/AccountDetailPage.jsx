@@ -16,7 +16,7 @@ import {
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { ArrowLeft, Buildings, Phone, Envelope, Globe, MapPin, PencilSimple, Plus, User } from "@phosphor-icons/react";
+import { ArrowLeft, Buildings, Phone, Envelope, Globe, MapPin, PencilSimple, Plus, User, CalendarBlank, Clock, CheckCircle, X } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
@@ -42,6 +42,12 @@ export default function AccountDetailPage() {
   const [contactForm, setContactForm] = useState({ first_name: "", last_name: "", email: "", phone: "", job_title: "", department: "", role_in_deal: "OTHER", notes: "" });
   const [contactSaving, setContactSaving] = useState(false);
 
+  const [activities, setActivities] = useState([]);
+  const [activityDialogOpen, setActivityDialogOpen] = useState(false);
+  const [activityForm, setActivityForm] = useState({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
+  const [availableDeals, setAvailableDeals] = useState([]);
+  const [activitySaving, setActivitySaving] = useState(false);
+
   const fetchAccount = () => {
     setLoading(true);
     api.get(`/accounts/${id}/`)
@@ -49,7 +55,13 @@ export default function AccountDetailPage() {
       .catch(() => { setLoading(false); toaster.create({ title: "Failed to load account", type: "error" }); });
   };
 
-  useEffect(() => { fetchAccount(); }, [id]);
+  const fetchActivities = () => {
+    api.get("/activities/", { params: { account_id: id } })
+      .then((r) => setActivities(r.data.results || r.data))
+      .catch(() => {});
+  };
+
+  useEffect(() => { fetchAccount(); fetchActivities(); }, [id]);
 
   const handleUpdate = async () => {
     setSaving(true);
@@ -111,6 +123,34 @@ export default function AccountDetailPage() {
       toaster.create({ title: "Failed to save contact", type: "error" });
     } finally {
       setContactSaving(false);
+    }
+  };
+
+  const openCreateActivity = () => {
+    setActivityForm({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
+    const deals = account?.deals || [];
+    setAvailableDeals(deals);
+    setActivityDialogOpen(true);
+  };
+
+  const handleSaveActivity = async () => {
+    if (!activityForm.deal) return toaster.create({ title: "Deal is required", type: "error" });
+    if (!activityForm.scheduled_at) return toaster.create({ title: "Schedule date/time is required", type: "error" });
+    setActivitySaving(true);
+    try {
+      await api.post("/activities/", {
+        activity_type: activityForm.activity_type,
+        deal: parseInt(activityForm.deal),
+        notes: activityForm.notes,
+        scheduled_at: activityForm.scheduled_at,
+      });
+      toaster.create({ title: "Activity created", type: "success" });
+      setActivityDialogOpen(false);
+      fetchActivities();
+    } catch {
+      toaster.create({ title: "Failed to create activity", type: "error" });
+    } finally {
+      setActivitySaving(false);
     }
   };
 
@@ -226,6 +266,40 @@ export default function AccountDetailPage() {
               </VStack>
             </Card.Body>
           </Card.Root>
+
+          <Card.Root bg="white" border="1px solid" borderColor="border">
+            <Card.Header>
+              <HStack justify="space-between">
+                <Heading size="sm">Activity Log ({activities.length})</Heading>
+                <Button size="xs" bg="primary" color="white" onClick={openCreateActivity}><Plus size={12} /> New</Button>
+              </HStack>
+            </Card.Header>
+            <Card.Body>
+              {activities.length === 0 ? (
+                <Text fontSize="sm" color="gray.500">No activities yet</Text>
+              ) : (
+                <VStack gap={3} align="stretch">
+                  {activities.slice(0, 10).map((a) => (
+                    <HStack key={a.id} p={3} bg="muted" borderRadius="lg" justify="space-between">
+                      <HStack gap={3}>
+                        <Box w={8} h={8} borderRadius="full" bg={a.activity_type === "MEETING" ? "yellow.500" : a.activity_type === "CALL" ? "blue.500" : a.activity_type === "EMAIL" ? "purple.500" : a.activity_type === "FOLLOW_UP" ? "green.500" : "gray.500"} color="white" display="flex" alignItems="center" justifyContent="center">
+                          {a.activity_type === "MEETING" ? <CalendarBlank size={14} /> : a.activity_type === "CALL" ? <Phone size={14} /> : a.activity_type === "EMAIL" ? <Envelope size={14} /> : <Clock size={14} />}
+                        </Box>
+                        <VStack align="start" gap={0}>
+                          <Text fontWeight="medium" fontSize="sm">{a.activity_type_display || a.activity_type}: {a.deal_name || ""}</Text>
+                          {a.notes && <Text fontSize="xs" color="gray.500" noOfLines={1}>{a.notes}</Text>}
+                          {a.scheduled_at && <Text fontSize="xs" color="gray.400">{new Date(a.scheduled_at).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</Text>}
+                        </VStack>
+                      </HStack>
+                      <Badge size="sm" colorPalette={a.is_completed ? "green" : "orange"} borderRadius="full">
+                        {a.is_completed ? "Done" : "Pending"}
+                      </Badge>
+                    </HStack>
+                  ))}
+                </VStack>
+              )}
+            </Card.Body>
+          </Card.Root>
         </VStack>
       </Box>
 
@@ -289,6 +363,50 @@ export default function AccountDetailPage() {
               <Dialog.Footer>
                 <Dialog.CloseTrigger asChild><Button variant="outline" mr={3}>Cancel</Button></Dialog.CloseTrigger>
                 <Button bg="primary" color="white" onClick={handleSaveContact} loading={contactSaving}>{editContact ? "Update" : "Create"}</Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+
+      <Dialog.Root open={activityDialogOpen} onOpenChange={(e) => setActivityDialogOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="500px">
+              <Dialog.Header><Dialog.Title>New Activity</Dialog.Title></Dialog.Header>
+              <Dialog.Body>
+                <VStack gap={4}>
+                  <Field.Root required>
+                    <Field.Label>Activity Type</Field.Label>
+                    <select value={activityForm.activity_type} onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <option value="CALL">Call</option>
+                      <option value="EMAIL">Email</option>
+                      <option value="MEETING">Meeting</option>
+                      <option value="NOTE">Note</option>
+                      <option value="FOLLOW_UP">Follow Up</option>
+                    </select>
+                  </Field.Root>
+                  <Field.Root required>
+                    <Field.Label>Deal</Field.Label>
+                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <option value="">Select deal...</option>
+                      {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+                    </select>
+                  </Field.Root>
+                  <Field.Root required>
+                    <Field.Label>Schedule Date & Time</Field.Label>
+                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => setActivityForm({ ...activityForm, scheduled_at: e.target.value })} />
+                  </Field.Root>
+                  <Field.Root w="full">
+                    <Field.Label>Notes</Field.Label>
+                    <textarea value={activityForm.notes} onChange={(e) => setActivityForm({ ...activityForm, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                  </Field.Root>
+                </VStack>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild><Button variant="outline" mr={3}>Cancel</Button></Dialog.CloseTrigger>
+                <Button bg="primary" color="white" onClick={handleSaveActivity} loading={activitySaving}>Create</Button>
               </Dialog.Footer>
             </Dialog.Content>
           </Dialog.Positioner>
