@@ -232,9 +232,9 @@ export default function ProductsPage() {
                     <Field.ErrorText>{errors.name}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Code/SKU</Field.Label><Input placeholder="SKU or code" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Code/SKU (optional)</Field.Label><Input placeholder="SKU or code" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field.Root>
                     <Field.Root flex={1}>
-                      <Field.Label>Category</Field.Label>
+                      <Field.Label>Category (optional)</Field.Label>
                       <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                         <option value="">Select category...</option>
                         {PRODUCT_CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
@@ -242,20 +242,20 @@ export default function ProductsPage() {
                     </Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Base Price</Field.Label><Input type="number" placeholder="0" value={form.base_price} onChange={(e) => setForm({ ...form, base_price: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Cost</Field.Label><Input type="number" placeholder="0" value={form.cost} onChange={(e) => setForm({ ...form, cost: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Base Price (optional)</Field.Label><Input type="number" placeholder="0" value={form.base_price} onChange={(e) => setForm({ ...form, base_price: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Cost (optional)</Field.Label><Input type="number" placeholder="0" value={form.cost} onChange={(e) => setForm({ ...form, cost: e.target.value })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}>
-                      <Field.Label>Unit</Field.Label>
+                      <Field.Label>Unit (optional)</Field.Label>
                       <select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                         <option value="">Select unit...</option>
                         {UNIT_OPTIONS.map((u) => <option key={u} value={u}>{u}</option>)}
                       </select>
                     </Field.Root>
-                    <Field.Root flex={1}><Field.Label>Tax Rate (%)</Field.Label><Input type="number" placeholder="0" value={form.tax_rate} onChange={(e) => setForm({ ...form, tax_rate: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Tax Rate (%) (optional)</Field.Label><Input type="number" placeholder="0" value={form.tax_rate} onChange={(e) => setForm({ ...form, tax_rate: e.target.value })} /></Field.Root>
                   </HStack>
-                  <Field.Root w="full"><Field.Label>Description</Field.Label><textarea placeholder="Product description..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Description (optional)</Field.Label><textarea placeholder="Product description..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
                 </VStack>
               </Dialog.Body>
               <Dialog.Footer>

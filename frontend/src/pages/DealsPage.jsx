@@ -200,11 +200,11 @@ export default function DealsPage() {
                     <Field.ErrorText>{errors.company}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Amount (Rp)</Field.Label><Input type="number" placeholder="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Expected Close</Field.Label><Input type="date" value={form.expected_close_date} onChange={(e) => setForm({ ...form, expected_close_date: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Amount (Rp) (optional)</Field.Label><Input type="number" placeholder="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Expected Close (optional)</Field.Label><Input type="date" value={form.expected_close_date} onChange={(e) => setForm({ ...form, expected_close_date: e.target.value })} /></Field.Root>
                   </HStack>
-                  <Field.Root w="full"><Field.Label>Source</Field.Label><Input placeholder="e.g. Website, Referral, Cold Call" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} /></Field.Root>
-                  <Field.Root w="full"><Field.Label>Description</Field.Label><textarea placeholder="Deal description..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Source (optional)</Field.Label><Input placeholder="e.g. Website, Referral, Cold Call" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Description (optional)</Field.Label><textarea placeholder="Deal description..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
                 </VStack>
               </Dialog.Body>
               <Dialog.Footer>

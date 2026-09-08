@@ -167,8 +167,6 @@ export default function AccountDetailPage() {
 
   const handleSaveActivity = async () => {
     const errs = {};
-    if (!activityForm.deal) errs.deal = "Deal is required";
-    if (!activityForm.scheduled_at) errs.scheduled_at = "Schedule date/time is required";
     if (!activityForm.notes.trim()) errs.notes = "Notes are required";
     if (Object.keys(errs).length > 0) { setActivityErrors(errs); return; }
     setActivityErrors({});
@@ -176,9 +174,9 @@ export default function AccountDetailPage() {
     try {
       await api.post("/activities/", {
         activity_type: activityForm.activity_type,
-        deal: parseInt(activityForm.deal),
+        deal: activityForm.deal ? parseInt(activityForm.deal) : null,
         notes: activityForm.notes,
-        scheduled_at: activityForm.scheduled_at,
+        scheduled_at: activityForm.scheduled_at || null,
       });
       toaster.create({ title: "Activity created", type: "success" });
       setActivityDialogOpen(false);
@@ -362,19 +360,19 @@ export default function AccountDetailPage() {
                     <Field.ErrorText>{editErrors.name}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Industry</Field.Label><select value={form.industry || ""} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Size</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Industry (optional)</Field.Label><select value={form.industry || ""} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Size (optional)</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Phone</Field.Label><Input placeholder="+62 xxx" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Email</Field.Label><Input type="email" placeholder="name@company.com" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Phone (optional)</Field.Label><Input placeholder="+62 xxx" value={form.phone || ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Email (optional)</Field.Label><Input type="email" placeholder="name@company.com" value={form.email || ""} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field.Root>
                   </HStack>
-                  <Field.Root w="full"><Field.Label>Website</Field.Label><Input placeholder="https://..." value={form.website || ""} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field.Root>
-                  <Field.Root w="full"><Field.Label>Address</Field.Label><Input placeholder="Street address" value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Website (optional)</Field.Label><Input placeholder="https://..." value={form.website || ""} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Address (optional)</Field.Label><Input placeholder="Street address" value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>City</Field.Label><Input placeholder="Jakarta" value={form.city || ""} onChange={(e) => setForm({ ...form, city: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Country</Field.Label><Input placeholder="Indonesia" value={form.country || ""} onChange={(e) => setForm({ ...form, country: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Revenue</Field.Label><Input type="number" placeholder="0" value={form.annual_revenue || ""} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>City (optional)</Field.Label><Input placeholder="Jakarta" value={form.city || ""} onChange={(e) => setForm({ ...form, city: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Country (optional)</Field.Label><Input placeholder="Indonesia" value={form.country || ""} onChange={(e) => setForm({ ...form, country: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Revenue (optional)</Field.Label><Input type="number" placeholder="0" value={form.annual_revenue || ""} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} /></Field.Root>
                   </HStack>
                 </VStack>
               </Dialog.Body>
@@ -401,15 +399,15 @@ export default function AccountDetailPage() {
                       <Input placeholder="John" value={contactForm.first_name} onChange={(e) => { setContactErrors({}); setContactForm({ ...contactForm, first_name: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.first_name}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1}><Field.Label>Last Name</Field.Label><Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => setContactForm({ ...contactForm, last_name: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Last Name (optional)</Field.Label><Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => setContactForm({ ...contactForm, last_name: e.target.value })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Email</Field.Label><Input type="email" placeholder="john@company.com" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Phone</Field.Label><Input placeholder="+62 xxx" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Email (optional)</Field.Label><Input type="email" placeholder="john@company.com" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Phone (optional)</Field.Label><Input placeholder="+62 xxx" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Job Title</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Role in Deal</Field.Label><select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Job Title (optional)</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Role in Deal (optional)</Field.Label><select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
                   </HStack>
                 </VStack>
               </Dialog.Body>
@@ -440,17 +438,17 @@ export default function AccountDetailPage() {
                       <option value="FOLLOW_UP">Follow Up</option>
                     </select>
                   </Field.Root>
-                  <Field.Root required invalid={!!activityErrors.deal}>
-                    <Field.Label>Deal</Field.Label>
-                    <select value={activityForm.deal} onChange={(e) => { setActivityErrors({ ...activityErrors, deal: undefined }); setActivityForm({ ...activityForm, deal: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                  <Field.Root>
+                    <Field.Label>Deal (optional)</Field.Label>
+                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                       <option value="">Select deal...</option>
                       {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                     </select>
                     <Field.ErrorText>{activityErrors.deal}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root required invalid={!!activityErrors.scheduled_at}>
-                    <Field.Label>Schedule Date & Time</Field.Label>
-                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => { setActivityErrors({ ...activityErrors, scheduled_at: undefined }); setActivityForm({ ...activityForm, scheduled_at: e.target.value }); }} />
+                  <Field.Root>
+                    <Field.Label>Schedule Date & Time (optional)</Field.Label>
+                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => setActivityForm({ ...activityForm, scheduled_at: e.target.value })} />
                     <Field.ErrorText>{activityErrors.scheduled_at}</Field.ErrorText>
                   </Field.Root>
                   <Field.Root w="full" required invalid={!!activityErrors.notes}>

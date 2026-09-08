@@ -248,8 +248,6 @@ export default function CalendarPage() {
 
   const handleSaveActivity = async () => {
     const errs = {};
-    if (!activityForm.deal) errs.deal = "Deal is required";
-    if (!activityForm.scheduled_at) errs.scheduled_at = "Schedule date/time is required";
     if (!activityForm.notes.trim()) errs.notes = "Notes are required";
     if (Object.keys(errs).length > 0) { setActivityErrors(errs); return; }
     setActivityErrors({});
@@ -257,9 +255,9 @@ export default function CalendarPage() {
     try {
       await api.post("/activities/", {
         activity_type: activityForm.activity_type,
-        deal: parseInt(activityForm.deal),
+        deal: activityForm.deal ? parseInt(activityForm.deal) : null,
         notes: activityForm.notes,
-        scheduled_at: activityForm.scheduled_at,
+        scheduled_at: activityForm.scheduled_at || null,
       });
       toaster.create({ title: "Activity created", type: "success" });
       setActivityDialogOpen(false);
@@ -598,17 +596,17 @@ export default function CalendarPage() {
                       <option value="FOLLOW_UP">Follow Up</option>
                     </select>
                   </Field.Root>
-                  <Field.Root required invalid={!!activityErrors.deal}>
-                    <Field.Label>Deal</Field.Label>
-                    <select value={activityForm.deal} onChange={(e) => { setActivityErrors({ ...activityErrors, deal: undefined }); setActivityForm({ ...activityForm, deal: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                  <Field.Root>
+                    <Field.Label>Deal (optional)</Field.Label>
+                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                       <option value="">Select deal...</option>
                       {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name} - {d.company_name}</option>)}
                     </select>
                     <Field.ErrorText>{activityErrors.deal}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root required invalid={!!activityErrors.scheduled_at}>
-                    <Field.Label>Schedule Date & Time</Field.Label>
-                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => { setActivityErrors({ ...activityErrors, scheduled_at: undefined }); setActivityForm({ ...activityForm, scheduled_at: e.target.value }); }} />
+                  <Field.Root>
+                    <Field.Label>Schedule Date & Time (optional)</Field.Label>
+                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => setActivityForm({ ...activityForm, scheduled_at: e.target.value })} />
                     <Field.ErrorText>{activityErrors.scheduled_at}</Field.ErrorText>
                   </Field.Root>
                   <Field.Root w="full" required invalid={!!activityErrors.notes}>

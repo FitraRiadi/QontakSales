@@ -224,6 +224,7 @@ export default function DealDetailPage() {
   const handleSaveLineItem = async () => {
     const errs = {};
     if (!lineItemForm.product) errs.product = "Product is required";
+    if (!lineItemForm.unit_price || lineItemForm.unit_price <= 0) errs.unit_price = "Unit price is required";
     if (Object.keys(errs).length > 0) { setLineItemErrors(errs); return; }
     setLineItemErrors({});
     setLineItemSaving(true);
@@ -466,20 +467,20 @@ export default function DealDetailPage() {
                     <Field.ErrorText>{editErrors.name}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Amount (Rp)</Field.Label><Input type="number" placeholder="0" value={editForm.amount || ""} onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Probability (%)</Field.Label><Input type="number" placeholder="0-100" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Amount (Rp) (optional)</Field.Label><Input type="number" placeholder="0" value={editForm.amount || ""} onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Probability (%) (optional)</Field.Label><Input type="number" placeholder="0-100" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Stage</Field.Label><select value={editForm.stage || ""} onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{STAGE_CHOICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Expected Close</Field.Label><Input type="date" value={editForm.expected_close_date || ""} onChange={(e) => setEditForm({ ...editForm, expected_close_date: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Stage (optional)</Field.Label><select value={editForm.stage || ""} onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{STAGE_CHOICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Expected Close (optional)</Field.Label><Input type="date" value={editForm.expected_close_date || ""} onChange={(e) => setEditForm({ ...editForm, expected_close_date: e.target.value })} /></Field.Root>
                   </HStack>
                   {editForm.stage === "LOST" && (
                     <HStack gap={4} w="full">
-                      <Field.Root flex={1}><Field.Label>Lost Reason</Field.Label><select value={editForm.lost_reason || ""} onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{LOST_REASON_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field.Root>
-                      <Field.Root flex={1}><Field.Label>Lost Notes</Field.Label><Input placeholder="Why was this deal lost?" value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
+                      <Field.Root flex={1}><Field.Label>Lost Reason (optional)</Field.Label><select value={editForm.lost_reason || ""} onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{LOST_REASON_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field.Root>
+                      <Field.Root flex={1}><Field.Label>Lost Notes (optional)</Field.Label><Input placeholder="Why was this deal lost?" value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
                     </HStack>
                   )}
-                  <Field.Root w="full"><Field.Label>Description</Field.Label><textarea placeholder="Deal description..." value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Description (optional)</Field.Label><textarea placeholder="Deal description..." value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
                 </VStack>
               </Dialog.Body>
               <Dialog.Footer>
@@ -508,7 +509,7 @@ export default function DealDetailPage() {
                     <Field.ErrorText>{contactErrors.contact}</Field.ErrorText>
                   </Field.Root>
                   <Field.Root>
-                    <Field.Label>Role in Deal</Field.Label>
+                    <Field.Label>Role in Deal (optional)</Field.Label>
                     <select value={contactDealForm.role} onChange={(e) => setContactDealForm({ ...contactDealForm, role: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                       {ROLE_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                     </select>
@@ -545,10 +546,14 @@ export default function DealDetailPage() {
                     <Field.ErrorText>{lineItemErrors.product}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Quantity</Field.Label><Input type="number" placeholder="1" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Unit Price (Rp)</Field.Label><Input type="number" placeholder="0" value={lineItemForm.unit_price} onChange={(e) => setLineItemForm({ ...lineItemForm, unit_price: parseFloat(e.target.value) || 0 })} /></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Quantity (optional)</Field.Label><Input type="number" placeholder="1" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>
+                    <Field.Root flex={1} required invalid={!!lineItemErrors.unit_price}>
+                      <Field.Label>Unit Price (Rp)</Field.Label>
+                      <Input type="number" placeholder="0" value={lineItemForm.unit_price} onChange={(e) => { setLineItemErrors({ ...lineItemErrors, unit_price: undefined }); setLineItemForm({ ...lineItemForm, unit_price: parseFloat(e.target.value) || 0 }); }} />
+                      <Field.ErrorText>{lineItemErrors.unit_price}</Field.ErrorText>
+                    </Field.Root>
                   </HStack>
-                  <Field.Root w="full"><Field.Label>Discount (%)</Field.Label><Input type="number" placeholder="0" min={0} max={100} value={lineItemForm.discount} onChange={(e) => { const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)); setLineItemForm({ ...lineItemForm, discount: v }); }} /></Field.Root>
+                  <Field.Root w="full"><Field.Label>Discount (%) (optional)</Field.Label><Input type="number" placeholder="0" min={0} max={100} value={lineItemForm.discount} onChange={(e) => { const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)); setLineItemForm({ ...lineItemForm, discount: v }); }} /></Field.Root>
                   <HStack justify="space-between" w="full" p={3} bg="muted" borderRadius="lg">
                     <Text fontSize="sm" fontWeight="bold">Total:</Text>
                     <Text fontSize="sm" fontWeight="bold" color="primary">Rp {Math.round(lineItemForm.unit_price * lineItemForm.quantity * (1 - lineItemForm.discount / 100)).toLocaleString("id-ID")}</Text>

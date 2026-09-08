@@ -254,14 +254,14 @@ export default function AccountsPage() {
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4} w="full">
                     <Field.Root>
-                      <Field.Label>Industry</Field.Label>
+                      <Field.Label>Industry (optional)</Field.Label>
                       <select value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                         <option value="">Select...</option>
                         {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                       </select>
                     </Field.Root>
                     <Field.Root>
-                      <Field.Label>Size</Field.Label>
+                      <Field.Label>Size (optional)</Field.Label>
                       <select value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                         <option value="">Select...</option>
                         <option value="1-10">1-10 employees</option>
@@ -273,45 +273,45 @@ export default function AccountsPage() {
                     </Field.Root>
                   </SimpleGrid>
                   <Field.Root>
-                    <Field.Label>Type</Field.Label>
+                    <Field.Label>Type (optional)</Field.Label>
                     <select value={form.account_type} onChange={(e) => setForm({ ...form, account_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                       {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4} w="full">
                     <Field.Root>
-                      <Field.Label>Phone</Field.Label>
+                      <Field.Label>Phone (optional)</Field.Label>
                       <Input placeholder="+62 xxx" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                     </Field.Root>
                     <Field.Root>
-                      <Field.Label>Email</Field.Label>
+                      <Field.Label>Email (optional)</Field.Label>
                       <Input type="email" placeholder="name@company.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                     </Field.Root>
                   </SimpleGrid>
                   <Field.Root>
-                    <Field.Label>Website</Field.Label>
+                    <Field.Label>Website (optional)</Field.Label>
                     <Input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} placeholder="https://..." />
                   </Field.Root>
                   <Field.Root>
-                    <Field.Label>Address</Field.Label>
+                    <Field.Label>Address (optional)</Field.Label>
                     <Input placeholder="Street address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
                   </Field.Root>
                   <SimpleGrid columns={3} gap={4} w="full">
                     <Field.Root>
-                      <Field.Label>City</Field.Label>
+                      <Field.Label>City (optional)</Field.Label>
                       <Input placeholder="Jakarta" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
                     </Field.Root>
                     <Field.Root>
-                      <Field.Label>Country</Field.Label>
+                      <Field.Label>Country (optional)</Field.Label>
                       <Input placeholder="Indonesia" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} />
                     </Field.Root>
                     <Field.Root>
-                      <Field.Label>Annual Revenue</Field.Label>
+                      <Field.Label>Annual Revenue (optional)</Field.Label>
                       <Input type="number" placeholder="0" value={form.annual_revenue} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} />
                     </Field.Root>
                   </SimpleGrid>
                   <Field.Root w="full">
-                    <Field.Label>Notes</Field.Label>
+                    <Field.Label>Notes (optional)</Field.Label>
                     <textarea placeholder="Additional notes..." value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
                   </Field.Root>
                 </VStack>
