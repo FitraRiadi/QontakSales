@@ -17,7 +17,7 @@ import {
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { Plus, MagnifyingGlass, Phone, Envelope, User } from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass, Phone, Envelope, User, PhoneCall, ChatCircle, X } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
@@ -31,6 +31,8 @@ export default function ContactsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("");
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
 
   const fetchContacts = () => {
     setLoading(true);
@@ -64,7 +66,7 @@ export default function ContactsPage() {
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
           {contacts.map((c) => (
-            <Card.Root key={c.id} bg="white" border="1px solid" borderColor="border" _hover={{ borderColor: "primary" }} transition="all 150ms ease">
+            <Card.Root key={c.id} bg="white" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", boxShadow: "lg" }} transition="all 150ms ease" cursor="pointer" onClick={() => { setSelectedContact(c); setContactDialogOpen(true); }}>
               <Card.Body>
                 <HStack gap={3} mb={2}>
                   <Box w={10} h={10} borderRadius="full" bg="primary" color="white" display="flex" alignItems="center" justifyContent="center"><User size={18} /></Box>
@@ -84,6 +86,60 @@ export default function ContactsPage() {
           ))}
         </SimpleGrid>
       )}
+      <Dialog.Root open={contactDialogOpen} onOpenChange={(e) => setContactDialogOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="400px">
+              <Dialog.Header>
+                <HStack justify="space-between">
+                  <Dialog.Title>{selectedContact ? `${selectedContact.first_name} ${selectedContact.last_name}` : "Contact Detail"}</Dialog.Title>
+                  <Button variant="ghost" size="sm" onClick={() => setContactDialogOpen(false)}><X size={16} /></Button>
+                </HStack>
+              </Dialog.Header>
+              <Dialog.Body>
+                {selectedContact && (
+                  <VStack gap={4} align="stretch">
+                    <HStack gap={3}>
+                      <Box w={12} h={12} borderRadius="full" bg="primary" color="white" display="flex" alignItems="center" justifyContent="center"><User size={22} /></Box>
+                      <VStack align="start" gap={1} flex={1}>
+                        <Text fontWeight="bold" fontSize="lg">{selectedContact.first_name} {selectedContact.last_name}</Text>
+                        {selectedContact.job_title && <Text fontSize="sm" color="gray.500">{selectedContact.job_title}</Text>}
+                        {selectedContact.account_name && <Text fontSize="sm" color="gray.400">{selectedContact.account_name}</Text>}
+                      </VStack>
+                    </HStack>
+                    <Box borderBottom="1px solid" borderColor="border" w="full" my={2} />
+                    <VStack align="start" gap={3}>
+                      {selectedContact.phone && (
+                        <HStack gap={3}>
+                          <PhoneCall size={20} color="primary" />
+                          <VStack align="start" gap={1} flex={1}>
+                            <Text fontSize="sm" color="gray.500">Phone</Text>
+                            <HStack gap={2}>
+                              <Text fontSize="sm" fontWeight="medium">{selectedContact.phone}</Text>
+                              <Button size="xs" leftIcon={<PhoneCall size={12} />} variant="solid" bg="green.500" color="white" onClick={() => window.open(`tel:${selectedContact.phone.replace(/\s/g, "")}`)}>Call</Button>
+                              <Button size="xs" leftIcon={<ChatCircle size={12} />} variant="outline" color="green.500" borderColor="green.500" onClick={() => window.open(`https://wa.me/${selectedContact.phone.replace(/\D/g, "")}`)}>WhatsApp</Button>
+                            </HStack>
+                          </VStack>
+                        </HStack>
+                      )}
+                      {selectedContact.email && (
+                        <HStack gap={3}>
+                          <Envelope size={20} color="primary" />
+                          <VStack align="start" gap={1} flex={1}>
+                            <Text fontSize="sm" color="gray.500">Email</Text>
+                            <Button size="xs" leftIcon={<ChatCircle size={12} />} variant="outline" color="blue.500" borderColor="blue.500" onClick={() => window.open(`mailto:${selectedContact.email}`)}>{selectedContact.email}</Button>
+                          </VStack>
+                        </HStack>
+                      )}
+                    </VStack>
+                  </VStack>
+                )}
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </VStack>
   );
 }

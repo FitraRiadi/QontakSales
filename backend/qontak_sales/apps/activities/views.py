@@ -17,7 +17,15 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(agent=self.request.user)
+        activity = serializer.save(agent=self.request.user)
+        # Notify managers about new activity
+        from django.contrib.auth import get_user_model
+        from qontak_sales.apps.notifications.views import create_notification
+        User = get_user_model()
+        managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
+        for mgr in managers:
+            if mgr != self.request.user:
+                create_notification(mgr, "New Activity Scheduled", f"{activity.get_activity_type_display()} for deal '{activity.deal.name}' scheduled by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{activity.deal.id}")
 
     @action(detail=True, methods=["post"])
     def cancel(self, request, pk=None):

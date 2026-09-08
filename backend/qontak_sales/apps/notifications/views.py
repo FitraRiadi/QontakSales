@@ -5,6 +5,11 @@ from .models import Notification
 from .serializers import NotificationSerializer
 
 
+def create_notification(user, title, message, link=None):
+    """Helper to create a notification for a user."""
+    return Notification.objects.create(user=user, title=title, message=message, link=link)
+
+
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
 

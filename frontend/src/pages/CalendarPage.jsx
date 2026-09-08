@@ -14,7 +14,7 @@ import {
   Spinner,
   createToaster,
 } from "@chakra-ui/react";
-import { CaretLeft, CaretRight, CalendarBlank, X, SquaresFour, List } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, CalendarBlank, X, SquaresFour, List, Plus } from "@phosphor-icons/react";
 import {
   format,
   startOfMonth,
@@ -161,6 +161,10 @@ export default function CalendarPage() {
   const [viewMode, setViewMode] = useState("month");
   const [yearPickerOpen, setYearPickerOpen] = useState(false);
   const [decadeStart, setDecadeStart] = useState(() => Math.floor(new Date().getFullYear() / 10) * 10);
+  const [activityDialogOpen, setActivityDialogOpen] = useState(false);
+  const [activityForm, setActivityForm] = useState({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
+  const [availableDeals, setAvailableDeals] = useState([]);
+  const [activitySaving, setActivitySaving] = useState(false);
 
   const fetchMonthEvents = useCallback(() => {
     setLoading(true);
@@ -229,20 +233,54 @@ export default function CalendarPage() {
     }
   };
 
+  const openCreateActivity = async () => {
+    setActivityForm({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
+    try {
+      const res = await api.get("/deals/");
+      setAvailableDeals(res.data.results || res.data);
+    } catch { setAvailableDeals([]); }
+    setActivityDialogOpen(true);
+  };
+
+  const handleSaveActivity = async () => {
+    if (!activityForm.deal) return toaster.create({ title: "Deal is required", type: "error" });
+    if (!activityForm.scheduled_at) return toaster.create({ title: "Schedule date/time is required", type: "error" });
+    setActivitySaving(true);
+    try {
+      await api.post("/activities/", {
+        activity_type: activityForm.activity_type,
+        deal: parseInt(activityForm.deal),
+        notes: activityForm.notes,
+        scheduled_at: activityForm.scheduled_at,
+      });
+      toaster.create({ title: "Activity created", type: "success" });
+      setActivityDialogOpen(false);
+      if (viewMode === "month") fetchMonthEvents();
+      else fetchYearEvents();
+    } catch {
+      toaster.create({ title: "Failed to create activity", type: "error" });
+    } finally {
+      setActivitySaving(false);
+    }
+  };
+
   const year = getYear(currentDate);
 
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
         <Heading size="lg" color="foreground">Calendar</Heading>
-        <Button
-          size="sm"
-          variant="outline"
-          leftIcon={viewMode === "month" ? <SquaresFour size={16} /> : <List size={16} />}
-          onClick={() => setViewMode(viewMode === "month" ? "year" : "month")}
-        >
-          {viewMode === "month" ? "Year View" : "Month View"}
-        </Button>
+        <HStack gap={2}>
+          <Button size="sm" bg="primary" color="white" onClick={openCreateActivity}><Plus size={14} /> New Activity</Button>
+          <Button
+            size="sm"
+            variant="outline"
+            leftIcon={viewMode === "month" ? <SquaresFour size={16} /> : <List size={16} />}
+            onClick={() => setViewMode(viewMode === "month" ? "year" : "month")}
+          >
+            {viewMode === "month" ? "Year View" : "Month View"}
+          </Button>
+        </HStack>
       </HStack>
 
       <Card.Root bg="white" border="1px solid" borderColor="border">
@@ -519,6 +557,50 @@ export default function CalendarPage() {
                 <Dialog.CloseTrigger asChild>
                   <Button variant="outline" size="sm">Close</Button>
                 </Dialog.CloseTrigger>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+
+      <Dialog.Root open={activityDialogOpen} onOpenChange={(e) => setActivityDialogOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="500px">
+              <Dialog.Header><Dialog.Title>New Activity</Dialog.Title></Dialog.Header>
+              <Dialog.Body>
+                <VStack gap={4}>
+                  <Field.Root required>
+                    <Field.Label>Activity Type</Field.Label>
+                    <select value={activityForm.activity_type} onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <option value="CALL">Call</option>
+                      <option value="EMAIL">Email</option>
+                      <option value="MEETING">Meeting</option>
+                      <option value="NOTE">Note</option>
+                      <option value="FOLLOW_UP">Follow Up</option>
+                    </select>
+                  </Field.Root>
+                  <Field.Root required>
+                    <Field.Label>Deal</Field.Label>
+                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <option value="">Select deal...</option>
+                      {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name} - {d.company_name}</option>)}
+                    </select>
+                  </Field.Root>
+                  <Field.Root required>
+                    <Field.Label>Schedule Date & Time</Field.Label>
+                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => setActivityForm({ ...activityForm, scheduled_at: e.target.value })} />
+                  </Field.Root>
+                  <Field.Root w="full">
+                    <Field.Label>Notes</Field.Label>
+                    <textarea value={activityForm.notes} onChange={(e) => setActivityForm({ ...activityForm, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                  </Field.Root>
+                </VStack>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild><Button variant="outline" mr={3}>Cancel</Button></Dialog.CloseTrigger>
+                <Button bg="primary" color="white" onClick={handleSaveActivity} loading={activitySaving}>Create</Button>
               </Dialog.Footer>
             </Dialog.Content>
           </Dialog.Positioner>

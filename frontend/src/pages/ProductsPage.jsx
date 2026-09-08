@@ -16,10 +16,20 @@ import {
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { Plus, Package, PencilSimple, Trash } from "@phosphor-icons/react";
+import { Plus, Package, PencilSimple, Trash, CurrencyDollar, Percent, X } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top-end" });
+
+const PRODUCT_CATEGORIES = [
+  "Software",
+  "Hardware",
+  "Service",
+  "Training",
+  "License",
+  "Support",
+  "Other",
+];
 
 const EMPTY_FORM = { name: "", code: "", description: "", base_price: "", cost: "", category: "", unit: "pcs", tax_rate: "0", status: "ACTIVE" };
 
@@ -32,6 +42,8 @@ export default function ProductsPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(null);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchProducts = () => {
     setLoading(true);
@@ -100,7 +112,7 @@ export default function ProductsPage() {
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
           {products.map((p) => (
-            <Card.Root key={p.id} bg="white" border="1px solid" borderColor="border" _hover={{ borderColor: "primary" }} transition="all 150ms ease">
+            <Card.Root key={p.id} bg="white" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", boxShadow: "lg" }} transition="all 150ms ease" cursor="pointer" onClick={() => { setSelectedProduct(p); setPreviewDialogOpen(true); }}>
               <Card.Body>
                 <HStack justify="space-between" mb={2}>
                   <Heading size="sm" noOfLines={1}>{p.name}</Heading>
@@ -114,7 +126,7 @@ export default function ProductsPage() {
                     <Text fontWeight="bold" fontSize="sm" color="primary">Rp {Number(p.base_price).toLocaleString("id-ID")}</Text>
                   </VStack>
                   <HStack gap={1}>
-                    <Button size="xs" variant="ghost" onClick={(e) => openEdit(p, e)}><PencilSimple size={12} /></Button>
+                    <Button size="xs" variant="ghost" onClick={(e) => { e.stopPropagation(); openEdit(p, e); }}><PencilSimple size={12} /></Button>
                     <Button size="xs" variant="ghost" color="red.500" onClick={(e) => { e.stopPropagation(); setDeleteDialog(p); }}><Trash size={12} /></Button>
                   </HStack>
                 </HStack>
@@ -123,6 +135,72 @@ export default function ProductsPage() {
           ))}
         </SimpleGrid>
       )}
+      <Dialog.Root open={previewDialogOpen} onOpenChange={(e) => setPreviewDialogOpen(e.open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="500px">
+              <Dialog.Header>
+                <HStack justify="space-between">
+                  <Dialog.Title>{selectedProduct ? selectedProduct.name : "Product Detail"}</Dialog.Title>
+                  <Button variant="ghost" size="sm" onClick={() => setPreviewDialogOpen(false)}><X size={16} /></Button>
+                </HStack>
+              </Dialog.Header>
+              <Dialog.Body>
+                {selectedProduct && (
+                  <VStack gap={4} align="stretch">
+                    <HStack justify="space-between">
+                      <VStack align="start" gap={1} flex={1}>
+                        <Text fontWeight="bold" fontSize="xl">{selectedProduct.name}</Text>
+                        {selectedProduct.code && <Text fontSize="sm" color="gray.500">SKU: {selectedProduct.code}</Text>}
+                        {selectedProduct.category && <Badge colorPalette="blue" size="sm">{selectedProduct.category}</Badge>}
+                      </VStack>
+                      <Badge colorPalette={selectedProduct.status === "ACTIVE" ? "green" : "gray"} size="md">{selectedProduct.status}</Badge>
+                    </HStack>
+                    <Box borderBottom="1px solid" borderColor="border" w="full" my={2} />
+                    <VStack align="start" gap={3}>
+                      <HStack gap={3}>
+                        <Package size={20} color="primary" />
+                        <VStack align="start" gap={1} flex={1}>
+                          <Text fontSize="sm" color="gray.500">Base Price</Text>
+                          <Text fontSize="lg" fontWeight="bold" color="primary">Rp {Number(selectedProduct.base_price).toLocaleString("id-ID")}</Text>
+                        </VStack>
+                      </HStack>
+                      <HStack gap={3}>
+                        <CurrencyDollar size={20} color="primary" />
+                        <VStack align="start" gap={1} flex={1}>
+                          <Text fontSize="sm" color="gray.500">Cost</Text>
+                          <Text fontSize="lg" fontWeight="bold">Rp {Number(selectedProduct.cost).toLocaleString("id-ID")}</Text>
+                        </VStack>
+                      </HStack>
+                      <HStack gap={3}>
+                        <Package size={20} color="primary" />
+                        <VStack align="start" gap={1} flex={1}>
+                          <Text fontSize="sm" color="gray.500">Unit</Text>
+                          <Text fontSize="lg" fontWeight="bold">{selectedProduct.unit}</Text>
+                        </VStack>
+                      </HStack>
+                      <HStack gap={3}>
+                        <Percent size={20} color="primary" />
+                        <VStack align="start" gap={1} flex={1}>
+                          <Text fontSize="sm" color="gray.500">Tax Rate</Text>
+                          <Text fontSize="lg" fontWeight="bold">{selectedProduct.tax_rate}%</Text>
+                        </VStack>
+                      </HStack>
+                      {selectedProduct.description && (
+                        <VStack align="start" gap={1}>
+                          <Text fontSize="sm" color="gray.500">Description</Text>
+                          <Text fontSize="sm">{selectedProduct.description}</Text>
+                        </VStack>
+                      )}
+                    </VStack>
+                  </VStack>
+                )}
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
 
       <Dialog.Root open={dialogOpen} onOpenChange={(e) => setDialogOpen(e.open)}>
         <Portal>
@@ -135,7 +213,13 @@ export default function ProductsPage() {
                   <Field.Root required><Field.Label>Name</Field.Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field.Root>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Code/SKU</Field.Label><Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Category</Field.Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1}>
+                      <Field.Label>Category</Field.Label>
+                      <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                        <option value="">Select category...</option>
+                        {PRODUCT_CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                      </select>
+                    </Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Base Price</Field.Label><Input type="number" value={form.base_price} onChange={(e) => setForm({ ...form, base_price: e.target.value })} /></Field.Root>

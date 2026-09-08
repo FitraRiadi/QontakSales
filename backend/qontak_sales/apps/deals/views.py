@@ -8,6 +8,7 @@ from .serializers import (
     DealSerializer, ContactDealSerializer,
     ProductSerializer, LineItemSerializer,
 )
+from qontak_sales.apps.notifications.views import create_notification
 
 
 class DealViewSet(viewsets.ModelViewSet):
@@ -56,11 +57,19 @@ class DealViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        deal = serializer.save(owner=self.request.user)
+        # Notify team members (managers) about new deal
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
+        for mgr in managers:
+            if mgr != self.request.user:
+                create_notification(mgr, "New Deal Created", f"Deal '{deal.name}' was created by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{deal.id}")
 
     @action(detail=True, methods=["post"])
     def move_stage(self, request, pk=None):
         deal = self.get_object()
+        old_stage = deal.stage
         new_stage = request.data.get("stage")
         valid_stages = [s[0] for s in Deal.STAGE_CHOICES]
         if new_stage not in valid_stages:
@@ -89,6 +98,17 @@ class DealViewSet(viewsets.ModelViewSet):
             deal.probability = 90
 
         deal.save()
+
+        # Notify relevant people about stage change
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        managers = User.objects.filter(company=request.user.company, role="MANAGER")
+        for mgr in managers:
+            if mgr != request.user:
+                create_notification(mgr, "Deal Stage Updated", f"Deal '{deal.name}' moved from {dict(Deal.STAGE_CHOICES).get(old_stage, old_stage)} to {dict(Deal.STAGE_CHOICES).get(new_stage, new_stage)}", f"/deals/{deal.id}")
+        if deal.owner and deal.owner != request.user:
+            create_notification(deal.owner, "Your Deal Stage Updated", f"Deal '{deal.name}' moved to {dict(Deal.STAGE_CHOICES).get(new_stage, new_stage)}", f"/deals/{deal.id}")
+
         return Response(DealSerializer(deal).data)
 
     @action(detail=True, methods=["post"])
@@ -161,7 +181,14 @@ class ContactDealViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        serializer.save()
+        contact_deal = serializer.save()
+        # Notify managers about new contact added to deal
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
+        for mgr in managers:
+            if mgr != self.request.user:
+                create_notification(mgr, "Contact Added to Deal", f"{contact_deal.contact.full_name} added to deal '{contact_deal.deal.name}' by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{contact_deal.deal.id}")
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -204,12 +231,19 @@ class LineItemViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        serializer.save()
-        deal = serializer.instance.deal
+        line_item = serializer.save()
+        deal = line_item.deal
         deal.amount = deal.line_items.aggregate(
             total=models.Sum("total_price")
         )["total"] or 0
         deal.save()
+        # Notify managers about product added to deal
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
+        for mgr in managers:
+            if mgr != self.request.user:
+                create_notification(mgr, "Product Added to Deal", f"{line_item.product.name} added to deal '{deal.name}' by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{deal.id}")
 
     def perform_update(self, serializer):
         serializer.save()

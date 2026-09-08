@@ -183,8 +183,8 @@ export default function DealDetailPage() {
 
   const openEditLineItem = (li) => {
     setEditLineItem(li);
-    setLineItemForm({ product: li.product || "", quantity: li.quantity || 1, unit_price: li.unit_price || 0, discount: li.discount || 0, notes: li.notes || "" });
-    setAvailableProducts([{ id: li.product, name: li.product_name }]);
+    setLineItemForm({ product: String(li.product), quantity: li.quantity || 1, unit_price: parseFloat(li.unit_price) || 0, discount: parseFloat(li.discount) || 0, notes: li.notes || "" });
+    setAvailableProducts([{ id: li.product, name: li.product_name, base_price: li.unit_price }]);
     setLineItemDialogOpen(true);
   };
 
@@ -347,7 +347,7 @@ export default function DealDetailPage() {
                         <VStack align="end" gap={0}>
                           <Text fontSize="xs" color="gray.500">Qty: {li.quantity}</Text>
                           <Text fontSize="xs" color="gray.500">Price: Rp {Number(li.unit_price).toLocaleString("id-ID")}</Text>
-                          {Number(li.discount) > 0 && <Text fontSize="xs" color="red.500">Discount: -Rp {Number(li.discount).toLocaleString("id-ID")}</Text>}
+                          {Number(li.discount) > 0 && <Text fontSize="xs" color="red.500">Discount: {Number(li.discount)}%</Text>}
                         </VStack>
                         <Text fontWeight="bold" fontSize="sm" color="primary">Rp {Number(li.total_price).toLocaleString("id-ID")}</Text>
                         <HStack gap={1}>
@@ -485,8 +485,8 @@ export default function DealDetailPage() {
                   <Field.Root required>
                     <Field.Label>Product</Field.Label>
                     <select value={lineItemForm.product} onChange={(e) => {
-                      const prod = availableProducts.find((p) => p.id === parseInt(e.target.value));
-                      setLineItemForm({ ...lineItemForm, product: e.target.value, unit_price: prod?.base_price || 0 });
+                      const prod = availableProducts.find((p) => String(p.id) === e.target.value);
+                      setLineItemForm({ ...lineItemForm, product: e.target.value, unit_price: parseFloat(prod?.base_price) || 0 });
                     }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }} disabled={!!editLineItem}>
                       <option value="">Select product...</option>
                       {availableProducts.map((p) => <option key={p.id} value={p.id}>{p.name} - Rp {Number(p.base_price).toLocaleString("id-ID")}</option>)}
@@ -496,10 +496,10 @@ export default function DealDetailPage() {
                     <Field.Root flex={1}><Field.Label>Quantity</Field.Label><Input type="number" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>
                     <Field.Root flex={1}><Field.Label>Unit Price (Rp)</Field.Label><Input type="number" value={lineItemForm.unit_price} onChange={(e) => setLineItemForm({ ...lineItemForm, unit_price: parseFloat(e.target.value) || 0 })} /></Field.Root>
                   </HStack>
-                  <Field.Root w="full"><Field.Label>Discount (Rp)</Field.Label><Input type="number" value={lineItemForm.discount} onChange={(e) => setLineItemForm({ ...lineItemForm, discount: parseFloat(e.target.value) || 0 })} /></Field.Root>
+                   <Field.Root w="full"><Field.Label>Discount (%)</Field.Label><Input type="number" min={0} max={100} value={lineItemForm.discount} onChange={(e) => { const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)); setLineItemForm({ ...lineItemForm, discount: v }); }} /></Field.Root>
                   <HStack justify="space-between" w="full" p={3} bg="muted" borderRadius="lg">
                     <Text fontSize="sm" fontWeight="bold">Total:</Text>
-                    <Text fontSize="sm" fontWeight="bold" color="primary">Rp {((lineItemForm.unit_price * lineItemForm.quantity) - lineItemForm.discount).toLocaleString("id-ID")}</Text>
+                    <Text fontSize="sm" fontWeight="bold" color="primary">Rp {Math.round(lineItemForm.unit_price * lineItemForm.quantity * (1 - lineItemForm.discount / 100)).toLocaleString("id-ID")}</Text>
                   </HStack>
                 </VStack>
               </Dialog.Body>
