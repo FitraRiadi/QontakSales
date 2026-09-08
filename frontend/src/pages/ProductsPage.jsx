@@ -43,6 +43,7 @@ export default function ProductsPage() {
   const [editProduct, setEditProduct] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
   const [deleteDialog, setDeleteDialog] = useState(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -58,16 +59,20 @@ export default function ProductsPage() {
 
   useEffect(() => { fetchProducts(); }, [search]);
 
-  const openCreate = () => { setEditProduct(null); setForm(EMPTY_FORM); setDialogOpen(true); };
+  const openCreate = () => { setEditProduct(null); setForm(EMPTY_FORM); setErrors({}); setDialogOpen(true); };
   const openEdit = (p, e) => {
     e.stopPropagation();
     setEditProduct(p);
     setForm({ name: p.name || "", code: p.code || "", description: p.description || "", base_price: p.base_price || "", cost: p.cost || "", category: p.category || "", unit: p.unit || "pcs", tax_rate: p.tax_rate || "0", status: p.status || "ACTIVE" });
+    setErrors({});
     setDialogOpen(true);
   };
 
   const handleSave = async () => {
-    if (!form.name.trim()) return toaster.create({ title: "Name is required", type: "error" });
+    const errs = {};
+    if (!form.name.trim()) errs.name = "Name is required";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setSaving(true);
     try {
       const payload = { ...form, base_price: parseFloat(form.base_price) || 0, cost: parseFloat(form.cost) || 0, tax_rate: parseFloat(form.tax_rate) || 0 };
@@ -212,7 +217,11 @@ export default function ProductsPage() {
               <Dialog.Header><Dialog.Title>{editProduct ? "Edit Product" : "New Product"}</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required><Field.Label>Name</Field.Label><Input placeholder="Product name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field.Root>
+                  <Field.Root required invalid={!!errors.name}>
+                    <Field.Label>Name</Field.Label>
+                    <Input placeholder="Product name" value={form.name} onChange={(e) => { setErrors({}); setForm({ ...form, name: e.target.value }); }} />
+                    <Field.ErrorText>{errors.name}</Field.ErrorText>
+                  </Field.Root>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Code/SKU</Field.Label><Input placeholder="SKU or code" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></Field.Root>
                     <Field.Root flex={1}>

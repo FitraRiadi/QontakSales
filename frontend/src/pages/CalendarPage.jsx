@@ -167,6 +167,7 @@ export default function CalendarPage() {
   const [activityForm, setActivityForm] = useState({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
   const [availableDeals, setAvailableDeals] = useState([]);
   const [activitySaving, setActivitySaving] = useState(false);
+  const [activityErrors, setActivityErrors] = useState({});
 
   const fetchMonthEvents = useCallback(() => {
     setLoading(true);
@@ -237,6 +238,7 @@ export default function CalendarPage() {
 
   const openCreateActivity = async () => {
     setActivityForm({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
+    setActivityErrors({});
     try {
       const res = await api.get("/deals/");
       setAvailableDeals(res.data.results || res.data);
@@ -245,8 +247,12 @@ export default function CalendarPage() {
   };
 
   const handleSaveActivity = async () => {
-    if (!activityForm.deal) return toaster.create({ title: "Deal is required", type: "error" });
-    if (!activityForm.scheduled_at) return toaster.create({ title: "Schedule date/time is required", type: "error" });
+    const errs = {};
+    if (!activityForm.deal) errs.deal = "Deal is required";
+    if (!activityForm.scheduled_at) errs.scheduled_at = "Schedule date/time is required";
+    if (!activityForm.notes.trim()) errs.notes = "Notes are required";
+    if (Object.keys(errs).length > 0) { setActivityErrors(errs); return; }
+    setActivityErrors({});
     setActivitySaving(true);
     try {
       await api.post("/activities/", {
@@ -583,20 +589,23 @@ export default function CalendarPage() {
                       <option value="FOLLOW_UP">Follow Up</option>
                     </select>
                   </Field.Root>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!activityErrors.deal}>
                     <Field.Label>Deal</Field.Label>
-                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={activityForm.deal} onChange={(e) => { setActivityErrors({ ...activityErrors, deal: undefined }); setActivityForm({ ...activityForm, deal: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                       <option value="">Select deal...</option>
                       {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name} - {d.company_name}</option>)}
                     </select>
+                    <Field.ErrorText>{activityErrors.deal}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!activityErrors.scheduled_at}>
                     <Field.Label>Schedule Date & Time</Field.Label>
-                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => setActivityForm({ ...activityForm, scheduled_at: e.target.value })} />
+                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => { setActivityErrors({ ...activityErrors, scheduled_at: undefined }); setActivityForm({ ...activityForm, scheduled_at: e.target.value }); }} />
+                    <Field.ErrorText>{activityErrors.scheduled_at}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root w="full">
+                  <Field.Root w="full" required invalid={!!activityErrors.notes}>
                     <Field.Label>Notes</Field.Label>
-                    <textarea value={activityForm.notes} onChange={(e) => setActivityForm({ ...activityForm, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                    <textarea placeholder="Activity notes..." value={activityForm.notes} onChange={(e) => { setActivityErrors({ ...activityErrors, notes: undefined }); setActivityForm({ ...activityForm, notes: e.target.value }); }} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                    <Field.ErrorText>{activityErrors.notes}</Field.ErrorText>
                   </Field.Root>
                 </VStack>
               </Dialog.Body>

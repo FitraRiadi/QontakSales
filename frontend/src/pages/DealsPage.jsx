@@ -81,6 +81,7 @@ export default function DealsPage() {
   const [accounts, setAccounts] = useState([]);
   const [form, setForm] = useState({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "" });
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const fetchDeals = () => {
     api.get("/deals/", { params: { page_size: 200 } })
@@ -92,6 +93,7 @@ export default function DealsPage() {
 
   const openCreate = async () => {
     setForm({ name: "", company: "", amount: "", expected_close_date: "", description: "", source: "" });
+    setErrors({});
     try {
       const res = await api.get("/accounts/");
       const data = res.data;
@@ -101,7 +103,11 @@ export default function DealsPage() {
   };
 
   const handleCreate = async () => {
-    if (!form.name || !form.company) return toaster.create({ title: "Name and Company are required", type: "error" });
+    const errs = {};
+    if (!form.name.trim()) errs.name = "Name is required";
+    if (!form.company) errs.company = "Company is required";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setSaving(true);
     try {
       const res = await api.post("/deals/", { ...form, amount: form.amount || 0 });
@@ -171,13 +177,18 @@ export default function DealsPage() {
               <Dialog.Header><Dialog.Title>Create New Deal</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required><Field.Label>Deal Name</Field.Label><Input placeholder="e.g. CRM Implementation" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field.Root>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!errors.name}>
+                    <Field.Label>Deal Name</Field.Label>
+                    <Input placeholder="e.g. CRM Implementation" value={form.name} onChange={(e) => { setErrors({ ...errors, name: undefined }); setForm({ ...form, name: e.target.value }); }} />
+                    <Field.ErrorText>{errors.name}</Field.ErrorText>
+                  </Field.Root>
+                  <Field.Root required invalid={!!errors.company}>
                     <Field.Label>Company</Field.Label>
-                    <select value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={form.company} onChange={(e) => { setErrors({ ...errors, company: undefined }); setForm({ ...form, company: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                       <option value="">Select company...</option>
                       {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                     </select>
+                    <Field.ErrorText>{errors.company}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Amount (Rp)</Field.Label><Input type="number" placeholder="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></Field.Root>

@@ -36,17 +36,20 @@ export default function AccountDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [editErrors, setEditErrors] = useState({});
 
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [editContact, setEditContact] = useState(null);
   const [contactForm, setContactForm] = useState({ first_name: "", last_name: "", email: "", phone: "", job_title: "", department: "", role_in_deal: "OTHER", notes: "" });
   const [contactSaving, setContactSaving] = useState(false);
+  const [contactErrors, setContactErrors] = useState({});
 
   const [activities, setActivities] = useState([]);
   const [activityDialogOpen, setActivityDialogOpen] = useState(false);
   const [activityForm, setActivityForm] = useState({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
   const [availableDeals, setAvailableDeals] = useState([]);
   const [activitySaving, setActivitySaving] = useState(false);
+  const [activityErrors, setActivityErrors] = useState({});
 
   const fetchAccount = () => {
     setLoading(true);
@@ -64,6 +67,10 @@ export default function AccountDetailPage() {
   useEffect(() => { fetchAccount(); fetchActivities(); }, [id]);
 
   const handleUpdate = async () => {
+    const errs = {};
+    if (!form.name?.trim()) errs.name = "Name is required";
+    if (Object.keys(errs).length > 0) { setEditErrors(errs); return; }
+    setEditErrors({});
     setSaving(true);
     try {
       const payload = { ...form, annual_revenue: form.annual_revenue ? parseFloat(form.annual_revenue) : null };
@@ -86,12 +93,14 @@ export default function AccountDetailPage() {
       city: account.city || "", country: account.country || "Indonesia",
       annual_revenue: account.annual_revenue || "", notes: account.notes || "",
     });
+    setEditErrors({});
     setEditOpen(true);
   };
 
   const openCreateContact = () => {
     setEditContact(null);
     setContactForm({ first_name: "", last_name: "", email: "", phone: "", job_title: "", department: "", role_in_deal: "OTHER", notes: "" });
+    setContactErrors({});
     setContactDialogOpen(true);
   };
 
@@ -103,11 +112,15 @@ export default function AccountDetailPage() {
       job_title: contact.job_title || "", department: contact.department || "",
       role_in_deal: contact.role_in_deal || "OTHER", notes: contact.notes || "",
     });
+    setContactErrors({});
     setContactDialogOpen(true);
   };
 
   const handleSaveContact = async () => {
-    if (!contactForm.first_name.trim()) return toaster.create({ title: "First name is required", type: "error" });
+    const errs = {};
+    if (!contactForm.first_name.trim()) errs.first_name = "First name is required";
+    if (Object.keys(errs).length > 0) { setContactErrors(errs); return; }
+    setContactErrors({});
     setContactSaving(true);
     try {
       if (editContact) {
@@ -128,14 +141,19 @@ export default function AccountDetailPage() {
 
   const openCreateActivity = () => {
     setActivityForm({ activity_type: "MEETING", deal: "", notes: "", scheduled_at: "" });
+    setActivityErrors({});
     const deals = account?.deals || [];
     setAvailableDeals(deals);
     setActivityDialogOpen(true);
   };
 
   const handleSaveActivity = async () => {
-    if (!activityForm.deal) return toaster.create({ title: "Deal is required", type: "error" });
-    if (!activityForm.scheduled_at) return toaster.create({ title: "Schedule date/time is required", type: "error" });
+    const errs = {};
+    if (!activityForm.deal) errs.deal = "Deal is required";
+    if (!activityForm.scheduled_at) errs.scheduled_at = "Schedule date/time is required";
+    if (!activityForm.notes.trim()) errs.notes = "Notes are required";
+    if (Object.keys(errs).length > 0) { setActivityErrors(errs); return; }
+    setActivityErrors({});
     setActivitySaving(true);
     try {
       await api.post("/activities/", {
@@ -311,7 +329,11 @@ export default function AccountDetailPage() {
               <Dialog.Header><Dialog.Title>Edit Account</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required><Field.Label>Company Name</Field.Label><Input placeholder="Company name" value={form.name || ""} onChange={(e) => setForm({ ...form, name: e.target.value })} /></Field.Root>
+                  <Field.Root required invalid={!!editErrors.name}>
+                    <Field.Label>Company Name</Field.Label>
+                    <Input placeholder="Company name" value={form.name || ""} onChange={(e) => { setEditErrors({}); setForm({ ...form, name: e.target.value }); }} />
+                    <Field.ErrorText>{editErrors.name}</Field.ErrorText>
+                  </Field.Root>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Industry</Field.Label><select value={form.industry || ""} onChange={(e) => setForm({ ...form, industry: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
                     <Field.Root flex={1}><Field.Label>Size</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
@@ -347,7 +369,11 @@ export default function AccountDetailPage() {
               <Dialog.Body>
                 <VStack gap={4}>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1} required><Field.Label>First Name</Field.Label><Input placeholder="John" value={contactForm.first_name} onChange={(e) => setContactForm({ ...contactForm, first_name: e.target.value })} /></Field.Root>
+                    <Field.Root flex={1} required invalid={!!contactErrors.first_name}>
+                      <Field.Label>First Name</Field.Label>
+                      <Input placeholder="John" value={contactForm.first_name} onChange={(e) => { setContactErrors({}); setContactForm({ ...contactForm, first_name: e.target.value }); }} />
+                      <Field.ErrorText>{contactErrors.first_name}</Field.ErrorText>
+                    </Field.Root>
                     <Field.Root flex={1}><Field.Label>Last Name</Field.Label><Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => setContactForm({ ...contactForm, last_name: e.target.value })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
@@ -387,20 +413,23 @@ export default function AccountDetailPage() {
                       <option value="FOLLOW_UP">Follow Up</option>
                     </select>
                   </Field.Root>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!activityErrors.deal}>
                     <Field.Label>Deal</Field.Label>
-                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={activityForm.deal} onChange={(e) => { setActivityErrors({ ...activityErrors, deal: undefined }); setActivityForm({ ...activityForm, deal: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
                       <option value="">Select deal...</option>
                       {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                     </select>
+                    <Field.ErrorText>{activityErrors.deal}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!activityErrors.scheduled_at}>
                     <Field.Label>Schedule Date & Time</Field.Label>
-                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => setActivityForm({ ...activityForm, scheduled_at: e.target.value })} />
+                    <Input type="datetime-local" value={activityForm.scheduled_at} onChange={(e) => { setActivityErrors({ ...activityErrors, scheduled_at: undefined }); setActivityForm({ ...activityForm, scheduled_at: e.target.value }); }} />
+                    <Field.ErrorText>{activityErrors.scheduled_at}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root w="full">
+                  <Field.Root w="full" required invalid={!!activityErrors.notes}>
                     <Field.Label>Notes</Field.Label>
-                    <textarea placeholder="Activity notes..." value={activityForm.notes} onChange={(e) => setActivityForm({ ...activityForm, notes: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                    <textarea placeholder="Activity notes..." value={activityForm.notes} onChange={(e) => { setActivityErrors({ ...activityErrors, notes: undefined }); setActivityForm({ ...activityForm, notes: e.target.value }); }} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} />
+                    <Field.ErrorText>{activityErrors.notes}</Field.ErrorText>
                   </Field.Root>
                 </VStack>
               </Dialog.Body>

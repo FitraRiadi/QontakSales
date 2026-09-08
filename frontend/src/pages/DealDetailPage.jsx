@@ -83,10 +83,12 @@ export default function DealDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [editErrors, setEditErrors] = useState({});
 
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [editContactDeal, setEditContactDeal] = useState(null);
   const [contactDealForm, setContactDealForm] = useState({ contact: "", role: "OTHER", is_primary: false });
+  const [contactErrors, setContactErrors] = useState({});
   const [availableContacts, setAvailableContacts] = useState([]);
   const [contactSaving, setContactSaving] = useState(false);
 
@@ -95,6 +97,7 @@ export default function DealDetailPage() {
   const [lineItemForm, setLineItemForm] = useState({ product: "", quantity: 1, unit_price: 0, discount: 0, notes: "" });
   const [availableProducts, setAvailableProducts] = useState([]);
   const [lineItemSaving, setLineItemSaving] = useState(false);
+  const [lineItemErrors, setLineItemErrors] = useState({});
 
   const fetchDeal = () => {
     setLoading(true);
@@ -117,10 +120,15 @@ export default function DealDetailPage() {
       description: deal.description || "",
       source: deal.source || "",
     });
+    setEditErrors({});
     setEditOpen(true);
   };
 
   const handleUpdateDeal = async () => {
+    const errs = {};
+    if (!editForm.name?.trim()) errs.name = "Name is required";
+    if (Object.keys(errs).length > 0) { setEditErrors(errs); return; }
+    setEditErrors({});
     setSaving(true);
     try {
       await api.put(`/deals/${id}/`, editForm);
@@ -137,6 +145,7 @@ export default function DealDetailPage() {
   const openCreateContact = async () => {
     setEditContactDeal(null);
     setContactDealForm({ contact: "", role: "OTHER", is_primary: false });
+    setContactErrors({});
     try {
       const res = await api.get("/contacts/", { params: { account_id: deal.company } });
       setAvailableContacts(res.data.results || res.data);
@@ -148,11 +157,15 @@ export default function DealDetailPage() {
     setEditContactDeal(cd);
     setContactDealForm({ contact: cd.contact || "", role: cd.role_in_deal || "OTHER", is_primary: cd.is_primary || false });
     setAvailableContacts([{ id: cd.contact, first_name: cd.contact_name?.split(" ")[0], last_name: cd.contact_name?.split(" ").slice(1).join(" ") }]);
+    setContactErrors({});
     setContactDialogOpen(true);
   };
 
   const handleSaveContactDeal = async () => {
-    if (!contactDealForm.contact) return toaster.create({ title: "Contact is required", type: "error" });
+    const errs = {};
+    if (!contactDealForm.contact) errs.contact = "Contact is required";
+    if (Object.keys(errs).length > 0) { setContactErrors(errs); return; }
+    setContactErrors({});
     setContactSaving(true);
     try {
       if (editContactDeal) {
@@ -174,6 +187,7 @@ export default function DealDetailPage() {
   const openCreateLineItem = async () => {
     setEditLineItem(null);
     setLineItemForm({ product: "", quantity: 1, unit_price: 0, discount: 0, notes: "" });
+    setLineItemErrors({});
     try {
       const res = await api.get("/products/");
       setAvailableProducts(res.data.results || res.data);
@@ -185,11 +199,15 @@ export default function DealDetailPage() {
     setEditLineItem(li);
     setLineItemForm({ product: String(li.product), quantity: li.quantity || 1, unit_price: parseFloat(li.unit_price) || 0, discount: parseFloat(li.discount) || 0, notes: li.notes || "" });
     setAvailableProducts([{ id: li.product, name: li.product_name, base_price: li.unit_price }]);
+    setLineItemErrors({});
     setLineItemDialogOpen(true);
   };
 
   const handleSaveLineItem = async () => {
-    if (!lineItemForm.product) return toaster.create({ title: "Product is required", type: "error" });
+    const errs = {};
+    if (!lineItemForm.product) errs.product = "Product is required";
+    if (Object.keys(errs).length > 0) { setLineItemErrors(errs); return; }
+    setLineItemErrors({});
     setLineItemSaving(true);
     try {
       if (editLineItem) {
@@ -415,7 +433,11 @@ export default function DealDetailPage() {
               <Dialog.Header><Dialog.Title>Edit Deal</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required><Field.Label>Deal Name</Field.Label><Input placeholder="Deal name" value={editForm.name || ""} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} /></Field.Root>
+                  <Field.Root required invalid={!!editErrors.name}>
+                    <Field.Label>Deal Name</Field.Label>
+                    <Input placeholder="Deal name" value={editForm.name || ""} onChange={(e) => { setEditErrors({}); setEditForm({ ...editForm, name: e.target.value }); }} />
+                    <Field.ErrorText>{editErrors.name}</Field.ErrorText>
+                  </Field.Root>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Amount (Rp)</Field.Label><Input type="number" placeholder="0" value={editForm.amount || ""} onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })} /></Field.Root>
                     <Field.Root flex={1}><Field.Label>Probability (%)</Field.Label><Input type="number" placeholder="0-100" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
@@ -450,12 +472,13 @@ export default function DealDetailPage() {
               <Dialog.Header><Dialog.Title>{editContactDeal ? "Edit Contact" : "Add Contact to Deal"}</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!contactErrors.contact}>
                     <Field.Label>Contact</Field.Label>
-                    <select value={contactDealForm.contact} onChange={(e) => setContactDealForm({ ...contactDealForm, contact: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }} disabled={!!editContactDeal}>
+                    <select value={contactDealForm.contact} onChange={(e) => { setContactErrors({}); setContactDealForm({ ...contactDealForm, contact: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }} disabled={!!editContactDeal}>
                       <option value="">Select contact...</option>
                       {availableContacts.map((c) => <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>)}
                     </select>
+                    <Field.ErrorText>{contactErrors.contact}</Field.ErrorText>
                   </Field.Root>
                   <Field.Root>
                     <Field.Label>Role in Deal</Field.Label>
@@ -482,15 +505,17 @@ export default function DealDetailPage() {
               <Dialog.Header><Dialog.Title>{editLineItem ? "Edit Line Item" : "Add Product to Deal"}</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!lineItemErrors.product}>
                     <Field.Label>Product</Field.Label>
                     <select value={lineItemForm.product} onChange={(e) => {
+                      setLineItemErrors({});
                       const prod = availableProducts.find((p) => String(p.id) === e.target.value);
                       setLineItemForm({ ...lineItemForm, product: e.target.value, unit_price: parseFloat(prod?.base_price) || 0 });
                     }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }} disabled={!!editLineItem}>
                       <option value="">Select product...</option>
                       {availableProducts.map((p) => <option key={p.id} value={p.id}>{p.name} - Rp {Number(p.base_price).toLocaleString("id-ID")}</option>)}
                     </select>
+                    <Field.ErrorText>{lineItemErrors.product}</Field.ErrorText>
                   </Field.Root>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Quantity</Field.Label><Input type="number" placeholder="1" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>

@@ -72,6 +72,7 @@ export default function AccountsPage() {
   const [editAccount, setEditAccount] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
   const [deleteDialog, setDeleteDialog] = useState(null);
   const [filterType, setFilterType] = useState("");
   const [filterIndustry, setFilterIndustry] = useState("");
@@ -92,6 +93,7 @@ export default function AccountsPage() {
   const openCreate = () => {
     setEditAccount(null);
     setForm(EMPTY_FORM);
+    setErrors({});
     setDialogOpen(true);
   };
 
@@ -112,11 +114,15 @@ export default function AccountsPage() {
       annual_revenue: account.annual_revenue || "",
       notes: account.notes || "",
     });
+    setErrors({});
     setDialogOpen(true);
   };
 
   const handleSave = async () => {
-    if (!form.name.trim()) return toaster.create({ title: "Name is required", type: "error" });
+    const errs = {};
+    if (!form.name.trim()) errs.name = "Name is required";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setSaving(true);
     try {
       const payload = { ...form, annual_revenue: form.annual_revenue ? parseFloat(form.annual_revenue) : null };
@@ -232,9 +238,10 @@ export default function AccountsPage() {
               </Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <Field.Root required>
+                  <Field.Root required invalid={!!errors.name}>
                     <Field.Label>Company Name</Field.Label>
-                    <Input placeholder="Company name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                    <Input placeholder="Company name" value={form.name} onChange={(e) => { setErrors({}); setForm({ ...form, name: e.target.value }); }} />
+                    <Field.ErrorText>{errors.name}</Field.ErrorText>
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4} w="full">
                     <Field.Root>
