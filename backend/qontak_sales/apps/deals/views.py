@@ -355,7 +355,7 @@ def calendar_events(request):
         })
 
     activities = ActivityLog.objects.filter(
-        deal__company=user.company,
+        deal__company__company=user.company,
         scheduled_at__isnull=False,
         scheduled_at__date__gte=start,
         scheduled_at__date__lte=end,

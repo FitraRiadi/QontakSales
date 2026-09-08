@@ -12,7 +12,7 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
         user = self.request.user
         deal_id = self.request.query_params.get("deal_id")
         account_id = self.request.query_params.get("account_id")
-        queryset = ActivityLog.objects.filter(deal__company=user.company)
+        queryset = ActivityLog.objects.filter(deal__company__company=user.company)
         if deal_id:
             queryset = queryset.filter(deal_id=deal_id)
         if account_id:
