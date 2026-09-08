@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 
@@ -126,6 +127,6 @@ class LineItem(models.Model):
         return f"{self.product.name} x{self.quantity}"
 
     def save(self, *args, **kwargs):
-        discount_rate = min(max(float(self.discount), 0), 100) / 100
+        discount_rate = Decimal(str(min(max(float(self.discount), 0), 100) / 100))
         self.total_price = (self.unit_price * self.quantity) * (1 - discount_rate)
         super().save(*args, **kwargs)
