@@ -135,7 +135,16 @@ export default function AccountsPage() {
       }
       setDialogOpen(false);
       fetchAccounts();
-    } catch {
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data && typeof data === "object") {
+        const fieldErrors = {};
+        for (const [key, val] of Object.entries(data)) {
+          if (Array.isArray(val)) fieldErrors[key] = val[0];
+          else if (typeof val === "string") fieldErrors[key] = val;
+        }
+        if (Object.keys(fieldErrors).length > 0) { setErrors(fieldErrors); return; }
+      }
       toaster.create({ title: "Failed to save account", type: "error" });
     } finally {
       setSaving(false);
@@ -240,7 +249,7 @@ export default function AccountsPage() {
                 <VStack gap={4}>
                   <Field.Root required invalid={!!errors.name}>
                     <Field.Label>Company Name</Field.Label>
-                    <Input placeholder="Company name" value={form.name} onChange={(e) => { setErrors({}); setForm({ ...form, name: e.target.value }); }} />
+                    <Input placeholder="Company name" value={form.name} onChange={(e) => { setErrors({ ...errors, name: undefined }); setForm({ ...form, name: e.target.value }); }} />
                     <Field.ErrorText>{errors.name}</Field.ErrorText>
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4} w="full">

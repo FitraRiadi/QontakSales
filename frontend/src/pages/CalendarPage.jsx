@@ -265,7 +265,16 @@ export default function CalendarPage() {
       setActivityDialogOpen(false);
       if (viewMode === "month") fetchMonthEvents();
       else fetchYearEvents();
-    } catch {
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data && typeof data === "object") {
+        const fieldErrors = {};
+        for (const [key, val] of Object.entries(data)) {
+          if (Array.isArray(val)) fieldErrors[key] = val[0];
+          else if (typeof val === "string") fieldErrors[key] = val;
+        }
+        if (Object.keys(fieldErrors).length > 0) { setActivityErrors(fieldErrors); return; }
+      }
       toaster.create({ title: "Failed to create activity", type: "error" });
     } finally {
       setActivitySaving(false);

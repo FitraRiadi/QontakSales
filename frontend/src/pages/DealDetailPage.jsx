@@ -135,7 +135,16 @@ export default function DealDetailPage() {
       toaster.create({ title: "Deal updated", type: "success" });
       setEditOpen(false);
       fetchDeal();
-    } catch {
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data && typeof data === "object") {
+        const fieldErrors = {};
+        for (const [key, val] of Object.entries(data)) {
+          if (Array.isArray(val)) fieldErrors[key] = val[0];
+          else if (typeof val === "string") fieldErrors[key] = val;
+        }
+        if (Object.keys(fieldErrors).length > 0) { setEditErrors(fieldErrors); return; }
+      }
       toaster.create({ title: "Failed to update deal", type: "error" });
     } finally {
       setSaving(false);
@@ -177,7 +186,16 @@ export default function DealDetailPage() {
       }
       setContactDialogOpen(false);
       fetchDeal();
-    } catch {
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data && typeof data === "object") {
+        const fieldErrors = {};
+        for (const [key, val] of Object.entries(data)) {
+          if (Array.isArray(val)) fieldErrors[key] = val[0];
+          else if (typeof val === "string") fieldErrors[key] = val;
+        }
+        if (Object.keys(fieldErrors).length > 0) { setContactErrors(fieldErrors); return; }
+      }
       toaster.create({ title: "Failed to save", type: "error" });
     } finally {
       setContactSaving(false);
@@ -219,7 +237,16 @@ export default function DealDetailPage() {
       }
       setLineItemDialogOpen(false);
       fetchDeal();
-    } catch {
+    } catch (err) {
+      const data = err?.response?.data;
+      if (data && typeof data === "object") {
+        const fieldErrors = {};
+        for (const [key, val] of Object.entries(data)) {
+          if (Array.isArray(val)) fieldErrors[key] = val[0];
+          else if (typeof val === "string") fieldErrors[key] = val;
+        }
+        if (Object.keys(fieldErrors).length > 0) { setLineItemErrors(fieldErrors); return; }
+      }
       toaster.create({ title: "Failed to save", type: "error" });
     } finally {
       setLineItemSaving(false);
