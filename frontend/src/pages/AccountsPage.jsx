@@ -76,6 +76,8 @@ export default function AccountsPage() {
   const [deleteDialog, setDeleteDialog] = useState(null);
   const [filterType, setFilterType] = useState("");
   const [filterIndustry, setFilterIndustry] = useState("");
+  const userRole = localStorage.getItem("user_role");
+  const userId = localStorage.getItem("user_id");
 
   const fetchAccounts = () => {
     setLoading(true);
@@ -170,9 +172,11 @@ export default function AccountsPage() {
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
         <Heading size="lg">Accounts</Heading>
-        <Button bg="primary" color="white" _hover={{ bg: "secondary" }} onClick={openCreate}>
-          <Plus size={16} /> Add Account
-        </Button>
+        {userRole === "MANAGER" && (
+          <Button bg="primary" color="white" _hover={{ bg: "secondary" }} onClick={openCreate}>
+            <Plus size={16} /> Add Account
+          </Button>
+        )}
       </HStack>
 
       <HStack gap={3} wrap="wrap">
@@ -230,8 +234,12 @@ export default function AccountsPage() {
                   <Text fontSize="xs" color="gray.500">{acc.contacts_count || 0} contacts</Text>
                   <Text fontSize="xs" color="gray.500">{acc.deals_count || 0} deals</Text>
                   <HStack gap={1}>
-                    <Button size="xs" variant="ghost" onClick={(e) => openEdit(acc, e)}><PencilSimple size={12} /></Button>
-                    <Button size="xs" variant="ghost" color="red.500" onClick={(e) => { e.stopPropagation(); setDeleteDialog(acc); }}><Trash size={12} /></Button>
+                    {(userRole === "MANAGER" || String(acc.owner) === String(userId)) && (
+                      <>
+                        <Button size="xs" variant="ghost" onClick={(e) => openEdit(acc, e)}><PencilSimple size={12} /></Button>
+                        <Button size="xs" variant="ghost" color="red.500" onClick={(e) => { e.stopPropagation(); setDeleteDialog(acc); }}><Trash size={12} /></Button>
+                      </>
+                    )}
                   </HStack>
                 </HStack>
               </Card.Body>

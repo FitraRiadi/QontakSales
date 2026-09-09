@@ -91,6 +91,7 @@ export default function TopBar({ onMenuClick }) {
     localStorage.setItem("access_token", managerToken);
     localStorage.setItem("refresh_token", managerRefresh);
     localStorage.setItem("user_role", managerUser.role);
+    localStorage.setItem("user_id", managerUser.id);
     localStorage.setItem("user_name", managerUser.name);
     localStorage.removeItem("manager_token");
     localStorage.removeItem("manager_refresh");
@@ -110,6 +111,7 @@ export default function TopBar({ onMenuClick }) {
       const managerRefresh = localStorage.getItem("refresh_token");
       const managerUser = {
         role: localStorage.getItem("user_role"),
+        id: localStorage.getItem("user_id"),
         name: localStorage.getItem("user_name"),
       };
       localStorage.setItem("manager_token", managerToken);
@@ -118,6 +120,7 @@ export default function TopBar({ onMenuClick }) {
       localStorage.setItem("access_token", res.data.access);
       localStorage.setItem("refresh_token", res.data.refresh);
       localStorage.setItem("user_role", res.data.user.role);
+      localStorage.setItem("user_id", String(res.data.user.id));
       localStorage.setItem("user_name", `${res.data.user.first_name} ${res.data.user.last_name}`);
       localStorage.setItem("impersonating", "true");
       localStorage.setItem("impersonated_name", `${res.data.user.first_name} ${res.data.user.last_name}`);

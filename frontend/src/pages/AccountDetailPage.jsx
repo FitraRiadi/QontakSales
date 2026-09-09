@@ -37,6 +37,8 @@ export default function AccountDetailPage() {
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [editErrors, setEditErrors] = useState({});
+  const userRole = localStorage.getItem("user_role");
+  const userId = localStorage.getItem("user_id");
 
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [editContact, setEditContact] = useState(null);
@@ -214,7 +216,9 @@ export default function AccountDetailPage() {
           <Heading size="lg">{account.name}</Heading>
           <Badge colorPalette={TYPE_COLORS[account.account_type] || "gray"}>{TYPE_LABELS[account.account_type]}</Badge>
         </HStack>
-        <Button size="sm" variant="outline" onClick={openEdit}><PencilSimple size={14} /> Edit</Button>
+        {(userRole === "MANAGER" || String(account.owner) === String(userId)) && (
+          <Button size="sm" variant="outline" onClick={openEdit}><PencilSimple size={14} /> Edit</Button>
+        )}
       </HStack>
 
       <Box display="grid" gridTemplateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>

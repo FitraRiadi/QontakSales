@@ -39,6 +39,7 @@ export default function LoginPage() {
       localStorage.setItem("refresh_token", response.data.refresh);
       const profile = await api.get("/auth/profile/");
       localStorage.setItem("user_role", profile.data.role);
+      localStorage.setItem("user_id", String(profile.data.id));
       localStorage.setItem("user_name", `${profile.data.first_name} ${profile.data.last_name}`);
       localStorage.removeItem("manager_token");
       localStorage.removeItem("manager_refresh");

@@ -14,9 +14,11 @@ class IsManagerOrReadOnly(BasePermission):
 
 
 class IsOwnerOrManager(BasePermission):
-    """Object-level: agent can only modify objects they own. Managers can modify any."""
+    """Shared read for all authenticated users. Write only for owner or manager."""
     def has_object_permission(self, request, view, obj):
         if request.user.role == "MANAGER":
+            return True
+        if request.method in ("GET", "HEAD", "OPTIONS"):
             return True
         owner = getattr(obj, "owner", None) or getattr(obj, "agent", None) or getattr(obj, "sent_by", None)
         return owner == request.user
