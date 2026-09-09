@@ -53,7 +53,7 @@ class DealSerializer(serializers.ModelSerializer):
             "contact_count", "contacts", "line_items", "total_line_value",
             "is_archived", "created_at", "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "company", "created_at", "updated_at"]
         extra_kwargs = {
             "amount": {"required": True},
             "expected_close_date": {"required": True},
