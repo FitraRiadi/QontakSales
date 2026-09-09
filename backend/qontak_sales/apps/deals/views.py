@@ -287,6 +287,8 @@ def dashboard_stats(request):
     if user.role == "AGENT":
         all_deals = all_deals.filter(owner=user)
 
+    all_company_deals = Deal.objects.filter(company__company=user.company, is_archived=False)
+
     total_revenue = all_deals.filter(stage="WON").aggregate(total=Sum("amount"))["total"] or 0
     total_deals = all_deals.count()
     won_count = all_deals.filter(stage="WON").count()
@@ -319,7 +321,7 @@ def dashboard_stats(request):
     agents = User.objects.filter(company=user.company, role="AGENT")
     leaderboard = []
     for agent in agents:
-        agent_won = all_deals.filter(owner=agent, stage="WON")
+        agent_won = all_company_deals.filter(owner=agent, stage="WON")
         agent_revenue = agent_won.aggregate(total=Sum("amount"))["total"] or 0
         leaderboard.append({
             "name": agent.get_full_name() or agent.username,
