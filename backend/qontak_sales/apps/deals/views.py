@@ -62,13 +62,14 @@ class DealViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         deal = serializer.save(owner=self.request.user)
-        # Notify team members (managers) about new deal
         from django.contrib.auth import get_user_model
         User = get_user_model()
         managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
         for mgr in managers:
             if mgr != self.request.user:
                 create_notification(mgr, "New Deal Created", f"Deal '{deal.name}' was created by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{deal.id}")
+        if deal.owner and deal.owner != self.request.user:
+            create_notification(deal.owner, "New Deal Created", f"Deal '{deal.name}' was created by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{deal.id}")
 
     @action(detail=True, methods=["post"])
     def move_stage(self, request, pk=None):
@@ -192,13 +193,14 @@ class ContactDealViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         contact_deal = serializer.save()
-        # Notify managers about new contact added to deal
         from django.contrib.auth import get_user_model
         User = get_user_model()
         managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
         for mgr in managers:
             if mgr != self.request.user:
                 create_notification(mgr, "Contact Added to Deal", f"{contact_deal.contact.full_name} added to deal '{contact_deal.deal.name}' by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{contact_deal.deal.id}")
+        if contact_deal.deal.owner and contact_deal.deal.owner != self.request.user:
+            create_notification(contact_deal.deal.owner, "Contact Added to Deal", f"{contact_deal.contact.full_name} added to deal '{contact_deal.deal.name}' by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{contact_deal.deal.id}")
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -249,13 +251,14 @@ class LineItemViewSet(viewsets.ModelViewSet):
             total=models.Sum("total_price")
         )["total"] or 0
         deal.save()
-        # Notify managers about product added to deal
         from django.contrib.auth import get_user_model
         User = get_user_model()
         managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
         for mgr in managers:
             if mgr != self.request.user:
                 create_notification(mgr, "Product Added to Deal", f"{line_item.product.name} added to deal '{deal.name}' by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{deal.id}")
+        if deal.owner and deal.owner != self.request.user:
+            create_notification(deal.owner, "Product Added to Deal", f"{line_item.product.name} added to deal '{deal.name}' by {self.request.user.get_full_name() or self.request.user.username}", f"/deals/{deal.id}")
 
     def perform_update(self, serializer):
         serializer.save()
