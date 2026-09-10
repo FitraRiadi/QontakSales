@@ -20,8 +20,8 @@ const config = {
         stageLost: { value: "#DC2626" },
       },
       fonts: {
-        heading: { value: "'Inter', sans-serif" },
-        body: { value: "'Inter', sans-serif" },
+        heading: { value: "'IBM Plex Sans', sans-serif" },
+        body: { value: "'IBM Plex Sans', sans-serif" },
       },
       fontSizes: {
         xs:    { value: "12px" },
@@ -35,7 +35,7 @@ const config = {
         "5xl": { value: "48px" },
       },
       fontWeights: {
-        regular:  { value: 450 },
+        regular:  { value: 400 },
         medium:   { value: 500 },
         semibold: { value: 600 },
         bold:     { value: 700 },
