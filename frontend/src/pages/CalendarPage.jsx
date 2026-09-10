@@ -284,7 +284,7 @@ export default function CalendarPage() {
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
-        <Heading size="lg" color="foreground">Calendar</Heading>
+        <Heading fontWeight="semibold" size="lg" color="foreground">Calendar</Heading>
         <HStack gap={2}>
           <Button size="sm" bg="primary" color="white" onClick={openCreateActivity}><Plus size={14} /> New Activity</Button>
           <Button
@@ -306,7 +306,7 @@ export default function CalendarPage() {
                 <Button size="sm" variant="outline" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
                   <CaretLeft size={16} />
                 </Button>
-                <Heading size="md" color="foreground">
+                <Heading fontWeight="semibold" size="md" color="foreground">
                   {format(currentDate, "MMMM yyyy", { locale: idLocale })}
                 </Heading>
                 <Button size="sm" variant="outline" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>

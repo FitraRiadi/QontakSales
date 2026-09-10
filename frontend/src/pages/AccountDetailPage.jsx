@@ -213,7 +213,7 @@ export default function AccountDetailPage() {
       <HStack justify="space-between">
         <HStack gap={3}>
           <Button size="sm" variant="ghost" onClick={() => navigate("/accounts")}><ArrowLeft size={16} /></Button>
-          <Heading size="lg">{account.name}</Heading>
+          <Heading fontWeight="semibold" size="lg">{account.name}</Heading>
           <Badge colorPalette={TYPE_COLORS[account.account_type] || "gray"}>{TYPE_LABELS[account.account_type]}</Badge>
         </HStack>
         {(userRole === "MANAGER" || String(account.owner) === String(userId)) && (
@@ -224,7 +224,7 @@ export default function AccountDetailPage() {
       <Box display="grid" gridTemplateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <VStack gap={6} align="stretch">
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-            <Card.Header><Heading size="sm">Company Information</Heading></Card.Header>
+            <Card.Header><Heading fontWeight="semibold" size="sm">Company Information</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3}>
                 {account.industry && <HStack gap={2}><Text fontSize="sm" fontWeight="medium" color="gray.500" w="120px">Industry</Text><Text fontSize="sm">{INDUSTRY_LABELS[account.industry]}</Text></HStack>}
@@ -239,7 +239,7 @@ export default function AccountDetailPage() {
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
-                <Heading size="sm">Contacts ({account.contacts?.length || 0})</Heading>
+                <Heading fontWeight="semibold" size="sm">Contacts ({account.contacts?.length || 0})</Heading>
                 <Button size="xs" bg="primary" color="white" onClick={openCreateContact}><Plus size={12} /> Add</Button>
               </HStack>
             </Card.Header>
@@ -272,7 +272,7 @@ export default function AccountDetailPage() {
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
-                <Heading size="sm">Deals ({account.deals?.length || 0})</Heading>
+                <Heading fontWeight="semibold" size="sm">Deals ({account.deals?.length || 0})</Heading>
                 <Button size="xs" bg="primary" color="white" onClick={() => navigate("/deals")}><Plus size={12} /> New Deal</Button>
               </HStack>
             </Card.Header>
@@ -298,7 +298,7 @@ export default function AccountDetailPage() {
 
         <VStack gap={6} align="stretch">
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-            <Card.Header><Heading size="sm">Contact Details</Heading></Card.Header>
+            <Card.Header><Heading fontWeight="semibold" size="sm">Contact Details</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3}>
                 {account.phone && <HStack gap={2}><Phone size={14} color="gray.400" /><Text fontSize="sm">{account.phone}</Text></HStack>}
@@ -310,7 +310,7 @@ export default function AccountDetailPage() {
           </Card.Root>
 
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-            <Card.Header><Heading size="sm">Summary</Heading></Card.Header>
+            <Card.Header><Heading fontWeight="semibold" size="sm">Summary</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3}>
                 <HStack justify="space-between" w="full"><Text fontSize="sm" color="gray.500">Total Deals</Text><Text fontWeight="bold" fontSize="sm">{account.deals_count || 0}</Text></HStack>
@@ -323,7 +323,7 @@ export default function AccountDetailPage() {
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
-                <Heading size="sm">Activity Log ({activities.length})</Heading>
+                <Heading fontWeight="semibold" size="sm">Activity Log ({activities.length})</Heading>
                 <Button size="xs" bg="primary" color="white" onClick={openCreateActivity}><Plus size={12} /> New</Button>
               </HStack>
             </Card.Header>

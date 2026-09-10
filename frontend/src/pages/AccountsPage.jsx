@@ -171,7 +171,7 @@ export default function AccountsPage() {
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
-        <Heading size="lg">Accounts</Heading>
+        <Heading fontWeight="semibold" size="lg">Accounts</Heading>
         {userRole === "MANAGER" && (
           <Button bg="primary" color="white" _hover={{ bg: "secondary" }} onClick={openCreate}>
             <Plus size={16} /> Add Account
@@ -219,7 +219,7 @@ export default function AccountsPage() {
             >
               <Card.Body>
                 <HStack justify="space-between" mb={2}>
-                  <Heading size="sm" noOfLines={1}>{acc.name}</Heading>
+                  <Heading fontWeight="semibold" size="sm" noOfLines={1}>{acc.name}</Heading>
                   <Badge colorPalette={TYPE_COLORS[acc.account_type] || "gray"} size="sm">
                     {TYPE_LABELS[acc.account_type] || acc.account_type}
                   </Badge>

@@ -119,7 +119,7 @@ export default function AgentsPage() {
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
-        <Heading size="lg">Team Agents</Heading>
+        <Heading fontWeight="semibold" size="lg">Team Agents</Heading>
         <Button bg="primary" color="white" onClick={openCreate} _hover={{ bg: "secondary" }}><UserPlus size={16} /> Add Agent</Button>
       </HStack>
 

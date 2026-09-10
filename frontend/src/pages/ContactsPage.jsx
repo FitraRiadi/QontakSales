@@ -113,7 +113,7 @@ export default function ContactsPage() {
 
   return (
     <VStack gap={6} align="stretch">
-      <Heading size="lg">Contacts</Heading>
+      <Heading fontWeight="semibold" size="lg">Contacts</Heading>
       <HStack gap={3} wrap="wrap">
         <Box position="relative" flex={1} minW="200px">
           <Input placeholder="Search contacts..." value={search} onChange={(e) => setSearch(e.target.value)} pl={10} />

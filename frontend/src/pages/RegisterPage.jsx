@@ -115,7 +115,7 @@ export default function RegisterPage() {
         <Box w="100%" maxW="480px">
           <VStack gap={6}>
             <VStack gap={2} align={{ base: "center", md: "start" }}>
-              <Heading size="xl" color="foreground">Create your account</Heading>
+              <Heading fontWeight="semibold" size="xl" color="foreground">Create your account</Heading>
               <Text color="foreground" opacity={0.6}>Get started with QontakSales for free</Text>
             </VStack>
 

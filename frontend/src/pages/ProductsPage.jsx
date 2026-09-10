@@ -120,7 +120,7 @@ export default function ProductsPage() {
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
-        <Heading size="lg">Products</Heading>
+        <Heading fontWeight="semibold" size="lg">Products</Heading>
         {userRole === "MANAGER" && <Button bg="primary" color="white" _hover={{ bg: "secondary" }} onClick={openCreate}><Plus size={16} /> Add Product</Button>}
       </HStack>
       <Input placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} maxW="400px" />
@@ -135,7 +135,7 @@ export default function ProductsPage() {
             <Card.Root key={p.id} bg="#FAFAFA" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", boxShadow: "lg" }} transition="all 150ms ease" cursor="pointer" onClick={() => { setSelectedProduct(p); setPreviewDialogOpen(true); }}>
               <Card.Body>
                 <HStack justify="space-between" mb={2}>
-                  <Heading size="sm" noOfLines={1}>{p.name}</Heading>
+                  <Heading fontWeight="semibold" size="sm" noOfLines={1}>{p.name}</Heading>
                   <Badge colorPalette={p.status === "ACTIVE" ? "green" : "gray"} size="sm">{p.status}</Badge>
                 </HStack>
                 {p.code && <Text fontSize="xs" color="gray.500">SKU: {p.code}</Text>}

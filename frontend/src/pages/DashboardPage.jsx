@@ -104,7 +104,7 @@ export default function DashboardPage() {
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
-        <Heading size="lg" color="foreground">Dashboard</Heading>
+        <Heading fontWeight="semibold" size="lg" color="foreground">Dashboard</Heading>
         <Button bg="accent" color="white" size="sm" onClick={handleExport} _hover={{ bg: "accent", opacity: 0.9 }}>
           <Export size={16} /> Export Excel
         </Button>
@@ -133,11 +133,11 @@ export default function DashboardPage() {
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
         <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-          <Card.Header><Heading size="md">Monthly Revenue</Heading></Card.Header>
+          <Card.Header><Heading fontWeight="semibold" size="md">Monthly Revenue</Heading></Card.Header>
           <Card.Body><Box h="300px"><Bar data={barData} options={barOptions} /></Box></Card.Body>
         </Card.Root>
         <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-          <Card.Header><Heading size="md">Pipeline Distribution</Heading></Card.Header>
+          <Card.Header><Heading fontWeight="semibold" size="md">Pipeline Distribution</Heading></Card.Header>
           <Card.Body><Box h="300px"><Doughnut data={donutData} options={donutOptions} /></Box></Card.Body>
         </Card.Root>
       </SimpleGrid>
@@ -145,7 +145,7 @@ export default function DashboardPage() {
       <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
         <Card.Header>
           <HStack justify="space-between">
-            <Heading size="md">Agent Leaderboard</Heading>
+            <Heading fontWeight="semibold" size="md">Agent Leaderboard</Heading>
             <Trophy size={20} color="primary" />
           </HStack>
         </Card.Header>

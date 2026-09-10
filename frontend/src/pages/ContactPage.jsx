@@ -36,7 +36,7 @@ export default function ContactPage() {
       <Container maxW="4xl" py={12}>
         <VStack align="stretch" gap={8}>
           <VStack align="start" gap={2}>
-            <Heading size="xl">Contact Us</Heading>
+            <Heading fontWeight="semibold" size="xl">Contact Us</Heading>
             <Text color="foreground" opacity={0.6}>Have a question? We'd love to hear from you.</Text>
           </VStack>
 
@@ -56,7 +56,7 @@ export default function ContactPage() {
           </SimpleGrid>
 
           <Box p={8} bg="#FAFAFA" borderRadius="2xl" border="1px solid" borderColor="border">
-            <Heading size="md" mb={6}>Send a Message</Heading>
+            <Heading fontWeight="semibold" size="md" mb={6}>Send a Message</Heading>
             <Box as="form" onSubmit={handleSubmit}>
               <VStack gap={4}>
                 <SimpleGrid columns={{ base: 1, md: 2 }} w="full" gap={4}>

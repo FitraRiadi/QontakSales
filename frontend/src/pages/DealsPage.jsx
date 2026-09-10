@@ -148,7 +148,7 @@ export default function DealsPage() {
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
-        <Heading size="lg">Deal Pipeline</Heading>
+        <Heading fontWeight="semibold" size="lg">Deal Pipeline</Heading>
         <Button bg="primary" color="white" onClick={openCreate}><Plus size={16} /> New Deal</Button>
       </HStack>
       <HStack gap={4} align="start" overflowX="auto" pb={4}>

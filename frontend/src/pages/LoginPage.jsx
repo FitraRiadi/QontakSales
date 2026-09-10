@@ -120,7 +120,7 @@ export default function LoginPage() {
         <Box w="100%" maxW="400px">
           <VStack gap={8}>
             <VStack gap={3} align={{ base: "center", md: "start" }}>
-              <Heading size="xl" color="foreground">Welcome back</Heading>
+              <Heading fontWeight="semibold" size="xl" color="foreground">Welcome back</Heading>
               <Text color="foreground" opacity={0.6}>Sign in to your account to continue</Text>
             </VStack>
 

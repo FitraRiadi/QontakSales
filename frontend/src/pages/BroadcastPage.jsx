@@ -114,7 +114,7 @@ export default function BroadcastPage() {
   return (
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
-        <Heading size="lg">WhatsApp Broadcast</Heading>
+        <Heading fontWeight="semibold" size="lg">WhatsApp Broadcast</Heading>
         <Badge colorPalette="green" fontSize="md" px={3} py={1}>
           {selectedContacts.length} contacts selected
         </Badge>

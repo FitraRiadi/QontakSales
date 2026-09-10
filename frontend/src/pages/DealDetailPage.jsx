@@ -285,7 +285,7 @@ export default function DealDetailPage() {
       <HStack justify="space-between">
         <HStack gap={3}>
           <Button size="sm" variant="ghost" onClick={() => navigate("/deals")}><ArrowLeft size={16} /></Button>
-          <Heading size="lg">{deal.name}</Heading>
+          <Heading fontWeight="semibold" size="lg">{deal.name}</Heading>
           <Badge colorPalette={currentStage?.color || "gray"} size="lg">{currentStage?.label}</Badge>
         </HStack>
         <HStack gap={2}>
@@ -307,7 +307,7 @@ export default function DealDetailPage() {
       <Box display="grid" gridTemplateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <VStack gap={6} align="stretch">
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-            <Card.Header><Heading size="sm">Deal Information</Heading></Card.Header>
+            <Card.Header><Heading fontWeight="semibold" size="sm">Deal Information</Heading></Card.Header>
             <Card.Body>
               <SimpleGrid columns={2} gap={4}>
                 <VStack align="start" gap={1}>
@@ -339,7 +339,7 @@ export default function DealDetailPage() {
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
-                <Heading size="sm">Contacts Involved ({deal.contacts?.length || 0})</Heading>
+                <Heading fontWeight="semibold" size="sm">Contacts Involved ({deal.contacts?.length || 0})</Heading>
                 <Button size="xs" bg="primary" color="white" onClick={openCreateContact}><Plus size={12} /> Add</Button>
               </HStack>
             </Card.Header>
@@ -371,7 +371,7 @@ export default function DealDetailPage() {
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
-                <Heading size="sm">Products / Line Items ({deal.line_items?.length || 0})</Heading>
+                <Heading fontWeight="semibold" size="sm">Products / Line Items ({deal.line_items?.length || 0})</Heading>
                 <Button size="xs" bg="primary" color="white" onClick={openCreateLineItem}><Plus size={12} /> Add Product</Button>
               </HStack>
             </Card.Header>
@@ -411,7 +411,7 @@ export default function DealDetailPage() {
 
         <VStack gap={6} align="stretch">
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-            <Card.Header><Heading size="sm">Deal Summary</Heading></Card.Header>
+            <Card.Header><Heading fontWeight="semibold" size="sm">Deal Summary</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3} w="full">
                 <HStack justify="space-between" w="full"><Text fontSize="sm" color="gray.500">Company</Text><Text fontWeight="bold" fontSize="sm" cursor="pointer" color="primary" onClick={() => navigate(`/accounts/${deal.company}`)}>{deal.company_name}</Text></HStack>
@@ -425,7 +425,7 @@ export default function DealDetailPage() {
           </Card.Root>
 
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
-            <Card.Header><Heading size="sm">Stage Progress</Heading></Card.Header>
+            <Card.Header><Heading fontWeight="semibold" size="sm">Stage Progress</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={2} w="full">
                 {STAGE_CHOICES.filter((s) => s.value !== "WON" && s.value !== "LOST").map((s) => (
@@ -441,7 +441,7 @@ export default function DealDetailPage() {
 
           {deal.lost_reason && (
             <Card.Root bg="red.50" border="1px solid" borderColor="red.200">
-              <Card.Header><Heading size="sm" color="red.600">Lost Information</Heading></Card.Header>
+              <Card.Header><Heading fontWeight="semibold" size="sm" color="red.600">Lost Information</Heading></Card.Header>
               <Card.Body>
                 <VStack align="start" gap={2}>
                   <HStack gap={2}><Text fontSize="sm" fontWeight="medium">Reason:</Text><Text fontSize="sm">{LOST_REASON_CHOICES.find((r) => r.value === deal.lost_reason)?.label}</Text></HStack>

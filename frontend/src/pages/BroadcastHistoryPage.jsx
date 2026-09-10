@@ -66,7 +66,7 @@ export default function BroadcastHistoryPage() {
 
   return (
     <VStack gap={6} align="stretch">
-      <Heading size="lg">Broadcast History</Heading>
+      <Heading fontWeight="semibold" size="lg">Broadcast History</Heading>
 
       <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
         <Card.Body>

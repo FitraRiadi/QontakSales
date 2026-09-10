@@ -182,7 +182,7 @@ export default function LandingPage() {
               <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">
                 #1 Sales CRM for Teams
               </Box>
-              <Heading size={{ base: "2xl", md: "3xl" }} color="foreground" lineHeight="shorter">
+              <Heading fontWeight="semibold" size={{ base: "2xl", md: "3xl" }} color="foreground" lineHeight="shorter">
                 Close More Deals,<br />
                 <Text as="span" bgGradient="to-r" gradientFrom="primary" gradientTo="stageContacted" bgClip="text">Faster.</Text>
               </Heading>
@@ -224,7 +224,7 @@ export default function LandingPage() {
         <Container maxW="7xl">
           <VStack gap={8} textAlign="center">
             <VStack gap={4}>
-              <Heading size="xl" color="foreground">Track Every Deal from Start to Close</Heading>
+              <Heading fontWeight="semibold" size="xl" color="foreground">Track Every Deal from Start to Close</Heading>
               <Text color="foreground" opacity={0.6} maxW="xl">
                 Drag and drop your deals across 5 stages — from first contact to closed won.
               </Text>
@@ -262,7 +262,7 @@ export default function LandingPage() {
           <SimpleGrid columns={{ base: 2, md: 4 }} gap={8}>
             {stats.map((s) => (
               <VStack key={s.label} color="white">
-                <Heading size="2xl">{s.value}</Heading>
+                <Heading fontWeight="semibold" size="2xl">{s.value}</Heading>
                 <Text opacity={0.8}>{s.label}</Text>
               </VStack>
             ))}
@@ -275,7 +275,7 @@ export default function LandingPage() {
         <Container maxW="7xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Features</Box>
-            <Heading size="xl" color="foreground">Everything You Need</Heading>
+            <Heading fontWeight="semibold" size="xl" color="foreground">Everything You Need</Heading>
             <Text color="foreground" opacity={0.6} maxW="lg">Built for sales teams who want to focus on closing, not data entry.</Text>
           </VStack>
           <Stack direction={{ base: "column", lg: "row" }} gap={8} align="stretch">
@@ -292,7 +292,7 @@ export default function LandingPage() {
                     <Box w={10} h={10} borderRadius="lg" bg="primary/10" display="flex" alignItems="center" justifyContent="center" mb={3}>
                       <Icon size={20} color="primary"><IconComp /></Icon>
                     </Box>
-                    <Heading size="sm" mb={1} color="foreground">{f.title}</Heading>
+                    <Heading fontWeight="semibold" size="sm" mb={1} color="foreground">{f.title}</Heading>
                     <Text color="foreground" opacity={0.6} fontSize="xs">{f.desc}</Text>
                   </Box>
                 );
@@ -307,7 +307,7 @@ export default function LandingPage() {
         <Container maxW="7xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Testimonials</Box>
-            <Heading size="xl" color="foreground">Loved by Sales Teams</Heading>
+            <Heading fontWeight="semibold" size="xl" color="foreground">Loved by Sales Teams</Heading>
           </VStack>
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
             {testimonials.map((t) => (
@@ -339,16 +339,16 @@ export default function LandingPage() {
         <Container maxW="7xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Pricing</Box>
-            <Heading size="xl" color="foreground">Simple Pricing</Heading>
+            <Heading fontWeight="semibold" size="xl" color="foreground">Simple Pricing</Heading>
             <Text color="foreground" opacity={0.6}>Start free. Upgrade when you're ready.</Text>
           </VStack>
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={8}>
             {plans.map((p) => (
               <Box key={p.name} p={8} bg="#FAFAFA" borderRadius="2xl" border="2px solid" borderColor={p.highlighted ? "primary" : "border"} position="relative" _hover={{ transform: "translateY(-4px)", shadow: "xl" }} transition="all 200ms ease">
                 {p.highlighted && <Box position="absolute" top={-3} left="50%" transform="translateX(-50%)" bg="primary" color="white" px={4} py={1} borderRadius="full" fontSize="xs" fontWeight="bold">Most Popular</Box>}
-                <Heading size="md" mb={2}>{p.name}</Heading>
+                <Heading fontWeight="semibold" size="md" mb={2}>{p.name}</Heading>
                 <HStack baseline gap={1} mb={6}>
-                  <Heading size="2xl" color={p.highlighted ? "primary" : "foreground"}>{p.price}</Heading>
+                  <Heading fontWeight="semibold" size="2xl" color={p.highlighted ? "primary" : "foreground"}>{p.price}</Heading>
                   <Text color="foreground" opacity={0.5}>{p.period}</Text>
                 </HStack>
                 <VStack align="start" gap={3} mb={8}>
@@ -370,7 +370,7 @@ export default function LandingPage() {
         <Container maxW="3xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">FAQ</Box>
-            <Heading size="xl" color="foreground">Frequently Asked Questions</Heading>
+            <Heading fontWeight="semibold" size="xl" color="foreground">Frequently Asked Questions</Heading>
             <Text color="foreground" opacity={0.6}>Everything you need to know about QontakSales.</Text>
           </VStack>
           <VStack gap={4}>
@@ -387,7 +387,7 @@ export default function LandingPage() {
         <Box position="absolute" inset={0} bg="blackAlpha.500" />
         <Container maxW="3xl" textAlign="center" position="relative" zIndex={1}>
           <VStack gap={6}>
-            <Heading size="xl">Ready to Boost Your Sales?</Heading>
+            <Heading fontWeight="semibold" size="xl">Ready to Boost Your Sales?</Heading>
             <Text opacity={0.9} fontSize="lg">Join hundreds of teams already closing more deals with QontakSales.</Text>
             <Button size="lg" bg="#FAFAFA" color="primary" onClick={() => navigate("/register")} _hover={{ bg: "muted", transform: "translateY(-1px)" }} px={8}>
               Get Started Free <Icon ml={1}><ArrowRight size={18} /></Icon>
