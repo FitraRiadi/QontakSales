@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -30,7 +30,6 @@ import brandLogo from "@/assets/brand.png";
 import heroImg from "@/assets/heroImg.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
-import ctaBg from "@/assets/cta.jpg";
 
 const features = [
   { icon: Kanban, title: "Sales Pipeline", desc: "Visual Kanban board to track every deal from first contact to closed won." },
@@ -49,23 +48,21 @@ const stats = [
 ];
 
 const testimonials = [
-  { name: "Rina Sari", role: "Sales Director, PT Maju Jaya", text: "QontakSales transformed how our team tracks leads. We closed 30% more deals in the first quarter.", rating: 5, company: "PT Maju Jaya" },
-  { name: "Budi Hartono", role: "Founder, Berkah Abadi", text: "The pipeline view is incredibly intuitive. My team adopted it on day one with zero training.", rating: 5, company: "Berkah Abadi" },
-  { name: "Dewi Lestari", role: "Ops Manager, Global Mandiri", text: "Finally a CRM that doesn't feel like a spreadsheet. The analytics alone are worth the switch.", rating: 5, company: "Global Mandiri" },
-  { name: "Ahmad Rizki", role: "Sales Lead, Sejahtera Corp", text: "We switched from spreadsheets to QontakSales and never looked back. Game changer.", rating: 5, company: "Sejahtera Corp" },
-  { name: "Siti Nurhaliza", role: "Manager, Berkah Group", text: "The activity logs alone save us hours every week. Highly recommend for any sales team.", rating: 5, company: "Berkah Group" },
-  { name: "Eko Prasetyo", role: "Director, Prima Sejahtera", text: "QontakSales helped us unify our sales process across 3 regions. Outstanding platform.", rating: 5, company: "Prima Sejahtera" },
+  { name: "Rina Sari", role: "Sales Director, PT Maju Jaya", text: "QontakSales transformed how our team tracks leads. We closed 30% more deals in the first quarter.", rating: 5 },
+  { name: "Budi Hartono", role: "Founder, Berkah Abadi", text: "The pipeline view is incredibly intuitive. My team adopted it on day one with zero training.", rating: 5 },
+  { name: "Dewi Lestari", role: "Ops Manager, Global Mandiri", text: "Finally a CRM that doesn't feel like a spreadsheet. The analytics alone are worth the switch.", rating: 5 },
+  { name: "Ahmad Rizki", role: "Sales Lead, Sejahtera Corp", text: "We switched from spreadsheets to QontakSales and never looked back. Game changer.", rating: 5 },
+  { name: "Siti Nurhaliza", role: "Manager, Berkah Group", text: "The activity logs alone save us hours every week. Highly recommend for any sales team.", rating: 5 },
+  { name: "Eko Prasetyo", role: "Director, Prima Sejahtera", text: "QontakSales helped us unify our sales process across 3 regions. Outstanding platform.", rating: 5 },
 ];
 
 const logos = [
-  { name: "PT Maju Jaya", color: "#2563EB" },
-  { name: "Berkah Abadi", color: "#059669" },
-  { name: "Global Mandiri", color: "#8B5CF6" },
-  { name: "Sejahtera Corp", color: "#F59E0B" },
-  { name: "Sumber Rejeki", color: "#DC2626" },
-  { name: "Putra Jaya", color: "#3B82F6" },
-  { name: "Berkah Group", color: "#10B981" },
-  { name: "Prima Sejahtera", color: "#6366F1" },
+  { name: "PT Maju Jaya", initials: "MJ" },
+  { name: "Berkah Abadi", initials: "BA" },
+  { name: "Global Mandiri", initials: "GM" },
+  { name: "Sejahtera Corp", initials: "SC" },
+  { name: "Sumber Rejeki", initials: "SR" },
+  { name: "Putra Jaya", initials: "PJ" },
 ];
 
 const plans = [
@@ -81,28 +78,26 @@ const faqs = [
   { q: "What is the difference between Manager and Agent roles?", a: "Managers have full access to all features including agent management, all leads, and broadcast history. Agents can only access their own assigned leads and broadcasts." },
   { q: "Can I archive leads instead of deleting them?", a: "Yes. QontakSales supports soft-delete via the Archive feature. Archived leads are hidden from the main Leads list, Pipeline, and Dashboard statistics, but can be restored anytime." },
   { q: "Does QontakSales support multiple companies?", a: "Yes. Each company has its own isolated data. Users are assigned to a company and can only see data within their organization." },
-  { q: "How does the Pipeline feature work?", a: "The Pipeline is a Kanban-style board with 5 stages: New Lead, Contacted, Negotiation, Won, and Lost. You can drag-and-drop leads between stages to track deal progress visually." },
+  { q: "How does the Pipeline feature work?", a: "The Pipeline is a Kanban-style board with stages: Qualification, Discovery, Proposal, Negotiation, Closing, Won, and Lost. You can drag-and-drop deals between stages to track progress visually." },
   { q: "Is my data secure?", a: "Yes. QontakSales uses JWT authentication, company-level data isolation, and HTTPS encryption. Your data is stored securely in PostgreSQL and is never shared with third parties." },
 ];
 
 function InfiniteCarousel() {
   const [paused, setPaused] = useState(false);
 
-  const keyframeStyle = `
-    @keyframes scroll-logos {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-  `;
-
   return (
     <Box overflow="hidden" py={8}>
-      <style>{keyframeStyle}</style>
+      <style>{`
+        @keyframes scroll-logos {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
       <Box
         display="flex"
-        gap={8}
+        gap={12}
         style={{
-          animation: `scroll-logos 30s linear infinite`,
+          animation: `scroll-logos 25s linear infinite`,
           animationPlayState: paused ? "paused" : "running",
           width: "max-content",
         }}
@@ -110,28 +105,32 @@ function InfiniteCarousel() {
         onMouseLeave={() => setPaused(false)}
       >
         {[...logos, ...logos, ...logos].map((logo, i) => (
-          <Box
+          <HStack
             key={i}
-            minW="200px"
-            h="80px"
-            bg="#FAFAFA"
-            border="1px solid"
-            borderColor="border"
-            borderRadius="lg"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
+            gap={3}
             flexShrink={0}
-            _hover={{ borderColor: "primary", shadow: "md" }}
-            transition="all 200ms ease"
+            opacity={0.5}
+            _hover={{ opacity: 1 }}
+            transition="opacity 200ms"
           >
-            <HStack gap={3}>
-              <Box w={10} h={10} borderRadius="md" bg={logo.color} color="white" display="flex" alignItems="center" justifyContent="center" fontWeight="bold" fontSize="md">
-                {logo.name[0]}
-              </Box>
-              <Text fontWeight="semibold" fontSize="sm" color="foreground">{logo.name}</Text>
-            </HStack>
-          </Box>
+            <Box
+              w={8}
+              h={8}
+              borderRadius="md"
+              bg="foreground"
+              color="background"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              fontSize="xs"
+              fontWeight="bold"
+            >
+              {logo.initials}
+            </Box>
+            <Text fontWeight="medium" fontSize="sm" color="foreground" whiteSpace="nowrap">
+              {logo.name}
+            </Text>
+          </HStack>
         ))}
       </Box>
     </Box>
@@ -142,14 +141,33 @@ function FaqItem({ question, answer }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Box w="full" bg="background" borderRadius="xl" border="1px solid" borderColor="border" overflow="hidden" _hover={{ borderColor: "primary" }} transition="all 200ms ease">
-      <HStack justify="space-between" p={5} cursor="pointer" onClick={() => setOpen(!open)}>
-        <Text fontWeight="semibold" color="foreground" flex={1}>{question}</Text>
-        <Icon color="foreground" opacity={0.5}>{open ? <CaretUp size={18} /> : <CaretDown size={18} />}</Icon>
+    <Box
+      w="full"
+      borderBottom="1px solid"
+      borderColor="border"
+      overflow="hidden"
+    >
+      <HStack
+        justify="space-between"
+        py={5}
+        px={1}
+        cursor="pointer"
+        onClick={() => setOpen(!open)}
+        _hover={{ opacity: 0.7 }}
+        transition="opacity 150ms"
+      >
+        <Text fontWeight="medium" color="foreground" flex={1} fontSize="md">
+          {question}
+        </Text>
+        <Icon color="foreground" opacity={0.4}>
+          {open ? <CaretUp size={16} /> : <CaretDown size={16} />}
+        </Icon>
       </HStack>
       {open && (
-        <Box px={5} pb={5}>
-          <Text color="foreground" opacity={0.6} fontSize="sm" lineHeight="tall">{answer}</Text>
+        <Box px={1} pb={5}>
+          <Text color="foreground" opacity={0.6} fontSize="md" lineHeight="relaxed">
+            {answer}
+          </Text>
         </Box>
       )}
     </Box>
@@ -160,87 +178,226 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <Box bg="background">
+    <Box bg="background" minH="100vh">
       {/* Navbar */}
-      <Box as="nav" position="sticky" top={0} zIndex={10} bg="white/80" backdropFilter="blur(12px)" borderBottom="1px solid" borderColor="border">
-        <Container maxW="7xl" py={4}>
+      <Box
+        as="nav"
+        position="sticky"
+        top={0}
+        zIndex={10}
+        bg="background"
+        borderBottom="1px solid"
+        borderColor="border"
+      >
+        <Container maxW="6xl" py={3}>
           <HStack justify="space-between">
-            <Box as="img" src={brandLogo} h="36px" alt="QontakSales" />
-            <HStack gap={3}>
-              <Button variant="ghost" onClick={() => navigate("/login")}>Login</Button>
-              <Button bg="primary" color="white" onClick={() => navigate("/register")} _hover={{ bg: "secondary" }} px={6}>Get Started Free</Button>
+            <HStack gap={2}>
+              <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />
+            </HStack>
+            <HStack gap={2}>
+              <Button
+                variant="ghost"
+                size="sm"
+                color="foreground"
+                opacity={0.6}
+                _hover={{ opacity: 1 }}
+                onClick={() => navigate("/login")}
+              >
+                Log in
+              </Button>
+              <Button
+                size="sm"
+                bg="foreground"
+                color="background"
+                fontWeight="medium"
+                onClick={() => navigate("/register")}
+                _hover={{ opacity: 0.85 }}
+                px={5}
+              >
+                Get Started
+              </Button>
             </HStack>
           </HStack>
         </Container>
       </Box>
 
       {/* Hero */}
-      <Box py={{ base: 12, md: 20 }} bg="#FAFAFA">
-        <Container maxW="7xl">
-          <Stack direction={{ base: "column", md: "row" }} gap={12} align="center">
-            <VStack align="start" gap={6} flex={1}>
-              <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">
-                #1 Sales CRM for Teams
-              </Box>
-              <Heading fontWeight="semibold" size={{ base: "2xl", md: "3xl" }} color="foreground" lineHeight="shorter">
-                Close More Deals,<br />
-                <Text as="span" bgGradient="to-r" gradientFrom="primary" gradientTo="stageContacted" bgClip="text">Faster.</Text>
-              </Heading>
-              <Text fontSize="lg" color="foreground" opacity={0.7} maxW="lg">
-                The modern Sales CRM that helps teams manage leads, track pipelines,
-                and boost revenue — all in one place.
-              </Text>
-              <HStack gap={4}>
-                <Button size="lg" bg="primary" color="white" onClick={() => navigate("/register")} _hover={{ bg: "secondary", transform: "translateY(-1px)" }} transition="all 200ms ease" px={8}>
-                  Start Free <Icon ml={1}><ArrowRight size={18} /></Icon>
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate("/login")}>
-                  See Demo
-                </Button>
-              </HStack>
-              <HStack gap={6} mt={2} wrap="wrap">
-                {["Free to start", "No credit card", "Setup in 2 min"].map((t) => (
-                  <HStack key={t}><Icon color="accent"><CheckCircle size={16} /></Icon><Text fontSize="sm">{t}</Text></HStack>
-                ))}
-              </HStack>
-            </VStack>
-            <Box flex={1} position="relative">
-              <Box bg="gradient-to-br from-primary/5 to-stageContacted/10" borderRadius="2xl" p={8} minH="360px" border="1px solid" borderColor="border" display="flex" alignItems="center" justifyContent="center">
-                <Box as="img" src={heroImg} maxH="340px" alt="Sales Dashboard" />
-              </Box>
-              <Box position="absolute" top={-4} right={-4} bg="#FAFAFA" p={3} borderRadius="lg" shadow="lg" border="1px solid" borderColor="border">
-                <HStack gap={2}><CheckCircle size={16} color="var(--color-accent)" /><Text fontSize="xs" fontWeight="medium">Deal Won!</Text></HStack>
-              </Box>
-              <Box position="absolute" bottom={-4} left={-4} bg="#FAFAFA" p={3} borderRadius="lg" shadow="lg" border="1px solid" borderColor="border">
-                <HStack gap={2}><Users size={16} color="var(--color-primary)" /><Text fontSize="xs" fontWeight="medium">+12 New Leads</Text></HStack>
-              </Box>
-            </Box>
-          </Stack>
+      <Box py={{ base: 16, md: 24 }}>
+        <Container maxW="4xl" textAlign="center">
+          <VStack gap={6}>
+            <Heading
+              fontWeight="bold"
+              size="4xl"
+              color="foreground"
+              lineHeight="tight"
+              letterSpacing="tight"
+            >
+              The modern CRM
+              <br />
+              for sales teams
+            </Heading>
+            <Text
+              fontSize="lg"
+              color="foreground"
+              opacity={0.6}
+              maxW="xl"
+              lineHeight="relaxed"
+            >
+              Manage leads, track pipelines, and close more deals — all in one
+              place. Built for teams who want results, not spreadsheets.
+            </Text>
+            <HStack gap={3} pt={2}>
+              <Button
+                size="md"
+                bg="foreground"
+                color="background"
+                fontWeight="medium"
+                onClick={() => navigate("/register")}
+                _hover={{ opacity: 0.85 }}
+                px={6}
+              >
+                Get Started Free
+                <Icon ml={1.5}>
+                  <ArrowRight size={16} />
+                </Icon>
+              </Button>
+              <Button
+                size="md"
+                variant="subtle"
+                color="foreground"
+                onClick={() => navigate("/login")}
+                fontWeight="medium"
+                px={6}
+              >
+                See Demo
+              </Button>
+            </HStack>
+            <HStack gap={5} pt={2} wrap="wrap" justify="center">
+              {["Free to start", "No credit card", "Setup in 2 min"].map(
+                (t) => (
+                  <HStack key={t} gap={1.5}>
+                    <Icon color="accent" size={14}>
+                      <CheckCircle />
+                    </Icon>
+                    <Text fontSize="sm" opacity={0.6}>
+                      {t}
+                    </Text>
+                  </HStack>
+                )
+              )}
+            </HStack>
+          </VStack>
+        </Container>
+      </Box>
+
+      {/* Hero Image */}
+      <Box pb={16}>
+        <Container maxW="6xl">
+          <Box
+            borderRadius="xl"
+            overflow="hidden"
+            border="1px solid"
+            borderColor="border"
+            shadow="lg"
+          >
+            <Box
+              as="img"
+              src={heroImg}
+              w="full"
+              alt="QontakSales Dashboard"
+              display="block"
+            />
+          </Box>
+        </Container>
+      </Box>
+
+      {/* Logo Carousel */}
+      <Box pb={8}>
+        <Container maxW="6xl">
+          <Text
+            textAlign="center"
+            fontSize="sm"
+            color="foreground"
+            opacity={0.4}
+            mb={2}
+            fontWeight="medium"
+          >
+            Trusted by leading companies
+          </Text>
+        </Container>
+        <InfiniteCarousel />
+      </Box>
+
+      {/* Stats */}
+      <Box py={16}>
+        <Container maxW="6xl">
+          <SimpleGrid columns={{ base: 2, md: 4 }} gap={8}>
+            {stats.map((s) => (
+              <VStack key={s.label} gap={1}>
+                <Heading fontWeight="semibold" size="2xl" color="foreground">
+                  {s.value}
+                </Heading>
+                <Text fontSize="sm" color="foreground" opacity={0.5}>
+                  {s.label}
+                </Text>
+              </VStack>
+            ))}
+          </SimpleGrid>
         </Container>
       </Box>
 
       {/* Pipeline Highlight */}
-      <Box py={16} bg="background">
-        <Container maxW="7xl">
+      <Box py={16}>
+        <Container maxW="6xl">
           <VStack gap={8} textAlign="center">
-            <VStack gap={4}>
-              <Heading fontWeight="semibold" size="xl" color="foreground">Track Every Deal from Start to Close</Heading>
-              <Text color="foreground" opacity={0.6} maxW="xl">
-                Drag and drop your deals across 5 stages — from first contact to closed won.
+            <VStack gap={3}>
+              <Heading
+                fontWeight="semibold"
+                size="xl"
+                color="foreground"
+                lineHeight="tight"
+              >
+                Track Every Deal from Start to Close
+              </Heading>
+              <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
+                Drag and drop your deals across stages — from first contact to
+                closed won.
               </Text>
             </VStack>
-            <Box w="full" borderRadius="2xl" overflow="hidden" border="1px solid" borderColor="border" shadow="2xl">
-              <Box as="img" src={pipelineHighlight} w="full" alt="Pipeline Kanban Board" />
+            <Box
+              w="full"
+              borderRadius="xl"
+              overflow="hidden"
+              border="1px solid"
+              borderColor="border"
+              shadow="md"
+            >
+              <Box
+                as="img"
+                src={pipelineHighlight}
+                w="full"
+                alt="Pipeline Kanban Board"
+                display="block"
+              />
             </Box>
             <HStack gap={8} wrap="wrap" justify="center">
               {[
-                { icon: Kanban, text: "5 visual stages" },
+                { icon: Kanban, text: "Visual stages" },
                 { icon: ArrowRight, text: "Drag & drop" },
                 { icon: ChartLineUp, text: "Real-time tracking" },
               ].map((item) => (
                 <HStack key={item.text} gap={2}>
-                  <Icon color="primary" size={18}><item.icon /></Icon>
-                  <Text fontSize="sm" fontWeight="medium" color="foreground">{item.text}</Text>
+                  <Icon color="primary" size={16}>
+                    <item.icon />
+                  </Icon>
+                  <Text
+                    fontSize="sm"
+                    fontWeight="medium"
+                    color="foreground"
+                    opacity={0.6}
+                  >
+                    {item.text}
+                  </Text>
                 </HStack>
               ))}
             </HStack>
@@ -248,52 +405,86 @@ export default function LandingPage() {
         </Container>
       </Box>
 
-      {/* Logo Carousel */}
-      <Box bg="background" py={4}>
-        <Container maxW="7xl">
-          <Text textAlign="center" fontSize="sm" color="foreground" opacity={0.5} mb={4}>Trusted by leading companies</Text>
-        </Container>
-        <InfiniteCarousel />
-      </Box>
-
-      {/* Stats */}
-      <Box py={12} bg="primary">
-        <Container maxW="7xl">
-          <SimpleGrid columns={{ base: 2, md: 4 }} gap={8}>
-            {stats.map((s) => (
-              <VStack key={s.label} color="white">
-                <Heading fontWeight="semibold" size="2xl">{s.value}</Heading>
-                <Text opacity={0.8}>{s.label}</Text>
-              </VStack>
-            ))}
-          </SimpleGrid>
-        </Container>
-      </Box>
-
       {/* Features */}
-      <Box py={20} bg="#FAFAFA">
-        <Container maxW="7xl">
-          <VStack gap={4} mb={12} textAlign="center">
-            <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Features</Box>
-            <Heading fontWeight="semibold" size="xl" color="foreground">Everything You Need</Heading>
-            <Text color="foreground" opacity={0.6} maxW="lg">Built for sales teams who want to focus on closing, not data entry.</Text>
+      <Box py={20}>
+        <Container maxW="6xl">
+          <VStack gap={3} mb={12} textAlign="center">
+            <Heading
+              fontWeight="semibold"
+              size="xl"
+              color="foreground"
+              lineHeight="tight"
+            >
+              Everything You Need
+            </Heading>
+            <Text color="foreground" opacity={0.5} maxW="lg">
+              Built for sales teams who want to focus on closing, not data
+              entry.
+            </Text>
           </VStack>
-          <Stack direction={{ base: "column", lg: "row" }} gap={8} align="stretch">
+          <Stack
+            direction={{ base: "column", lg: "row" }}
+            gap={8}
+            align="stretch"
+          >
             {/* Dashboard Image */}
-            <Box flex={1} minH="500px" display="flex" alignItems="center" justifyContent="center">
-              <Box as="img" src={dashboardHighlight} maxH="480px" alt="Dashboard Analytics" />
+            <Box
+              flex={1}
+              minH="400px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              border="1px solid"
+              borderColor="border"
+              borderRadius="xl"
+              overflow="hidden"
+            >
+              <Box
+                as="img"
+                src={dashboardHighlight}
+                maxH="380px"
+                alt="Dashboard Analytics"
+              />
             </Box>
             {/* Feature Cards Grid */}
-            <Box flex={1} display="grid" gridTemplateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
+            <Box
+              flex={1}
+              display="grid"
+              gridTemplateColumns={{ base: "1fr", md: "1fr 1fr" }}
+              gap={3}
+            >
               {features.map((f) => {
                 const IconComp = f.icon;
                 return (
-                  <Box key={f.title} p={5} bg="background" borderRadius="xl" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", shadow: "md" }} transition="all 200ms ease">
-                    <Box w={10} h={10} borderRadius="lg" bg="primary/10" display="flex" alignItems="center" justifyContent="center" mb={3}>
-                      <Icon size={20} color="primary"><IconComp /></Icon>
-                    </Box>
-                    <Heading fontWeight="semibold" size="sm" mb={1} color="foreground">{f.title}</Heading>
-                    <Text color="foreground" opacity={0.6} fontSize="xs">{f.desc}</Text>
+                  <Box
+                    key={f.title}
+                    p={5}
+                    bg="background"
+                    borderRadius="lg"
+                    border="1px solid"
+                    borderColor="border"
+                    _hover={{ borderColor: "primary" }}
+                    transition="border-color 150ms"
+                  >
+                    <Icon size={20} color="primary" mb={3}>
+                      <IconComp />
+                    </Icon>
+                    <Text
+                      fontWeight="semibold"
+                      fontSize="md"
+                      mb={1}
+                      color="foreground"
+                    >
+                      {f.title}
+                    </Text>
+                    <Text
+                      color="foreground"
+                      opacity={0.5}
+                      fontSize="sm"
+                      lineHeight="relaxed"
+                    >
+                      {f.desc}
+                    </Text>
                   </Box>
                 );
               })}
@@ -303,30 +494,67 @@ export default function LandingPage() {
       </Box>
 
       {/* Testimonials */}
-      <Box py={20} bg="#FAFAFA">
-        <Container maxW="7xl">
-          <VStack gap={4} mb={12} textAlign="center">
-            <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Testimonials</Box>
-            <Heading fontWeight="semibold" size="xl" color="foreground">Loved by Sales Teams</Heading>
+      <Box py={20}>
+        <Container maxW="6xl">
+          <VStack gap={3} mb={12} textAlign="center">
+            <Heading
+              fontWeight="semibold"
+              size="xl"
+              color="foreground"
+              lineHeight="tight"
+            >
+              Loved by Sales Teams
+            </Heading>
           </VStack>
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
             {testimonials.map((t) => (
-              <Box key={t.name} p={6} bg="background" borderRadius="xl" border="1px solid" borderColor="border" _hover={{ shadow: "md" }} transition="all 200ms ease">
-                <Icon size={24} color="primary/30" mb={3}><ChatCircleText /></Icon>
-                <HStack mb={3} gap={1}>
+              <Box
+                key={t.name}
+                p={6}
+                bg="background"
+                borderRadius="lg"
+                border="1px solid"
+                borderColor="border"
+              >
+                <HStack mb={3} gap={0.5}>
                   {Array.from({ length: t.rating }).map((_, i) => (
-                    <Icon key={i} color="stageContacted"><Star size={14} weight="fill" /></Icon>
+                    <Icon key={i} color="stageContacted" size={14}>
+                      <Star weight="fill" />
+                    </Icon>
                   ))}
                 </HStack>
-                <Text color="foreground" fontSize="sm" mb={4} lineHeight="tall">"{t.text}"</Text>
-                <HStack>
-                  <Box w={10} h={10} borderRadius="full" bg="primary" color="white" display="flex" alignItems="center" justifyContent="center" fontSize="sm" fontWeight="bold">
+                <Text
+                  color="foreground"
+                  fontSize="md"
+                  mb={4}
+                  lineHeight="relaxed"
+                  opacity={0.8}
+                >
+                  "{t.text}"
+                </Text>
+                <HStack gap={3}>
+                  <Box
+                    w={8}
+                    h={8}
+                    borderRadius="full"
+                    bg="foreground"
+                    color="background"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontSize="xs"
+                    fontWeight="bold"
+                  >
                     {t.name[0]}
                   </Box>
-                  <VStack align="start" gap={0}>
-                    <Text fontWeight="semibold" fontSize="sm">{t.name}</Text>
-                    <Text fontSize="xs" color="foreground" opacity={0.5}>{t.role}</Text>
-                  </VStack>
+                  <Box>
+                    <Text fontWeight="medium" fontSize="sm" color="foreground">
+                      {t.name}
+                    </Text>
+                    <Text fontSize="xs" color="foreground" opacity={0.4}>
+                      {t.role}
+                    </Text>
+                  </Box>
                 </HStack>
               </Box>
             ))}
@@ -336,27 +564,93 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <Box py={20}>
-        <Container maxW="7xl">
-          <VStack gap={4} mb={12} textAlign="center">
-            <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Pricing</Box>
-            <Heading fontWeight="semibold" size="xl" color="foreground">Simple Pricing</Heading>
-            <Text color="foreground" opacity={0.6}>Start free. Upgrade when you're ready.</Text>
+        <Container maxW="6xl">
+          <VStack gap={3} mb={12} textAlign="center">
+            <Heading
+              fontWeight="semibold"
+              size="xl"
+              color="foreground"
+              lineHeight="tight"
+            >
+              Simple Pricing
+            </Heading>
+            <Text color="foreground" opacity={0.5}>
+              Start free. Upgrade when you're ready.
+            </Text>
           </VStack>
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={8}>
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
             {plans.map((p) => (
-              <Box key={p.name} p={8} bg="#FAFAFA" borderRadius="2xl" border="2px solid" borderColor={p.highlighted ? "primary" : "border"} position="relative" _hover={{ transform: "translateY(-4px)", shadow: "xl" }} transition="all 200ms ease">
-                {p.highlighted && <Box position="absolute" top={-3} left="50%" transform="translateX(-50%)" bg="primary" color="white" px={4} py={1} borderRadius="full" fontSize="xs" fontWeight="bold">Most Popular</Box>}
-                <Heading fontWeight="semibold" size="md" mb={2}>{p.name}</Heading>
+              <Box
+                key={p.name}
+                p={8}
+                bg="background"
+                borderRadius="xl"
+                border="1px solid"
+                borderColor={p.highlighted ? "primary" : "border"}
+                position="relative"
+              >
+                {p.highlighted && (
+                  <Box
+                    position="absolute"
+                    top={-3}
+                    left="50%"
+                    transform="translateX(-50%)"
+                    bg="primary"
+                    color="white"
+                    px={3}
+                    py={0.5}
+                    borderRadius="full"
+                    fontSize="xs"
+                    fontWeight="medium"
+                  >
+                    Most Popular
+                  </Box>
+                )}
+                <Text
+                  fontWeight="semibold"
+                  fontSize="md"
+                  mb={2}
+                  color="foreground"
+                >
+                  {p.name}
+                </Text>
                 <HStack baseline gap={1} mb={6}>
-                  <Heading fontWeight="semibold" size="2xl" color={p.highlighted ? "primary" : "foreground"}>{p.price}</Heading>
-                  <Text color="foreground" opacity={0.5}>{p.period}</Text>
+                  <Heading
+                    fontWeight="semibold"
+                    size="2xl"
+                    color={p.highlighted ? "primary" : "foreground"}
+                  >
+                    {p.price}
+                  </Heading>
+                  <Text color="foreground" opacity={0.4} fontSize="sm">
+                    {p.period}
+                  </Text>
                 </HStack>
                 <VStack align="start" gap={3} mb={8}>
                   {p.features.map((f) => (
-                    <HStack key={f} gap={2}><Icon color="accent"><CheckCircle size={16} /></Icon><Text fontSize="sm">{f}</Text></HStack>
+                    <HStack key={f} gap={2}>
+                      <Icon color="accent" size={14}>
+                        <CheckCircle />
+                      </Icon>
+                      <Text fontSize="sm" opacity={0.7}>
+                        {f}
+                      </Text>
+                    </HStack>
                   ))}
                 </VStack>
-                <Button w="full" bg={p.highlighted ? "primary" : "transparent"} color={p.highlighted ? "white" : "foreground"} border={p.highlighted ? "none" : "1px solid"} borderColor="border" onClick={() => navigate("/register")} _hover={{ bg: p.highlighted ? "secondary" : "muted" }} size="lg">
+                <Button
+                  w="full"
+                  bg={p.highlighted ? "primary" : "transparent"}
+                  color={p.highlighted ? "white" : "foreground"}
+                  border={p.highlighted ? "none" : "1px solid"}
+                  borderColor="border"
+                  onClick={() => navigate("/register")}
+                  _hover={{
+                    bg: p.highlighted ? "secondary" : "muted",
+                  }}
+                  fontWeight="medium"
+                  size="md"
+                >
                   {p.cta}
                 </Button>
               </Box>
@@ -366,14 +660,22 @@ export default function LandingPage() {
       </Box>
 
       {/* FAQ */}
-      <Box py={20} bg="#FAFAFA">
-        <Container maxW="3xl">
-          <VStack gap={4} mb={12} textAlign="center">
-            <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">FAQ</Box>
-            <Heading fontWeight="semibold" size="xl" color="foreground">Frequently Asked Questions</Heading>
-            <Text color="foreground" opacity={0.6}>Everything you need to know about QontakSales.</Text>
+      <Box py={20}>
+        <Container maxW="2xl">
+          <VStack gap={3} mb={10} textAlign="center">
+            <Heading
+              fontWeight="semibold"
+              size="xl"
+              color="foreground"
+              lineHeight="tight"
+            >
+              Frequently Asked Questions
+            </Heading>
+            <Text color="foreground" opacity={0.5}>
+              Everything you need to know about QontakSales.
+            </Text>
           </VStack>
-          <VStack gap={4}>
+          <VStack gap={0} align="start" w="full">
             {faqs.map((faq, i) => (
               <FaqItem key={i} question={faq.q} answer={faq.a} />
             ))}
@@ -382,33 +684,78 @@ export default function LandingPage() {
       </Box>
 
       {/* CTA */}
-      <Box py={20} position="relative" overflow="hidden" color="white">
-        <Box as="img" src={ctaBg} position="absolute" inset={0} w="full" h="full" objectFit="cover" />
-        <Box position="absolute" inset={0} bg="blackAlpha.500" />
-        <Container maxW="3xl" textAlign="center" position="relative" zIndex={1}>
+      <Box py={20} borderTop="1px solid" borderColor="border">
+        <Container maxW="2xl" textAlign="center">
           <VStack gap={6}>
-            <Heading fontWeight="semibold" size="xl">Ready to Boost Your Sales?</Heading>
-            <Text opacity={0.9} fontSize="lg">Join hundreds of teams already closing more deals with QontakSales.</Text>
-            <Button size="lg" bg="#FAFAFA" color="primary" onClick={() => navigate("/register")} _hover={{ bg: "muted", transform: "translateY(-1px)" }} px={8}>
-              Get Started Free <Icon ml={1}><ArrowRight size={18} /></Icon>
+            <Heading
+              fontWeight="semibold"
+              size="xl"
+              color="foreground"
+              lineHeight="tight"
+            >
+              Ready to Boost Your Sales?
+            </Heading>
+            <Text color="foreground" opacity={0.5} lineHeight="relaxed">
+              Join hundreds of teams already closing more deals with
+              QontakSales.
+            </Text>
+            <Button
+              size="md"
+              bg="foreground"
+              color="background"
+              fontWeight="medium"
+              onClick={() => navigate("/register")}
+              _hover={{ opacity: 0.85 }}
+              px={8}
+            >
+              Get Started Free
+              <Icon ml={1.5}>
+                <ArrowRight size={16} />
+              </Icon>
             </Button>
           </VStack>
         </Container>
       </Box>
 
       {/* Footer */}
-      <Box py={12} bg="#FAFAFA" borderTop="1px solid" borderColor="border">
-        <Container maxW="7xl">
-          <Stack direction={{ base: "column", md: "row" }} justify="space-between" align="center" gap={4}>
+      <Box py={8} borderTop="1px solid" borderColor="border">
+        <Container maxW="6xl">
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            justify="space-between"
+            align="center"
+            gap={4}
+          >
             <HStack gap={3}>
-              <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />
+              <Box
+                as="img"
+                src={brandLogo}
+                h="24px"
+                alt="QontakSales"
+              />
             </HStack>
             <HStack gap={6}>
-              <Text fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }} onClick={() => navigate("/privacy")}>Privacy</Text>
-              <Text fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }} onClick={() => navigate("/terms")}>Terms</Text>
-              <Text fontSize="sm" color="foreground" opacity={0.5} cursor="pointer" _hover={{ opacity: 1 }} onClick={() => navigate("/contact")}>Contact</Text>
+              {["Privacy", "Terms", "Contact"].map((label) => (
+                <Text
+                  key={label}
+                  fontSize="sm"
+                  color="foreground"
+                  opacity={0.4}
+                  cursor="pointer"
+                  _hover={{ opacity: 0.8 }}
+                  onClick={() =>
+                    navigate(
+                      `/${label.toLowerCase()}`
+                    )
+                  }
+                >
+                  {label}
+                </Text>
+              ))}
             </HStack>
-            <Text fontSize="sm" color="foreground" opacity={0.4}>© 2026 QontakSales. All rights reserved.</Text>
+            <Text fontSize="sm" color="foreground" opacity={0.3}>
+              &copy; 2026 QontakSales
+            </Text>
           </Stack>
         </Container>
       </Box>
