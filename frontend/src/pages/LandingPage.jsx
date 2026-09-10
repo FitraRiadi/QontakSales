@@ -286,6 +286,20 @@ export default function LandingPage() {
                 )
               )}
             </HStack>
+
+            {/* Stats */}
+            <SimpleGrid columns={{ base: 2, md: 4 }} gap={6} pt={6}>
+              {stats.map((s) => (
+                <VStack key={s.label} gap={1}>
+                  <Heading fontWeight="semibold" size="lg" color="foreground">
+                    {s.value}
+                  </Heading>
+                  <Text fontSize="sm" color="foreground" opacity={0.5}>
+                    {s.label}
+                  </Text>
+                </VStack>
+              ))}
+            </SimpleGrid>
           </VStack>
         </Container>
       </Box>
@@ -326,24 +340,6 @@ export default function LandingPage() {
           </Text>
         </Container>
         <InfiniteCarousel />
-      </Box>
-
-      {/* Stats */}
-      <Box py={16}>
-        <Container maxW="6xl">
-          <SimpleGrid columns={{ base: 2, md: 4 }} gap={8}>
-            {stats.map((s) => (
-              <VStack key={s.label} gap={1}>
-                <Heading fontWeight="semibold" size="2xl" color="foreground">
-                  {s.value}
-                </Heading>
-                <Text fontSize="sm" color="foreground" opacity={0.5}>
-                  {s.label}
-                </Text>
-              </VStack>
-            ))}
-          </SimpleGrid>
-        </Container>
       </Box>
 
       {/* Pipeline Highlight */}
