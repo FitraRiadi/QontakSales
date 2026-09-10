@@ -17,7 +17,7 @@ import {
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { ArrowRight, CurrencyDollar, CheckCircle, XCircle, Plus, Archive } from "@phosphor-icons/react";
+import { ArrowRight, CurrencyDollar, CheckCircle, XCircle, Plus } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top" });
@@ -32,7 +32,7 @@ const stages = [
   { id: "LOST", label: "Lost", color: "red", next: null, prob: 0 },
 ];
 
-function DealCard({ deal, onMove, onArchive }) {
+function DealCard({ deal, onMove }) {
   const currentStage = stages.find((s) => s.id === deal.stage);
   const nextStageId = currentStage?.next;
   const nextStage = stages.find((s) => s.id === nextStageId);
@@ -43,12 +43,7 @@ function DealCard({ deal, onMove, onArchive }) {
         <VStack align="stretch" gap={2}>
           <HStack justify="space-between">
             <Text fontWeight="semibold" fontSize="sm" noOfLines={1}>{deal.name}</Text>
-            <HStack gap={1}>
-              <Badge size="sm" colorPalette={deal.probability >= 70 ? "green" : deal.probability >= 40 ? "yellow" : "blue"}>{deal.probability}%</Badge>
-              <Button size="xs" variant="ghost" p={0} minW={0} h={6} onClick={(e) => { e.stopPropagation(); onArchive(deal.id); }} _hover={{ color: "red.500" }}>
-                <Archive size={12} />
-              </Button>
-            </HStack>
+            <Badge size="sm" colorPalette={deal.probability >= 70 ? "green" : deal.probability >= 40 ? "yellow" : "blue"}>{deal.probability}%</Badge>
           </HStack>
           <Text fontSize="xs" color="gray.500">{deal.company_name}</Text>
           {deal.contacts?.length > 0 && (
@@ -148,16 +143,6 @@ export default function DealsPage() {
     }
   };
 
-  const handleArchive = async (dealId) => {
-    try {
-      await api.post(`/deals/${dealId}/archive/`);
-      toaster.create({ title: "Deal archived", type: "success" });
-      fetchDeals();
-    } catch {
-      toaster.create({ title: "Failed to archive deal", type: "error" });
-    }
-  };
-
   if (loading) return <Box display="flex" justifyContent="center" py={20}><Spinner size="xl" color="primary" /></Box>;
 
   return (
@@ -185,7 +170,7 @@ export default function DealsPage() {
               <VStack gap={3} align="stretch" maxH="60vh" overflowY="auto">
                 {stageDeals.map((deal) => (
                   <Box key={deal.id} cursor="pointer" onClick={() => navigate(`/deals/${deal.id}`)}>
-                    <DealCard deal={deal} onMove={handleMove} onArchive={handleArchive} />
+                    <DealCard deal={deal} onMove={handleMove} />
                   </Box>
                 ))}
                 {stageDeals.length === 0 && <Text fontSize="xs" color="gray.400" textAlign="center" py={4}>No deals</Text>}

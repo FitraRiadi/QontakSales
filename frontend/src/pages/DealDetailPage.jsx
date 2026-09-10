@@ -31,6 +31,7 @@ import {
   CheckCircle,
   XCircle,
   ArrowRight,
+  Archive,
 } from "@phosphor-icons/react";
 import api from "@/services/api";
 
@@ -275,6 +276,16 @@ export default function DealDetailPage() {
     }
   };
 
+  const handleArchive = async () => {
+    try {
+      await api.post(`/deals/${id}/archive/`);
+      toaster.create({ title: "Deal archived", type: "success" });
+      navigate("/deals");
+    } catch {
+      toaster.create({ title: "Failed to archive deal", type: "error" });
+    }
+  };
+
   if (loading) return <Box display="flex" justifyContent="center" py={20}><Spinner size="xl" color="primary" /></Box>;
   if (!deal) return <Box textAlign="center" py={10}><Text>Deal not found</Text></Box>;
 
@@ -302,6 +313,7 @@ export default function DealDetailPage() {
             </>
           )}
           <Button size="sm" variant="outline" onClick={openEditDeal}><PencilSimple size={14} /> Edit</Button>
+          <Button size="sm" variant="outline" color="red.500" onClick={handleArchive}><Archive size={14} /> Archive</Button>
         </HStack>
       </Stack>
 
