@@ -18,8 +18,12 @@ class DealViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        qs = Deal.objects.filter(company__company=user.company, is_archived=False)
-        if user.role == "AGENT":
+        show_archived = self.request.query_params.get("archived", "false") == "true"
+        filters = {"company__company": user.company}
+        if not show_archived:
+            filters["is_archived"] = False
+        qs = Deal.objects.filter(**filters)
+        if user.role == "AGENT" and not show_archived:
             qs = qs.filter(owner=user)
 
         search = self.request.query_params.get("search")

@@ -13,7 +13,11 @@ class BusinessAccountViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        qs = BusinessAccount.objects.filter(company=user.company, is_archived=False)
+        show_archived = self.request.query_params.get("archived", "false") == "true"
+        filters = {"company": user.company}
+        if not show_archived:
+            filters["is_archived"] = False
+        qs = BusinessAccount.objects.filter(**filters)
 
         search = self.request.query_params.get("search")
         if search:
@@ -75,7 +79,11 @@ class ContactViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        qs = Contact.objects.filter(account__company=user.company, is_archived=False)
+        show_archived = self.request.query_params.get("archived", "false") == "true"
+        filters = {"account__company": user.company}
+        if not show_archived:
+            filters["is_archived"] = False
+        qs = Contact.objects.filter(**filters)
 
         search = self.request.query_params.get("search")
         if search:

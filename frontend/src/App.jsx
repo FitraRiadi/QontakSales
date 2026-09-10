@@ -17,6 +17,7 @@ import ContactsPage from "./pages/ContactsPage";
 import DealsPage from "./pages/DealsPage";
 import DealDetailPage from "./pages/DealDetailPage";
 import ProductsPage from "./pages/ProductsPage";
+import ArchivePage from "./pages/ArchivePage";
 import MainLayout from "./components/layout/MainLayout";
 import AuthGuard from "./components/layout/AuthGuard";
 
@@ -42,6 +43,7 @@ function App() {
           <Route path="/agents" element={<AgentsPage />} />
           <Route path="/broadcasts" element={<BroadcastPage />} />
           <Route path="/broadcasts/history" element={<BroadcastHistoryPage />} />
+          <Route path="/archive" element={<ArchivePage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Route>
