@@ -72,7 +72,6 @@ export default function ContactsPage() {
   const handleEditContact = async () => {
     const errs = {};
     if (!contactForm.first_name.trim()) errs.first_name = "First name is required";
-    if (!contactForm.last_name.trim()) errs.last_name = "Last name is required";
     if (!contactForm.email.trim()) errs.email = "Email is required";
     if (!contactForm.phone.trim()) errs.phone = "Phone is required";
     if (Object.keys(errs).length > 0) { setContactErrors(errs); return; }
@@ -324,7 +323,7 @@ export default function ContactsPage() {
                       <Input placeholder="John" value={contactForm.first_name} onChange={(e) => { setContactErrors({ ...contactErrors, first_name: undefined }); setContactForm({ ...contactForm, first_name: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.first_name}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1} required invalid={!!contactErrors.last_name}>
+                    <Field.Root flex={1} invalid={!!contactErrors.last_name}>
                       <Field.Label>Last Name</Field.Label>
                       <Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => { setContactErrors({ ...contactErrors, last_name: undefined }); setContactForm({ ...contactForm, last_name: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.last_name}</Field.ErrorText>

@@ -61,7 +61,10 @@ class DealViewSet(viewsets.ModelViewSet):
         return qs
 
     def perform_create(self, serializer):
-        deal = serializer.save(owner=self.request.user)
+        from qontak_sales.apps.companies.models import BusinessAccount
+        company_id = self.request.data.get("company")
+        company = BusinessAccount.objects.get(id=company_id) if company_id else None
+        deal = serializer.save(owner=self.request.user, company=company)
         from django.contrib.auth import get_user_model
         User = get_user_model()
         managers = User.objects.filter(company=self.request.user.company, role="MANAGER")
