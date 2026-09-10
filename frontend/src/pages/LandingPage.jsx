@@ -28,6 +28,7 @@ import {
 } from "@phosphor-icons/react";
 import brandLogo from "@/assets/brand.png";
 import dashboardPreviewLaptop from "@/assets/dashboard-preview-laptop.png";
+import trustedHighlightBg from "@/assets/trusted-highligh-bg.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
 import ctaImg from "@/assets/cta.jpg";
@@ -247,8 +248,20 @@ export default function LandingPage() {
       </Box>
 
       {/* Hero */}
-      <Box pt={{ base: 12, md: 16 }} pb={{ base: 12, md: 20 }}>
-        <Container maxW="6xl">
+      <Box pt={{ base: 12, md: 16 }} pb={{ base: 12, md: 20 }} position="relative" overflow="hidden">
+        <Box
+          position="absolute"
+          top={{ base: "-10%", md: "-20%" }}
+          left="-5%"
+          right="-5%"
+          bottom="0"
+          bgImage={`url(${trustedHighlightBg})`}
+          bgSize="contain"
+          bgRepeat="no-repeat"
+          bgPosition="center top"
+          opacity={0.15}
+        />
+        <Container maxW="6xl" position="relative" zIndex={1}>
           <Stack direction={{ base: "column", md: "row" }} align="center" gap={10}>
             <VStack flex={1} gap={6} textAlign={{ base: "center", md: "left" }}>
               <Heading
