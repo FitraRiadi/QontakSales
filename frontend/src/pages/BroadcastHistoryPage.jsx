@@ -17,7 +17,7 @@ import {
 import { Eye, CheckCircle, XCircle } from "@phosphor-icons/react";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const STATUS_MAP = {
   DRAFT: { label: "Draft", color: "gray" },

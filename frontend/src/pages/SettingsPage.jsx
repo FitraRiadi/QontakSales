@@ -18,7 +18,7 @@ import { User, Lock, Camera, FloppyDisk } from "@phosphor-icons/react";
 import api from "@/services/api";
 import LoadingPopup from "@/components/ui/LoadingPopup";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState(null);

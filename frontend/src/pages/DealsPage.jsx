@@ -20,7 +20,7 @@ import {
 import { ArrowRight, CurrencyDollar, CheckCircle, XCircle, Plus } from "@phosphor-icons/react";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const stages = [
   { id: "QUALIFICATION", label: "Qualification", color: "blue", next: "DISCOVERY", prob: 10 },

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import brandLogo from "@/assets/brand.png";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const contactInfo = [
   { icon: EnvelopeSimple, label: "Email", value: "hello@qontaksales.com", color: "primary" },

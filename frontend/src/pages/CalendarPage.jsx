@@ -40,7 +40,7 @@ import {
 import { id as idLocale } from "date-fns/locale";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 const DAYS_FULL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

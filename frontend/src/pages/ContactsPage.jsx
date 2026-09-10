@@ -20,7 +20,7 @@ import {
 import { Plus, MagnifyingGlass, Phone, Envelope, User, PhoneCall, ChatCircle, X, PencilSimple, Trash } from "@phosphor-icons/react";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const ROLE_LABELS = { DECISION_MAKER: "Decision Maker", CHAMPION: "Champion", TECH_EVALUATOR: "Tech Evaluator", INFLUENCER: "Influencer", BLOCKER: "Blocker", USER: "End User", OTHER: "Other" };
 const ROLE_COLORS = { DECISION_MAKER: "green", CHAMPION: "blue", TECH_EVALUATOR: "purple", INFLUENCER: "yellow", BLOCKER: "red", USER: "gray", OTHER: "gray" };

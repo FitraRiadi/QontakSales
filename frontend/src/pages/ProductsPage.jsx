@@ -19,7 +19,7 @@ import {
 import { Plus, Package, PencilSimple, Trash, CurrencyDollar, Percent, X } from "@phosphor-icons/react";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const PRODUCT_CATEGORIES = [
   "Software",

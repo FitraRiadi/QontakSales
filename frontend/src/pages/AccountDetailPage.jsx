@@ -11,6 +11,7 @@ import {
   Input,
   Portal,
   Spinner,
+  Stack,
   Text,
   VStack,
   Badge,
@@ -19,7 +20,7 @@ import {
 import { ArrowLeft, Buildings, Phone, Envelope, Globe, MapPin, PencilSimple, Plus, User, CalendarBlank, Clock, CheckCircle, X } from "@phosphor-icons/react";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const INDUSTRY_LABELS = { TECH: "Technology", FINANCE: "Finance", HEALTH: "Healthcare", EDUCATION: "Education", RETAIL: "Retail", MANUFACTURING: "Manufacturing", REAL_ESTATE: "Real Estate", CONSULTING: "Consulting", OTHER: "Other" };
 const TYPE_LABELS = { PROSPECT: "Prospect", CUSTOMER: "Customer", PARTNER: "Partner", VENDOR: "Vendor" };
@@ -210,8 +211,8 @@ export default function AccountDetailPage() {
 
   return (
     <VStack gap={6} align="stretch">
-      <HStack justify="space-between">
-        <HStack gap={3}>
+      <Stack direction={{ base: "column", md: "row" }} justify="space-between" gap={4} align={{ base: "start", md: "center" }}>
+        <HStack gap={3} wrap="wrap">
           <Button size="sm" variant="ghost" onClick={() => navigate("/accounts")}><ArrowLeft size={16} /></Button>
           <Heading fontWeight="semibold" size="lg">{account.name}</Heading>
           <Badge colorPalette={TYPE_COLORS[account.account_type] || "gray"}>{TYPE_LABELS[account.account_type]}</Badge>
@@ -219,7 +220,7 @@ export default function AccountDetailPage() {
         {(userRole === "MANAGER" || String(account.owner) === String(userId)) && (
           <Button size="sm" variant="outline" onClick={openEdit}><PencilSimple size={14} /> Edit</Button>
         )}
-      </HStack>
+      </Stack>
 
       <Box display="grid" gridTemplateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <VStack gap={6} align="stretch">
@@ -369,33 +370,33 @@ export default function AccountDetailPage() {
                     <Input placeholder="Company name" value={form.name || ""} onChange={(e) => { setEditErrors({}); setForm({ ...form, name: e.target.value }); }} />
                     <Field.ErrorText>{editErrors.name}</Field.ErrorText>
                   </Field.Root>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1} required invalid={!!editErrors.industry}>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root required invalid={!!editErrors.industry}>
                       <Field.Label>Industry</Field.Label>
                       <select value={form.industry || ""} onChange={(e) => { setEditErrors({ ...editErrors, industry: undefined }); setForm({ ...form, industry: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
                       <Field.ErrorText>{editErrors.industry}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1}><Field.Label>Size (optional)</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
-                  </HStack>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1} required invalid={!!editErrors.phone}>
+                    <Field.Root><Field.Label>Size (optional)</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
+                  </SimpleGrid>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root required invalid={!!editErrors.phone}>
                       <Field.Label>Phone</Field.Label>
                       <Input placeholder="+62 xxx" value={form.phone || ""} onChange={(e) => { setEditErrors({ ...editErrors, phone: undefined }); setForm({ ...form, phone: e.target.value }); }} />
                       <Field.ErrorText>{editErrors.phone}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1} required invalid={!!editErrors.email}>
+                    <Field.Root required invalid={!!editErrors.email}>
                       <Field.Label>Email</Field.Label>
                       <Input type="email" placeholder="name@company.com" value={form.email || ""} onChange={(e) => { setEditErrors({ ...editErrors, email: undefined }); setForm({ ...form, email: e.target.value }); }} />
                       <Field.ErrorText>{editErrors.email}</Field.ErrorText>
                     </Field.Root>
-                  </HStack>
+                  </SimpleGrid>
                   <Field.Root w="full"><Field.Label>Website (optional)</Field.Label><Input placeholder="https://..." value={form.website || ""} onChange={(e) => setForm({ ...form, website: e.target.value })} /></Field.Root>
                   <Field.Root w="full"><Field.Label>Address (optional)</Field.Label><Input placeholder="Street address" value={form.address || ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></Field.Root>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>City (optional)</Field.Label><Input placeholder="Jakarta" value={form.city || ""} onChange={(e) => setForm({ ...form, city: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Country (optional)</Field.Label><Input placeholder="Indonesia" value={form.country || ""} onChange={(e) => setForm({ ...form, country: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Revenue (optional)</Field.Label><Input type="number" placeholder="0" value={form.annual_revenue || ""} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} /></Field.Root>
-                  </HStack>
+                  <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} w="full">
+                    <Field.Root><Field.Label>City (optional)</Field.Label><Input placeholder="Jakarta" value={form.city || ""} onChange={(e) => setForm({ ...form, city: e.target.value })} /></Field.Root>
+                    <Field.Root><Field.Label>Country (optional)</Field.Label><Input placeholder="Indonesia" value={form.country || ""} onChange={(e) => setForm({ ...form, country: e.target.value })} /></Field.Root>
+                    <Field.Root><Field.Label>Revenue (optional)</Field.Label><Input type="number" placeholder="0" value={form.annual_revenue || ""} onChange={(e) => setForm({ ...form, annual_revenue: e.target.value })} /></Field.Root>
+                  </SimpleGrid>
                 </VStack>
               </Dialog.Body>
               <Dialog.Footer>
@@ -415,34 +416,34 @@ export default function AccountDetailPage() {
               <Dialog.Header><Dialog.Title>{editContact ? "Edit Contact" : "New Contact"}</Dialog.Title></Dialog.Header>
               <Dialog.Body>
                 <VStack gap={4}>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1} required invalid={!!contactErrors.first_name}>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root required invalid={!!contactErrors.first_name}>
                       <Field.Label>First Name</Field.Label>
                       <Input placeholder="John" value={contactForm.first_name} onChange={(e) => { setContactErrors({}); setContactForm({ ...contactForm, first_name: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.first_name}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1} required invalid={!!contactErrors.last_name}>
+                    <Field.Root required invalid={!!contactErrors.last_name}>
                       <Field.Label>Last Name</Field.Label>
                       <Input placeholder="Doe" value={contactForm.last_name} onChange={(e) => { setContactErrors({ ...contactErrors, last_name: undefined }); setContactForm({ ...contactForm, last_name: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.last_name}</Field.ErrorText>
                     </Field.Root>
-                  </HStack>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1} required invalid={!!contactErrors.email}>
+                  </SimpleGrid>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root required invalid={!!contactErrors.email}>
                       <Field.Label>Email</Field.Label>
                       <Input type="email" placeholder="john@company.com" value={contactForm.email} onChange={(e) => { setContactErrors({ ...contactErrors, email: undefined }); setContactForm({ ...contactForm, email: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.email}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1} required invalid={!!contactErrors.phone}>
+                    <Field.Root required invalid={!!contactErrors.phone}>
                       <Field.Label>Phone</Field.Label>
                       <Input placeholder="+62 xxx" value={contactForm.phone} onChange={(e) => { setContactErrors({ ...contactErrors, phone: undefined }); setContactForm({ ...contactForm, phone: e.target.value }); }} />
                       <Field.ErrorText>{contactErrors.phone}</Field.ErrorText>
                     </Field.Root>
-                  </HStack>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Job Title (optional)</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Role in Deal (optional)</Field.Label><select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>{Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
-                  </HStack>
+                  </SimpleGrid>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root><Field.Label>Job Title (optional)</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
+                    <Field.Root><Field.Label>Role in Deal (optional)</Field.Label><select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>{Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
+                  </SimpleGrid>
                 </VStack>
               </Dialog.Body>
               <Dialog.Footer>

@@ -23,7 +23,7 @@ import api from "@/services/api";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import LoadingPopup from "@/components/ui/LoadingPopup";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState([]);

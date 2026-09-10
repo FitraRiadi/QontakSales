@@ -34,7 +34,7 @@ import {
 } from "@phosphor-icons/react";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const STAGE_CHOICES = [
   { value: "QUALIFICATION", label: "Qualification", color: "blue", prob: 10 },

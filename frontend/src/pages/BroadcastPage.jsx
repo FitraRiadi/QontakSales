@@ -22,7 +22,7 @@ import { MagnifyingGlass, PaperPlaneRight, CheckCircle, XCircle, Clock } from "@
 import api from "@/services/api";
 import LoadingPopup from "@/components/ui/LoadingPopup";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const VARIABLES = [
   { key: "{name}", desc: "Contact name" },

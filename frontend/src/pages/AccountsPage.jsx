@@ -20,7 +20,7 @@ import {
 import { Plus, Buildings, MagnifyingGlass, Phone, Envelope, MapPin, PencilSimple, Trash } from "@phosphor-icons/react";
 import api from "@/services/api";
 
-const toaster = createToaster({ placement: "top-end" });
+const toaster = createToaster({ placement: "top" });
 
 const INDUSTRY_LABELS = {
   TECH: "Technology",
