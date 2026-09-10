@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
-  Box, Heading, Text, Button, Table, Badge, VStack, HStack, Tabs, Spinner, createToaster,
+  Box, Heading, Text, Button, Table, Badge, HStack, Tabs, Spinner, createToaster,
   Dialog, Portal
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import { ArrowCounterClockwise, Trash, Archive, Buildings, AddressBook, Handshake } from "@phosphor-icons/react";
 import api from "@/services/api";
 
@@ -15,6 +14,8 @@ const TABS = [
   { value: "deals", label: "Deals", icon: Handshake },
 ];
 
+const PAGE_SIZE = 10;
+
 const TYPE_COLORS = {
   CUSTOMER: { bg: "blue.50", color: "blue.700", label: "Customer" },
   PARTNER: { bg: "purple.50", color: "purple.700", label: "Partner" },
@@ -23,15 +24,21 @@ const TYPE_COLORS = {
   OTHER: { bg: "gray.50", color: "gray.700", label: "Other" },
 };
 
+const STAGE_LABELS = {
+  QUALIFICATION: "Qualification",
+  DISCOVERY: "Discovery",
+  PROPOSAL: "Proposal",
+  NEGOTIATION: "Negotiation",
+  CLOSING: "Closing",
+  WON: "Won",
+  LOST: "Lost",
+};
+
 export default function ArchivePage() {
-  const navigate = useNavigate();
   const [tab, setTab] = useState("accounts");
   const [accounts, setAccounts] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [deals, setDeals] = useState([]);
-  const [accountsCount, setAccountsCount] = useState(0);
-  const [contactsCount, setContactsCount] = useState(0);
-  const [dealsCount, setDealsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [deleteDialog, setDeleteDialog] = useState(null);
@@ -39,41 +46,38 @@ export default function ArchivePage() {
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/accounts/", { params: { archived: "true", page, page_size: 10 } });
-      setAccounts(data.results || []);
-      setAccountsCount(data.count || 0);
+      const { data } = await api.get("/accounts/", { params: { archived: "true" } });
+      setAccounts(Array.isArray(data.results) ? data.results : Array.isArray(data) ? data : []);
     } catch {
       toaster.create({ title: "Failed to load archived accounts", type: "error" });
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, []);
 
   const fetchContacts = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/contacts/", { params: { archived: "true", page, page_size: 10 } });
-      setContacts(data.results || []);
-      setContactsCount(data.count || 0);
+      const { data } = await api.get("/contacts/", { params: { archived: "true" } });
+      setContacts(Array.isArray(data.results) ? data.results : Array.isArray(data) ? data : []);
     } catch {
       toaster.create({ title: "Failed to load archived contacts", type: "error" });
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, []);
 
   const fetchDeals = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/deals/", { params: { archived: "true", page, page_size: 10 } });
-      setDeals(data.results || []);
-      setDealsCount(data.count || 0);
+      const { data } = await api.get("/deals/", { params: { archived: "true" } });
+      setDeals(Array.isArray(data.results) ? data.results : Array.isArray(data) ? data : []);
     } catch {
       toaster.create({ title: "Failed to load archived deals", type: "error" });
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -83,7 +87,15 @@ export default function ArchivePage() {
     if (tab === "accounts") fetchAccounts();
     else if (tab === "contacts") fetchContacts();
     else fetchDeals();
-  }, [tab, page, fetchAccounts, fetchContacts, fetchDeals]);
+  }, [tab, fetchAccounts, fetchContacts, fetchDeals]);
+
+  const items = tab === "accounts" ? accounts : tab === "contacts" ? contacts : deals;
+  const totalCount = items.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const pagedItems = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return items.slice(start, start + PAGE_SIZE);
+  }, [items, page]);
 
   const handleRestore = async (endpoint) => {
     try {
@@ -111,24 +123,17 @@ export default function ArchivePage() {
     }
   };
 
-  const getCounts = () => {
-    const items = tab === "accounts" ? accounts : tab === "contacts" ? contacts : deals;
-    return items.length;
-  };
-
-  const totalPages = Math.ceil((tab === "accounts" ? accountsCount : tab === "contacts" ? contactsCount : dealsCount) / 10);
-
   return (
     <Box px={6} py={4}>
       <HStack justify="space-between" mb={4}>
         <Heading fontWeight="semibold" size="lg">Archive</Heading>
       </HStack>
 
-      <Tabs.Root value={tab} onValueChange={(e) => setTab(e.value)}>
+      <Tabs.Root value={tab} onValueChange={(e) => { setTab(e.value); setPage(1); }}>
         <Tabs.List>
           {TABS.map((t) => {
             const Icon = t.icon;
-            const count = t.value === "accounts" ? accountsCount : t.value === "contacts" ? contactsCount : dealsCount;
+            const count = t.value === "accounts" ? accounts.length : t.value === "contacts" ? contacts.length : deals.length;
             return (
               <Tabs.Trigger key={t.value} value={t.value}>
                 <HStack gap={2}>
@@ -151,7 +156,7 @@ export default function ArchivePage() {
               <Box py={10} textAlign="center">
                 <Spinner size="lg" color="primary" />
               </Box>
-            ) : (tab === "accounts" ? accounts : tab === "contacts" ? contacts : deals).length === 0 ? (
+            ) : items.length === 0 ? (
               <Box py={10} textAlign="center">
                 <Archive size={40} color="gray.300" />
                 <Text mt={3} color="gray.500">No archived items</Text>
@@ -189,7 +194,7 @@ export default function ArchivePage() {
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    {(tab === "accounts" ? accounts : tab === "contacts" ? contacts : deals).map((item) => (
+                    {pagedItems.map((item) => (
                       <Table.Row key={item.id}>
                         {tab === "accounts" && (
                           <>
@@ -216,7 +221,11 @@ export default function ArchivePage() {
                             <Table.Cell fontWeight="medium">{item.name}</Table.Cell>
                             <Table.Cell>{item.company_name || "-"}</Table.Cell>
                             <Table.Cell>{item.amount ? `Rp ${Number(item.amount).toLocaleString("id-ID")}` : "-"}</Table.Cell>
-                            <Table.Cell>{item.stage}</Table.Cell>
+                            <Table.Cell>
+                              <Badge size="sm" borderRadius="full" px={2}>
+                                {STAGE_LABELS[item.stage] || item.stage}
+                              </Badge>
+                            </Table.Cell>
                           </>
                         )}
                         <Table.Cell textAlign="end">
