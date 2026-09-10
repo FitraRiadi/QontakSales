@@ -171,7 +171,7 @@ export default function SettingsPage() {
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Company</Field.Label>
-                      <Input value={settings?.user?.company_name || ""} isDisabled />
+                      <Input value={settings?.user?.company_name || ""} isDisabled pointerEvents="none" tabIndex={-1} bg="gray.100" color="gray.500" borderColor="gray.200" _disabled={{ opacity: 1, cursor: "default" }} />
                     </Field.Root>
                   </SimpleGrid>
                   <Button type="submit" bg="primary" color="white" loading={saving} _hover={{ bg: "secondary" }}><FloppyDisk size={16} /> Save Changes</Button>
