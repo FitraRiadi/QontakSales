@@ -12,6 +12,7 @@ import {
   Portal,
   SimpleGrid,
   Spinner,
+  Stack,
   Text,
   VStack,
   Badge,
@@ -282,13 +283,13 @@ export default function DealDetailPage() {
 
   return (
     <VStack gap={6} align="stretch">
-      <HStack justify="space-between">
-        <HStack gap={3}>
+      <Stack direction={{ base: "column", md: "row" }} justify="space-between" gap={4} align={{ base: "start", md: "center" }}>
+        <HStack gap={3} wrap="wrap">
           <Button size="sm" variant="ghost" onClick={() => navigate("/deals")}><ArrowLeft size={16} /></Button>
           <Heading fontWeight="semibold" size="lg">{deal.name}</Heading>
           <Badge colorPalette={currentStage?.color || "gray"} size="lg">{currentStage?.label}</Badge>
         </HStack>
-        <HStack gap={2}>
+        <HStack gap={2} wrap="wrap">
           {deal.stage !== "WON" && deal.stage !== "LOST" && nextStage && (
             <Button size="sm" bg="primary" color="white" onClick={() => handleMoveStage(nextStage.value)} _hover={{ bg: "secondary" }}>
               <ArrowRight size={14} /> Move to {nextStage.label}
@@ -302,14 +303,14 @@ export default function DealDetailPage() {
           )}
           <Button size="sm" variant="outline" onClick={openEditDeal}><PencilSimple size={14} /> Edit</Button>
         </HStack>
-      </HStack>
+      </Stack>
 
       <Box display="grid" gridTemplateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <VStack gap={6} align="stretch">
           <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header><Heading fontWeight="semibold" size="sm">Deal Information</Heading></Card.Header>
             <Card.Body>
-              <SimpleGrid columns={2} gap={4}>
+              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
                 <VStack align="start" gap={1}>
                   <Text fontSize="xs" color="gray.500">Deal Value</Text>
                   <HStack gap={1}><CurrencyDollar size={14} color="primary" /><Text fontWeight="bold" fontSize="lg" color="primary">Rp {Number(deal.amount).toLocaleString("id-ID")}</Text></HStack>
@@ -327,7 +328,7 @@ export default function DealDetailPage() {
                   <Text fontSize="sm">{deal.source || "-"}</Text>
                 </VStack>
                 {deal.description && (
-                  <VStack align="start" gap={1} gridColumn="span 2">
+                  <VStack align="start" gap={1} gridColumn={{ base: "span 1", md: "span 2" }}>
                     <Text fontSize="xs" color="gray.500">Description</Text>
                     <Text fontSize="sm">{deal.description}</Text>
                   </VStack>
@@ -381,27 +382,29 @@ export default function DealDetailPage() {
               ) : (
                 <VStack gap={3} align="stretch">
                   {deal.line_items.map((li) => (
-                    <HStack key={li.id} p={3} bg="muted" borderRadius="lg" justify="space-between">
-                      <HStack gap={3}>
-                        <Box w={8} h={8} borderRadius="full" bg="purple.500" color="white" display="flex" alignItems="center" justifyContent="center"><Package size={14} /></Box>
-                        <VStack align="start" gap={0}>
-                          <Text fontWeight="medium" fontSize="sm">{li.product_name}</Text>
-                          {li.product_code && <Text fontSize="xs" color="gray.500">SKU: {li.product_code}</Text>}
-                        </VStack>
-                      </HStack>
-                      <HStack gap={4} align="center">
-                        <VStack align="end" gap={0}>
-                          <Text fontSize="xs" color="gray.500">Qty: {li.quantity}</Text>
-                          <Text fontSize="xs" color="gray.500">Price: Rp {Number(li.unit_price).toLocaleString("id-ID")}</Text>
-                          {Number(li.discount) > 0 && <Text fontSize="xs" color="red.500">Discount: {Number(li.discount)}%</Text>}
-                        </VStack>
-                        <Text fontWeight="bold" fontSize="sm" color="primary">Rp {Number(li.total_price).toLocaleString("id-ID")}</Text>
+                    <VStack key={li.id} p={3} bg="muted" borderRadius="lg" align="stretch" gap={3}>
+                      <HStack justify="space-between" gap={3}>
+                        <HStack gap={3}>
+                          <Box w={8} h={8} borderRadius="full" bg="purple.500" color="white" display="flex" alignItems="center" justifyContent="center"><Package size={14} /></Box>
+                          <VStack align="start" gap={0}>
+                            <Text fontWeight="medium" fontSize="sm">{li.product_name}</Text>
+                            {li.product_code && <Text fontSize="xs" color="gray.500">SKU: {li.product_code}</Text>}
+                          </VStack>
+                        </HStack>
                         <HStack gap={1}>
                           <Button size="xs" variant="ghost" onClick={() => openEditLineItem(li)}><PencilSimple size={12} /></Button>
                           <Button size="xs" variant="ghost" color="red.500" onClick={() => handleDeleteLineItem(li.id)}><Trash size={12} /></Button>
                         </HStack>
                       </HStack>
-                    </HStack>
+                      <HStack justify="space-between" pl={11}>
+                        <VStack align="start" gap={0}>
+                          <Text fontSize="xs" color="gray.500">Qty: {li.quantity}</Text>
+                          <Text fontSize="xs" color="gray.500">Price: Rp {Number(li.unit_price).toLocaleString("id-ID")}</Text>
+                          {Number(li.discount) > 0 && <Text fontSize="xs" color="red.500">Discount: {Number(li.discount)}%</Text>}
+                        </VStack>
+                        <Text fontWeight="bold" fontSize="sm" color="primary">Rp {Number(li.total_price).toLocaleString("id-ID")}</Text>
+                      </HStack>
+                    </VStack>
                   ))}
                 </VStack>
               )}
@@ -466,19 +469,19 @@ export default function DealDetailPage() {
                     <Input placeholder="Deal name" value={editForm.name || ""} onChange={(e) => { setEditErrors({}); setEditForm({ ...editForm, name: e.target.value }); }} />
                     <Field.ErrorText>{editErrors.name}</Field.ErrorText>
                   </Field.Root>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Amount (Rp) (optional)</Field.Label><Input type="number" placeholder="0" value={editForm.amount || ""} onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Probability (%) (optional)</Field.Label><Input type="number" placeholder="0-100" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
-                  </HStack>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Stage (optional)</Field.Label><select value={editForm.stage || ""} onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>{STAGE_CHOICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Expected Close (optional)</Field.Label><Input type="date" value={editForm.expected_close_date || ""} onChange={(e) => setEditForm({ ...editForm, expected_close_date: e.target.value })} /></Field.Root>
-                  </HStack>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root><Field.Label>Amount (Rp) (optional)</Field.Label><Input type="number" placeholder="0" value={editForm.amount || ""} onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })} /></Field.Root>
+                    <Field.Root><Field.Label>Probability (%) (optional)</Field.Label><Input type="number" placeholder="0-100" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
+                  </SimpleGrid>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root><Field.Label>Stage (optional)</Field.Label><select value={editForm.stage || ""} onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>{STAGE_CHOICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></Field.Root>
+                    <Field.Root><Field.Label>Expected Close (optional)</Field.Label><Input type="date" value={editForm.expected_close_date || ""} onChange={(e) => setEditForm({ ...editForm, expected_close_date: e.target.value })} /></Field.Root>
+                  </SimpleGrid>
                   {editForm.stage === "LOST" && (
-                    <HStack gap={4} w="full">
-                      <Field.Root flex={1}><Field.Label>Lost Reason (optional)</Field.Label><select value={editForm.lost_reason || ""} onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option>{LOST_REASON_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field.Root>
-                      <Field.Root flex={1}><Field.Label>Lost Notes (optional)</Field.Label><Input placeholder="Why was this deal lost?" value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
-                    </HStack>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                      <Field.Root><Field.Label>Lost Reason (optional)</Field.Label><select value={editForm.lost_reason || ""} onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option>{LOST_REASON_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field.Root>
+                      <Field.Root><Field.Label>Lost Notes (optional)</Field.Label><Input placeholder="Why was this deal lost?" value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
+                    </SimpleGrid>
                   )}
                   <Field.Root w="full"><Field.Label>Description (optional)</Field.Label><textarea placeholder="Deal description..." value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", resize: "vertical" }} /></Field.Root>
                 </VStack>
@@ -545,14 +548,14 @@ export default function DealDetailPage() {
                     </select>
                     <Field.ErrorText>{lineItemErrors.product}</Field.ErrorText>
                   </Field.Root>
-                  <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Quantity (optional)</Field.Label><Input type="number" placeholder="1" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>
-                    <Field.Root flex={1} required invalid={!!lineItemErrors.unit_price}>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
+                    <Field.Root><Field.Label>Quantity (optional)</Field.Label><Input type="number" placeholder="1" value={lineItemForm.quantity} onChange={(e) => setLineItemForm({ ...lineItemForm, quantity: parseInt(e.target.value) || 1 })} /></Field.Root>
+                    <Field.Root required invalid={!!lineItemErrors.unit_price}>
                       <Field.Label>Unit Price (Rp)</Field.Label>
                       <Input type="number" placeholder="0" value={lineItemForm.unit_price} onChange={(e) => { setLineItemErrors({ ...lineItemErrors, unit_price: undefined }); setLineItemForm({ ...lineItemForm, unit_price: parseFloat(e.target.value) || 0 }); }} />
                       <Field.ErrorText>{lineItemErrors.unit_price}</Field.ErrorText>
                     </Field.Root>
-                  </HStack>
+                  </SimpleGrid>
                   <Field.Root w="full"><Field.Label>Discount (%) (optional)</Field.Label><Input type="number" placeholder="0" min={0} max={100} value={lineItemForm.discount} onChange={(e) => { const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0)); setLineItemForm({ ...lineItemForm, discount: v }); }} /></Field.Root>
                   <HStack justify="space-between" w="full" p={3} bg="muted" borderRadius="lg">
                     <Text fontSize="sm" fontWeight="bold">Total:</Text>

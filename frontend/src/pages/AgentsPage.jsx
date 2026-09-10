@@ -123,7 +123,34 @@ export default function AgentsPage() {
         <Button bg="primary" color="white" onClick={openCreate} _hover={{ bg: "secondary" }}><UserPlus size={16} /> Add Agent</Button>
       </HStack>
 
-      <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
+      {/* Mobile: Card list */}
+      <VStack display={{ base: "flex", md: "none" }} gap={3} align="stretch">
+        {agents.map((agent) => (
+          <Card.Root key={agent.id} bg="#FAFAFA" border="1px solid" borderColor="border">
+            <Card.Body>
+              <HStack justify="space-between" gap={3}>
+                <HStack gap={3}>
+                  <Avatar.Root size="sm">
+                    {agent.avatar_url ? <Avatar.Image src={agent.avatar_url} /> : <Avatar.Fallback name={`${agent.first_name} ${agent.last_name}`} bg="primary" color="white" />}
+                  </Avatar.Root>
+                  <VStack align="start" gap={0}>
+                    <Text fontWeight="medium" fontSize="sm">{agent.first_name} {agent.last_name}</Text>
+                    <Text fontSize="xs" color="gray.500">{agent.email}</Text>
+                    <Badge size="sm" colorPalette={agent.role === "MANAGER" ? "purple" : "blue"}>{agent.role}</Badge>
+                  </VStack>
+                </HStack>
+                <HStack gap={1}>
+                  <Button size="xs" variant="ghost" onClick={() => openEdit(agent)}><Pencil size={12} /></Button>
+                  <Button size="xs" variant="ghost" colorPalette="red" onClick={() => setDeleteDialog({ open: true, id: agent.id })}><Trash size={12} /></Button>
+                </HStack>
+              </HStack>
+            </Card.Body>
+          </Card.Root>
+        ))}
+      </VStack>
+
+      {/* Desktop: Table */}
+      <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border" display={{ base: "none", md: "block" }}>
         <Card.Body>
           <Table.Root size="sm">
             <Table.Header>
@@ -179,7 +206,7 @@ export default function AgentsPage() {
                     <Box position="absolute" bottom={0} right={0} bg="primary" color="white" p={1.5} borderRadius="full"><Camera size={14} /></Box>
                     <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleAvatarChange} />
                   </Box>
-                  <SimpleGrid columns={2} gap={4} w="full">
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w="full">
                     <Field.Root required><Field.Label>First Name</Field.Label><Input value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} /></Field.Root>
                     <Field.Root required><Field.Label>Last Name</Field.Label><Input value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} /></Field.Root>
                     <Field.Root required><Field.Label>Username</Field.Label><Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} disabled={!!editAgent} /></Field.Root>

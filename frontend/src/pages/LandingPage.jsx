@@ -33,12 +33,36 @@ import pipelineHighlight from "@/assets/pipeline-highlight.png";
 import ctaImg from "@/assets/cta.jpg";
 
 const features = [
-  { icon: Kanban, title: "Sales Pipeline", desc: "Visual Kanban board to track every deal from first contact to closed won." },
-  { icon: ChartLineUp, title: "Real-time Analytics", desc: "Dashboards with charts showing revenue, win rate, and agent performance." },
-  { icon: Users, title: "Lead Management", desc: "Organize, tag, and filter prospects with Hot/Cold temperature indicators." },
-  { icon: ShieldCheck, title: "Secure & Multi-tenant", desc: "JWT authentication with company-level data isolation for every team." },
-  { icon: Lightning, title: "Activity Tracking", desc: "Chronological activity logs for every lead interaction, nothing lost." },
-  { icon: DeviceMobile, title: "Responsive Design", desc: "Full mobile and desktop support — manage deals from anywhere." },
+  {
+    icon: Kanban,
+    title: "Visual Sales Pipeline",
+    desc: "Track every deal seamlessly with an intuitive Kanban board. Drag and drop leads across customized stages from initial inquiry to final contract signing.",
+  },
+  {
+    icon: ChartLineUp,
+    title: "Real-time Analytics & Dashboards",
+    desc: "Make data-driven decisions with dynamic charts. Monitor monthly revenue forecasts, team win rates, pipeline distribution, and top-performing sales agents.",
+  },
+  {
+    icon: Users,
+    title: "Advanced Lead Management",
+    desc: "Organize, tag, and segment prospects effortlesly. Utilize Hot/Cold temperature indicators and custom filters to prioritize high-value leads and boost conversion.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Multi-tenant & Enterprise Security",
+    desc: "Built with JWT authentication and strict company-level data isolation, ensuring your sensitive business data stays completely secure and private.",
+  },
+  {
+    icon: Lightning,
+    title: "Chronological Activity Tracking",
+    desc: "Log every touchpoint with your leads. From phone calls and meeting notes to email updates, maintain a complete timeline of customer interactions.",
+  },
+  {
+    icon: DeviceMobile,
+    title: "Seamless Cross-Device Experience",
+    desc: "Designed for modern remote teams. Enjoy full functionality and smooth user experience whether you are on a desktop workstation or a mobile device.",
+  },
 ];
 
 const stats = [
@@ -334,7 +358,7 @@ export default function LandingPage() {
           <VStack gap={8} textAlign="center">
             <VStack gap={3}>
               <Heading
-                fontWeight="semibold"
+                fontWeight="bold"
                 size="xl"
                 color="foreground"
                 lineHeight="tight"
@@ -342,7 +366,7 @@ export default function LandingPage() {
                 Track Every Deal from Start to Close
               </Heading>
               <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
-                Drag and drop your deals across stages — from first contact to
+                Switch your deals across stages, from first contact to
                 closed won.
               </Text>
             </VStack>
@@ -416,7 +440,6 @@ export default function LandingPage() {
               display="flex"
               alignItems="center"
               justifyContent="center"
-              border="1px solid"
               borderColor="border"
               borderRadius="xl"
               overflow="hidden"
@@ -424,7 +447,7 @@ export default function LandingPage() {
               <Box
                 as="img"
                 src={dashboardHighlight}
-                maxH="380px"
+                maxH="650px"
                 alt="Dashboard Analytics"
               />
             </Box>
