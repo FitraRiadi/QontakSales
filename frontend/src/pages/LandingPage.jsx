@@ -222,12 +222,12 @@ export default function LandingPage() {
       </Box>
 
       {/* Hero */}
-      <Box py={{ base: 16, md: 24 }}>
+      <Box pt={{ base: 12, md: 16 }} pb={{ base: 12, md: 20 }}>
         <Container maxW="4xl" textAlign="center">
           <VStack gap={6}>
             <Heading
               fontWeight="bold"
-              size="4xl"
+              fontSize={{ base: "40px", md: "56px", lg: "64px" }}
               color="foreground"
               lineHeight="tight"
               letterSpacing="tight"
