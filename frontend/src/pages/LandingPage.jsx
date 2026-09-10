@@ -29,6 +29,7 @@ import {
 import brandLogo from "@/assets/brand.png";
 import dashboardPreviewLaptop from "@/assets/dashboard-preview-laptop.png";
 import trustedHighlightBg from "@/assets/trusted-highligh-bg.png";
+import faqIllustration from "@/assets/FAQ-ilustration.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
 import ctaImg from "@/assets/cta.jpg";
@@ -259,7 +260,7 @@ export default function LandingPage() {
           bgSize="contain"
           bgRepeat="no-repeat"
           bgPosition="center top"
-          opacity={0.15}
+          opacity={0.50}
         />
         <Container maxW="6xl" position="relative" zIndex={1}>
           <Stack direction={{ base: "column", md: "row" }} align="center" gap={10}>
@@ -679,7 +680,7 @@ export default function LandingPage() {
 
       {/* FAQ */}
       <Box py={20}>
-        <Container maxW="2xl">
+        <Container maxW="6xl">
           <VStack gap={3} mb={10} textAlign="center">
             <Heading
               fontWeight="semibold"
@@ -693,11 +694,16 @@ export default function LandingPage() {
               Everything you need to know about QontakSales.
             </Text>
           </VStack>
-          <VStack gap={0} align="start" w="full">
-            {faqs.map((faq, i) => (
-              <FaqItem key={i} question={faq.q} answer={faq.a} />
-            ))}
-          </VStack>
+          <Stack direction={{ base: "column", md: "row" }} gap={10} align="start">
+            <Box flex={1} display={{ base: "none", md: "block" }}>
+              <Box as="img" src={faqIllustration} w="full" display="block" />
+            </Box>
+            <VStack gap={0} align="start" flex={1} w="full">
+              {faqs.map((faq, i) => (
+                <FaqItem key={i} question={faq.q} answer={faq.a} />
+              ))}
+            </VStack>
+          </Stack>
         </Container>
       </Box>
 
