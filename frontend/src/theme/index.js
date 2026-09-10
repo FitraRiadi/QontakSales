@@ -20,8 +20,8 @@ const config = {
         stageLost: { value: "#DC2626" },
       },
       fonts: {
-        heading: { value: "'Plus Jakarta Sans', sans-serif" },
-        body: { value: "'Inter', 'Open Sans', sans-serif" },
+        heading: { value: "'Inter', sans-serif" },
+        body: { value: "'Inter', sans-serif" },
       },
     },
   },
