@@ -62,7 +62,7 @@ export default function DashboardPage() {
   };
 
   const metrics = [
-    { label: "Total Revenue", value: `Rp ${(stats.total_revenue / 1000000).toFixed(1)}M`, icon: CurrencyDollar, color: "stageWon" },
+    { label: "Total Revenue", value: `Rp ${(stats.total_revenue / 1000000).toFixed(1)}JT`, icon: CurrencyDollar, color: "stageWon" },
     { label: "Win Rate", value: `${stats.win_rate}%`, icon: Trophy, color: "primary" },
     { label: "Active Leads", value: stats.active_leads, icon: Users, color: "stageContacted" },
     { label: "Total Leads", value: stats.total_leads, icon: TrendUp, color: "stageNegotiation" },
@@ -82,7 +82,7 @@ export default function DashboardPage() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: { legend: { display: false } },
-    scales: { y: { beginAtZero: true, ticks: { callback: (v) => `Rp ${(v / 1000000).toFixed(0)}M` } } },
+    scales: { y: { beginAtZero: true, ticks: { callback: (v) => `Rp ${(v / 1000000).toFixed(0)}JT` } } },
   };
 
   const donutData = {
@@ -168,7 +168,7 @@ export default function DashboardPage() {
                     <Table.Cell><Text fontWeight="bold" color={i < 3 ? "stageContacted" : "foreground"}>#{i + 1}</Text></Table.Cell>
                     <Table.Cell fontWeight="medium">{a.name}</Table.Cell>
                     <Table.Cell>{a.deals}</Table.Cell>
-                    <Table.Cell fontWeight="medium">Rp {(a.revenue / 1000000).toFixed(1)}M</Table.Cell>
+                    <Table.Cell fontWeight="medium">Rp {(a.revenue / 1000000).toFixed(1)}JT</Table.Cell>
                   </Table.Row>
                 ))}
               </Table.Body>

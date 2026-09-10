@@ -189,7 +189,7 @@ export default function LandingPage() {
         borderBottom="1px solid"
         borderColor="border"
       >
-        <Container maxW="6xl" py={3}>
+        <Container maxW="full" px={{ base: 4, md: 8 }} py={3}>
           <HStack justify="space-between">
             <HStack gap={2}>
               <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />
@@ -232,9 +232,9 @@ export default function LandingPage() {
               lineHeight="tight"
               letterSpacing="tight"
             >
-              The modern CRM
+              The Modern CRM
               <br />
-              for sales teams
+              For Sales Teams
             </Heading>
             <Text
               fontSize="lg"
@@ -257,9 +257,7 @@ export default function LandingPage() {
                 px={6}
               >
                 Get Started Free
-                <Icon ml={1.5}>
-                  <ArrowRight size={16} />
-                </Icon>
+               
               </Button>
               <Button
                 size="md"
