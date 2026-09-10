@@ -30,6 +30,7 @@ import brandLogo from "@/assets/brand.png";
 import dashboardPreviewLaptop from "@/assets/dashboard-preview-laptop.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
+import ctaImg from "@/assets/cta.jpg";
 
 const features = [
   { icon: Kanban, title: "Sales Pipeline", desc: "Visual Kanban board to track every deal from first contact to closed won." },
@@ -233,8 +234,7 @@ export default function LandingPage() {
                 lineHeight="tight"
                 letterSpacing="tight"
               >
-                The Modern CRM
-                <br />
+                The Modern CRM            
                 For Sales Teams
               </Heading>
               <Text
@@ -243,7 +243,7 @@ export default function LandingPage() {
                 opacity={0.6}
                 lineHeight="relaxed"
               >
-                Manage leads, track pipelines, and close more deals — all in one
+                Manage leads, track pipelines, and close more deals, all in one
                 place. Built for teams who want results, not spreadsheets.
               </Text>
               <HStack gap={3}>
@@ -666,31 +666,39 @@ export default function LandingPage() {
       </Box>
 
       {/* CTA */}
-      <Box py={20} borderTop="1px solid" borderColor="border">
-        <Container maxW="2xl" textAlign="center">
+      <Box py={24} position="relative" overflow="hidden">
+        <Box
+          position="absolute"
+          inset={0}
+          bgImage={`url(${ctaImg})`}
+          bgSize="cover"
+          bgPosition="center"
+        />
+        <Box position="absolute" inset={0} bg="black" opacity={0.6} />
+        <Container maxW="2xl" textAlign="center" position="relative" zIndex={1}>
           <VStack gap={6}>
             <Heading
               fontWeight="semibold"
               size="xl"
-              color="foreground"
+              color="white"
               lineHeight="tight"
             >
               Ready to Boost Your Sales?
             </Heading>
-            <Text color="foreground" opacity={0.5} lineHeight="relaxed">
+            <Text color="white" opacity={0.8} lineHeight="relaxed">
               Join hundreds of teams already closing more deals with
               QontakSales.
             </Text>
-              <Button
-                size="md"
-                bg="primary"
-                color="white"
-                fontWeight="medium"
-                onClick={() => navigate("/register")}
-                _hover={{ opacity: 0.85 }}
-                px={8}
-              >
-                Get Started Free
+            <Button
+              size="md"
+              bg="primary"
+              color="white"
+              fontWeight="medium"
+              onClick={() => navigate("/register")}
+              _hover={{ opacity: 0.85 }}
+              px={8}
+            >
+              Get Started Free
               <Icon ml={1.5}>
                 <ArrowRight size={16} />
               </Icon>
