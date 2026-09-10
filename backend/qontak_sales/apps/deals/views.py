@@ -20,8 +20,7 @@ class DealViewSet(viewsets.ModelViewSet):
         user = self.request.user
         show_archived = self.request.query_params.get("archived", "false") == "true"
         filters = {"company__company": user.company}
-        if not show_archived:
-            filters["is_archived"] = False
+        filters["is_archived"] = show_archived
         qs = Deal.objects.filter(**filters)
         if user.role == "AGENT" and not show_archived:
             qs = qs.filter(owner=user)

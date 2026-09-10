@@ -17,7 +17,7 @@ import {
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { Plus, MagnifyingGlass, Phone, Envelope, User, PhoneCall, ChatCircle, X, PencilSimple, Trash } from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass, Phone, Envelope, User, PhoneCall, ChatCircle, X, PencilSimple, Trash, Archive } from "@phosphor-icons/react";
 import api from "@/services/api";
 
 const toaster = createToaster({ placement: "top" });
@@ -111,6 +111,17 @@ export default function ContactsPage() {
     }
   };
 
+  const handleArchive = async (id) => {
+    try {
+      await api.post(`/contacts/${id}/archive/`);
+      toaster.create({ title: "Contact archived", type: "success" });
+      setContactDialogOpen(false);
+      fetchContacts();
+    } catch {
+      toaster.create({ title: "Failed to archive contact", type: "error" });
+    }
+  };
+
   return (
     <VStack gap={6} align="stretch">
       <Heading fontWeight="semibold" size="lg">Contacts</Heading>
@@ -165,6 +176,12 @@ export default function ContactsPage() {
                         onClick={() => openEdit(selectedContact)}
                       >
                         <PencilSimple size={14} />
+                      </Button>
+                      <Button
+                        size="xs" variant="ghost" color="white" _hover={{ bg: "whiteAlpha.200" }}
+                        onClick={() => handleArchive(selectedContact.id)}
+                      >
+                        <Archive size={14} />
                       </Button>
                       <Button
                         size="xs" variant="ghost" color="white" _hover={{ bg: "redAlpha.400" }}
