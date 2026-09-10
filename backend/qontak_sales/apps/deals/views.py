@@ -131,7 +131,7 @@ class DealViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def restore(self, request, pk=None):
-        deal = self.get_object()
+        deal = Deal.objects.get(pk=pk, company__company=request.user.company)
         deal.is_archived = False
         deal.save()
         return Response({"message": "Deal restored"})
@@ -383,6 +383,7 @@ def calendar_events(request):
 
     activities = ActivityLog.objects.filter(
         deal__company__company=user.company,
+        deal__is_archived=False,
         scheduled_at__isnull=False,
         scheduled_at__date__gte=start,
         scheduled_at__date__lte=end,

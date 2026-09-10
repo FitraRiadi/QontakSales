@@ -66,7 +66,7 @@ class BusinessAccountViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def restore(self, request, pk=None):
-        account = self.get_object()
+        account = BusinessAccount.objects.get(pk=pk, company=request.user.company)
         account.is_archived = False
         account.save()
         return Response({"message": "Account restored"})
@@ -119,7 +119,7 @@ class ContactViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def restore(self, request, pk=None):
-        contact = self.get_object()
+        contact = Contact.objects.get(pk=pk, account__company=request.user.company)
         contact.is_archived = False
         contact.save()
         return Response({"message": "Contact restored"})
