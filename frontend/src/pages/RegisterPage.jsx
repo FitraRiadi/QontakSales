@@ -14,7 +14,7 @@ import {
   HStack,
   SimpleGrid,
 } from "@chakra-ui/react";
-import { Eye, EyeClosed, Buildings, User, Envelope, Lock } from "@phosphor-icons/react";
+import { Eye, EyeClosed, Buildings, User, Envelope, Lock, Info } from "@phosphor-icons/react";
 import api from "@/services/api";
 import brandLogo from "@/assets/brand.png";
 import LoadingPopup from "@/components/ui/LoadingPopup";
@@ -25,21 +25,54 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   if (localStorage.getItem("access_token")) return <Navigate to="/dashboard" replace />;
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (fieldErrors[e.target.name]) setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.name.trim() || form.name.trim().length < 2) errs.name = "Name must be at least 2 characters";
+    if (!form.email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) errs.email = "Please enter a valid email address";
+    if (!form.company_name.trim()) errs.company_name = "Company name is required";
+    if (!form.password) errs.password = "Password is required";
+    else if (form.password.length < 8) errs.password = "Password must be at least 8 characters";
+    if (!form.password_confirm) errs.password_confirm = "Please confirm your password";
+    else if (form.password !== form.password_confirm) errs.password_confirm = "Passwords do not match";
+    return errs;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
-    if (form.password !== form.password_confirm) { setError("Passwords do not match"); setLoading(false); return; }
+    setFieldErrors({});
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      return;
+    }
+    setLoading(true);
     try {
-      await api.post("/auth/register/", { name: form.name, email: form.email, password: form.password, company_name: form.company_name });
+      await api.post("/auth/register/", { name: form.name.trim(), email: form.email.trim(), password: form.password, company_name: form.company_name.trim() });
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      const data = err?.response?.data;
+      if (data && typeof data === "object") {
+        const fieldErrs = {};
+        for (const [key, val] of Object.entries(data)) {
+          if (Array.isArray(val)) fieldErrs[key] = val[0];
+          else if (typeof val === "string") fieldErrs[key] = val;
+        }
+        if (Object.keys(fieldErrs).length > 0) setFieldErrors(fieldErrs);
+        else setError(data.message || data.detail || "Registration failed. Please try again.");
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -94,26 +127,35 @@ export default function RegisterPage() {
                       {error}
                     </Box>
                   )}
-                  <Field.Root>
+                  <Field.Root invalid={!!fieldErrors.name}>
                     <Field.Label>Full Name</Field.Label>
-                    <Input name="name" size="lg" value={form.name} onChange={handleChange} placeholder="John Doe" borderRadius="lg" required />
+                    <Input name="name" size="lg" value={form.name} onChange={handleChange} placeholder="John Doe" borderRadius="lg" />
+                    <Field.ErrorText>{fieldErrors.name}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root>
+                  <Field.Root invalid={!!fieldErrors.email}>
                     <Field.Label>Email</Field.Label>
-                    <Input name="email" type="email" size="lg" value={form.email} onChange={handleChange} placeholder="you@company.com" borderRadius="lg" required />
+                    <Input name="email" type="email" size="lg" value={form.email} onChange={handleChange} placeholder="you@company.com" borderRadius="lg" />
+                    <Field.ErrorText>{fieldErrors.email}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root>
+                  <Field.Root invalid={!!fieldErrors.company_name}>
                     <Field.Label>Company Name</Field.Label>
-                    <Input name="company_name" size="lg" value={form.company_name} onChange={handleChange} placeholder="Your Company" borderRadius="lg" required />
+                    <Input name="company_name" size="lg" value={form.company_name} onChange={handleChange} placeholder="Your Company" borderRadius="lg" />
+                    <Field.ErrorText>{fieldErrors.company_name}</Field.ErrorText>
                   </Field.Root>
                   <SimpleGrid columns={2} gap={4}>
-                    <Field.Root>
+                    <Field.Root invalid={!!fieldErrors.password}>
                       <Field.Label>Password</Field.Label>
-                      <Input name="password" type="password" size="lg" value={form.password} onChange={handleChange} placeholder="Min 8 characters" borderRadius="lg" required />
+                      <Input name="password" type="password" size="lg" value={form.password} onChange={handleChange} placeholder="Min 8 characters" borderRadius="lg" />
+                      {fieldErrors.password ? (
+                        <Field.ErrorText>{fieldErrors.password}</Field.ErrorText>
+                      ) : (
+                        <Text fontSize="xs" color="fg.muted" mt={1}>At least 8 characters</Text>
+                      )}
                     </Field.Root>
-                    <Field.Root>
+                    <Field.Root invalid={!!fieldErrors.password_confirm}>
                       <Field.Label>Confirm</Field.Label>
-                      <Input name="password_confirm" type="password" size="lg" value={form.password_confirm} onChange={handleChange} placeholder="Confirm password" borderRadius="lg" required />
+                      <Input name="password_confirm" type="password" size="lg" value={form.password_confirm} onChange={handleChange} placeholder="Confirm password" borderRadius="lg" />
+                      <Field.ErrorText>{fieldErrors.password_confirm}</Field.ErrorText>
                     </Field.Root>
                   </SimpleGrid>
                   <Button

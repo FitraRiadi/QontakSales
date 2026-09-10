@@ -26,15 +26,30 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   if (localStorage.getItem("access_token")) return <Navigate to="/dashboard" replace />;
 
+  const validate = () => {
+    const errs = {};
+    if (!email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = "Please enter a valid email address";
+    if (!password) errs.password = "Password is required";
+    return errs;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setFieldErrors({});
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      return;
+    }
+    setLoading(true);
     try {
-      const response = await api.post("/token/", { email, password });
+      const response = await api.post("/token/", { email: email.trim(), password });
       localStorage.setItem("access_token", response.data.access);
       localStorage.setItem("refresh_token", response.data.refresh);
       const profile = await api.get("/auth/profile/");
@@ -117,31 +132,30 @@ export default function LoginPage() {
                       {error}
                     </Box>
                   )}
-                  <Field.Root>
+                  <Field.Root invalid={!!fieldErrors.email}>
                     <Field.Label color="foreground">Email</Field.Label>
                     <Input
                       size="lg"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: "" })); }}
                       placeholder="Enter your email"
                       borderRadius="lg"
-                      required
                     />
+                    <Field.ErrorText>{fieldErrors.email}</Field.ErrorText>
                   </Field.Root>
-                  <Field.Root>
+                  <Field.Root invalid={!!fieldErrors.password}>
                     <Field.Label color="foreground">Password</Field.Label>
                     <Box position="relative" w="full">
                       <Input
                         size="lg"
                         type={showPassword ? "text" : "password"}
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => { setPassword(e.target.value); if (fieldErrors.password) setFieldErrors((p) => ({ ...p, password: "" })); }}
                         placeholder="Enter your password"
                         borderRadius="lg"
                         w="full"
                         pr={12}
-                        required
                       />
                       <Box
                         position="absolute"
@@ -159,6 +173,7 @@ export default function LoginPage() {
                         {showPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
                       </Box>
                     </Box>
+                    <Field.ErrorText>{fieldErrors.password}</Field.ErrorText>
                   </Field.Root>
                   <Button
                     type="submit"
