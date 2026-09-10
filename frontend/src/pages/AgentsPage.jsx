@@ -123,7 +123,7 @@ export default function AgentsPage() {
         <Button bg="primary" color="white" onClick={openCreate} _hover={{ bg: "secondary" }}><UserPlus size={16} /> Add Agent</Button>
       </HStack>
 
-      <Card.Root bg="white" border="1px solid" borderColor="border">
+      <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
         <Card.Body>
           <Table.Root size="sm">
             <Table.Header>

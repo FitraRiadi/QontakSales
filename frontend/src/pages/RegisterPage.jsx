@@ -92,8 +92,8 @@ export default function RegisterPage() {
         position="relative"
         overflow="hidden"
       >
-        <Box position="absolute" bottom={-100} left={-100} w={300} h={300} bg="white" opacity={5} borderRadius="full" />
-        <Box position="absolute" top={-50} right={-50} w={200} h={200} bg="white" opacity={5} borderRadius="full" />
+        <Box position="absolute" bottom={-100} left={-100} w={300} h={300} bg="#FAFAFA" opacity={5} borderRadius="full" />
+        <Box position="absolute" top={-50} right={-50} w={200} h={200} bg="#FAFAFA" opacity={5} borderRadius="full" />
         <VStack align="start" gap={8} position="relative" zIndex={1}>
           <Box as="img" src={brandLogo} h="40px" alt="QontakSales" />
           <VStack align="start" gap={4}>
@@ -101,7 +101,7 @@ export default function RegisterPage() {
             <VStack align="start" gap={3} mt={4}>
               {["Free forever for small teams", "Setup in under 2 minutes", "No credit card required"].map((t) => (
                 <HStack key={t} gap={2}>
-                  <Box w={2} h={2} borderRadius="full" bg="white" />
+                  <Box w={2} h={2} borderRadius="full" bg="#FAFAFA" />
                   <Text fontSize="sm" opacity={0.8}>{t}</Text>
                 </HStack>
               ))}
@@ -119,7 +119,7 @@ export default function RegisterPage() {
               <Text color="foreground" opacity={0.6}>Get started with QontakSales for free</Text>
             </VStack>
 
-            <Box w="100%" bg="white" p={8} borderRadius="2xl" border="1px solid" borderColor="border" shadow="sm">
+            <Box w="100%" bg="#FAFAFA" p={8} borderRadius="2xl" border="1px solid" borderColor="border" shadow="sm">
               <form onSubmit={handleSubmit}>
                 <Stack gap={4}>
                   {error && (

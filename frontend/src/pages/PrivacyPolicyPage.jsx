@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
 
   return (
     <Box bg="background" minH="100vh">
-      <Box as="nav" bg="white" borderBottom="1px solid" borderColor="border" py={4}>
+      <Box as="nav" bg="#FAFAFA" borderBottom="1px solid" borderColor="border" py={4}>
         <Container maxW="4xl">
           <HStack justify="space-between">
             <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />

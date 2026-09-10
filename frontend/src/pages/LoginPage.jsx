@@ -124,7 +124,7 @@ export default function LoginPage() {
               <Text color="foreground" opacity={0.6}>Sign in to your account to continue</Text>
             </VStack>
 
-            <Box w="100%" bg="white" p={8} borderRadius="2xl" border="1px solid" borderColor="border" shadow="sm">
+            <Box w="100%" bg="#FAFAFA" p={8} borderRadius="2xl" border="1px solid" borderColor="border" shadow="sm">
               <form onSubmit={handleSubmit}>
                 <Stack gap={5}>
                   {error && (

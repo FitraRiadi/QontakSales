@@ -115,7 +115,7 @@ export default function SettingsPage() {
       <Heading size="lg">Settings</Heading>
 
       <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
-        <Card.Root bg="white" border="1px solid" borderColor="border">
+        <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
           <Card.Header><HStack gap={2}><User size={20} color="primary" /><Heading size="md">Profile</Heading></HStack></Card.Header>
           <Card.Body>
             <VStack gap={6} align="stretch">
@@ -181,7 +181,7 @@ export default function SettingsPage() {
           </Card.Body>
         </Card.Root>
 
-        <Card.Root bg="white" border="1px solid" borderColor="border" display="flex" flexDirection="column">
+        <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border" display="flex" flexDirection="column">
           <Card.Header><HStack gap={2}><Lock size={20} color="primary" /><Heading size="md">Change Password</Heading></HStack></Card.Header>
           <Card.Body display="flex" flexDirection="column" flex={1}>
             <Box as="form" onSubmit={handlePasswordChange} display="flex" flexDirection="column" flex={1}>

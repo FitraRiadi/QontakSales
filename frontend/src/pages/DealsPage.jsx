@@ -38,7 +38,7 @@ function DealCard({ deal, onMove }) {
   const nextStage = stages.find((s) => s.id === nextStageId);
 
   return (
-    <Card.Root size="sm" bg="white" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", transform: "translateY(-2px)" }} transition="all 150ms ease">
+    <Card.Root size="sm" bg="#FAFAFA" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", transform: "translateY(-2px)" }} transition="all 150ms ease">
       <Card.Body p={4}>
         <VStack align="stretch" gap={2}>
           <HStack justify="space-between">
@@ -195,7 +195,7 @@ export default function DealsPage() {
                   </Field.Root>
                   <Field.Root required invalid={!!errors.company}>
                     <Field.Label>Company</Field.Label>
-                    <select value={form.company} onChange={(e) => { setErrors({ ...errors, company: undefined }); setForm({ ...form, company: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={form.company} onChange={(e) => { setErrors({ ...errors, company: undefined }); setForm({ ...form, company: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                       <option value="">Select company...</option>
                       {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
                     </select>

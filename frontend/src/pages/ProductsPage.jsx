@@ -132,7 +132,7 @@ export default function ProductsPage() {
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
           {products.map((p) => (
-            <Card.Root key={p.id} bg="white" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", boxShadow: "lg" }} transition="all 150ms ease" cursor="pointer" onClick={() => { setSelectedProduct(p); setPreviewDialogOpen(true); }}>
+            <Card.Root key={p.id} bg="#FAFAFA" border="1px solid" borderColor="border" _hover={{ borderColor: "primary", boxShadow: "lg" }} transition="all 150ms ease" cursor="pointer" onClick={() => { setSelectedProduct(p); setPreviewDialogOpen(true); }}>
               <Card.Body>
                 <HStack justify="space-between" mb={2}>
                   <Heading size="sm" noOfLines={1}>{p.name}</Heading>
@@ -245,7 +245,7 @@ export default function ProductsPage() {
                     </Field.Root>
                     <Field.Root flex={1}>
                       <Field.Label>Category (optional)</Field.Label>
-                      <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                         <option value="">Select category...</option>
                         {PRODUCT_CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
                       </select>
@@ -262,7 +262,7 @@ export default function ProductsPage() {
                   <HStack gap={4} w="full">
                     <Field.Root flex={1} required invalid={!!errors.unit}>
                       <Field.Label>Unit</Field.Label>
-                      <select value={form.unit} onChange={(e) => { setErrors({ ...errors, unit: undefined }); setForm({ ...form, unit: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <select value={form.unit} onChange={(e) => { setErrors({ ...errors, unit: undefined }); setForm({ ...form, unit: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                         <option value="">Select unit...</option>
                         {UNIT_OPTIONS.map((u) => <option key={u} value={u}>{u}</option>)}
                       </select>

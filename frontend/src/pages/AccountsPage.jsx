@@ -184,14 +184,14 @@ export default function AccountsPage() {
           <Input placeholder="Search accounts..." value={search} onChange={(e) => setSearch(e.target.value)} pl={10} />
           <MagnifyingGlass size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", opacity: 0.4 }} />
         </Box>
-        <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "white" }}>
+        <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "#FAFAFA" }}>
           <option value="">All Types</option>
           <option value="PROSPECT">Prospect</option>
           <option value="CUSTOMER">Customer</option>
           <option value="PARTNER">Partner</option>
           <option value="VENDOR">Vendor</option>
         </select>
-        <select value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "white" }}>
+        <select value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", backgroundColor: "#FAFAFA" }}>
           <option value="">All Industries</option>
           {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select>
@@ -209,7 +209,7 @@ export default function AccountsPage() {
           {accounts.map((acc) => (
             <Card.Root
               key={acc.id}
-              bg="white"
+              bg="#FAFAFA"
               border="1px solid"
               borderColor="border"
               cursor="pointer"
@@ -266,7 +266,7 @@ export default function AccountsPage() {
                   <SimpleGrid columns={2} gap={4} w="full">
                     <Field.Root required invalid={!!errors.industry}>
                       <Field.Label>Industry</Field.Label>
-                      <select value={form.industry} onChange={(e) => { setErrors({ ...errors, industry: undefined }); setForm({ ...form, industry: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <select value={form.industry} onChange={(e) => { setErrors({ ...errors, industry: undefined }); setForm({ ...form, industry: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                         <option value="">Select...</option>
                         {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                       </select>
@@ -274,7 +274,7 @@ export default function AccountsPage() {
                     </Field.Root>
                     <Field.Root>
                       <Field.Label>Size (optional)</Field.Label>
-                      <select value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                      <select value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                         <option value="">Select...</option>
                         <option value="1-10">1-10 employees</option>
                         <option value="11-50">11-50 employees</option>
@@ -286,7 +286,7 @@ export default function AccountsPage() {
                   </SimpleGrid>
                   <Field.Root>
                     <Field.Label>Type (optional)</Field.Label>
-                    <select value={form.account_type} onChange={(e) => setForm({ ...form, account_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={form.account_type} onChange={(e) => setForm({ ...form, account_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                       {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                     </select>
                   </Field.Root>

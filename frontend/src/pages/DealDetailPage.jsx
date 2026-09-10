@@ -306,7 +306,7 @@ export default function DealDetailPage() {
 
       <Box display="grid" gridTemplateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <VStack gap={6} align="stretch">
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header><Heading size="sm">Deal Information</Heading></Card.Header>
             <Card.Body>
               <SimpleGrid columns={2} gap={4}>
@@ -336,7 +336,7 @@ export default function DealDetailPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
                 <Heading size="sm">Contacts Involved ({deal.contacts?.length || 0})</Heading>
@@ -368,7 +368,7 @@ export default function DealDetailPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
                 <Heading size="sm">Products / Line Items ({deal.line_items?.length || 0})</Heading>
@@ -410,7 +410,7 @@ export default function DealDetailPage() {
         </VStack>
 
         <VStack gap={6} align="stretch">
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header><Heading size="sm">Deal Summary</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3} w="full">
@@ -424,7 +424,7 @@ export default function DealDetailPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header><Heading size="sm">Stage Progress</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={2} w="full">
@@ -471,12 +471,12 @@ export default function DealDetailPage() {
                     <Field.Root flex={1}><Field.Label>Probability (%) (optional)</Field.Label><Input type="number" placeholder="0-100" value={editForm.probability || ""} onChange={(e) => setEditForm({ ...editForm, probability: parseInt(e.target.value) || 0 })} /></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
-                    <Field.Root flex={1}><Field.Label>Stage (optional)</Field.Label><select value={editForm.stage || ""} onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{STAGE_CHOICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Stage (optional)</Field.Label><select value={editForm.stage || ""} onChange={(e) => setEditForm({ ...editForm, stage: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>{STAGE_CHOICES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select></Field.Root>
                     <Field.Root flex={1}><Field.Label>Expected Close (optional)</Field.Label><Input type="date" value={editForm.expected_close_date || ""} onChange={(e) => setEditForm({ ...editForm, expected_close_date: e.target.value })} /></Field.Root>
                   </HStack>
                   {editForm.stage === "LOST" && (
                     <HStack gap={4} w="full">
-                      <Field.Root flex={1}><Field.Label>Lost Reason (optional)</Field.Label><select value={editForm.lost_reason || ""} onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{LOST_REASON_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field.Root>
+                      <Field.Root flex={1}><Field.Label>Lost Reason (optional)</Field.Label><select value={editForm.lost_reason || ""} onChange={(e) => setEditForm({ ...editForm, lost_reason: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option>{LOST_REASON_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}</select></Field.Root>
                       <Field.Root flex={1}><Field.Label>Lost Notes (optional)</Field.Label><Input placeholder="Why was this deal lost?" value={editForm.lost_notes || ""} onChange={(e) => setEditForm({ ...editForm, lost_notes: e.target.value })} /></Field.Root>
                     </HStack>
                   )}
@@ -502,7 +502,7 @@ export default function DealDetailPage() {
                 <VStack gap={4}>
                   <Field.Root required invalid={!!contactErrors.contact}>
                     <Field.Label>Contact</Field.Label>
-                    <select value={contactDealForm.contact} onChange={(e) => { setContactErrors({}); setContactDealForm({ ...contactDealForm, contact: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }} disabled={!!editContactDeal}>
+                    <select value={contactDealForm.contact} onChange={(e) => { setContactErrors({}); setContactDealForm({ ...contactDealForm, contact: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }} disabled={!!editContactDeal}>
                       <option value="">Select contact...</option>
                       {availableContacts.map((c) => <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>)}
                     </select>
@@ -510,7 +510,7 @@ export default function DealDetailPage() {
                   </Field.Root>
                   <Field.Root>
                     <Field.Label>Role in Deal (optional)</Field.Label>
-                    <select value={contactDealForm.role} onChange={(e) => setContactDealForm({ ...contactDealForm, role: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={contactDealForm.role} onChange={(e) => setContactDealForm({ ...contactDealForm, role: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                       {ROLE_CHOICES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                     </select>
                   </Field.Root>
@@ -539,7 +539,7 @@ export default function DealDetailPage() {
                       setLineItemErrors({});
                       const prod = availableProducts.find((p) => String(p.id) === e.target.value);
                       setLineItemForm({ ...lineItemForm, product: e.target.value, unit_price: parseFloat(prod?.base_price) || 0 });
-                    }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }} disabled={!!editLineItem}>
+                    }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }} disabled={!!editLineItem}>
                       <option value="">Select product...</option>
                       {availableProducts.map((p) => <option key={p.id} value={p.id}>{p.name} - Rp {Number(p.base_price).toLocaleString("id-ID")}</option>)}
                     </select>

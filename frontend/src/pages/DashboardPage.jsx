@@ -114,7 +114,7 @@ export default function DashboardPage() {
         {metrics.map((m) => {
           const Icon = m.icon;
           return (
-            <Card.Root key={m.label} bg="white" border="1px solid" borderColor="border">
+            <Card.Root key={m.label} bg="#FAFAFA" border="1px solid" borderColor="border">
               <Card.Body>
                 <HStack justify="space-between">
                   <VStack align="start" gap={1}>
@@ -132,17 +132,17 @@ export default function DashboardPage() {
       </SimpleGrid>
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
-        <Card.Root bg="white" border="1px solid" borderColor="border">
+        <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
           <Card.Header><Heading size="md">Monthly Revenue</Heading></Card.Header>
           <Card.Body><Box h="300px"><Bar data={barData} options={barOptions} /></Box></Card.Body>
         </Card.Root>
-        <Card.Root bg="white" border="1px solid" borderColor="border">
+        <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
           <Card.Header><Heading size="md">Pipeline Distribution</Heading></Card.Header>
           <Card.Body><Box h="300px"><Doughnut data={donutData} options={donutOptions} /></Box></Card.Body>
         </Card.Root>
       </SimpleGrid>
 
-      <Card.Root bg="white" border="1px solid" borderColor="border">
+      <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
         <Card.Header>
           <HStack justify="space-between">
             <Heading size="md">Agent Leaderboard</Heading>

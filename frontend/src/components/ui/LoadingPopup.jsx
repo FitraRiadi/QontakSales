@@ -19,7 +19,7 @@ export default function LoadingPopup({ open, message = "Loading..." }) {
       style={{ touchAction: "none" }}
     >
       <Box
-        bg="white"
+        bg="#FAFAFA"
         borderRadius="xl"
         px={10}
         py={8}

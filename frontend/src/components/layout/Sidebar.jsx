@@ -32,7 +32,7 @@ export default function Sidebar({ open, onClose }) {
       )}
 
       <Box
-        w="260px" h="100vh" bg="white" borderRight="1px solid" borderColor="border"
+        w="260px" h="100vh" bg="#FAFAFA" borderRight="1px solid" borderColor="border"
         display="flex" flexDirection="column"
         position={{ base: "fixed", md: "relative" }}
         zIndex={50}

@@ -93,7 +93,7 @@ function MiniCalendar({ year, month, events, onSelect }) {
   return (
     <Card.Root
       size="sm"
-      bg="white"
+      bg="#FAFAFA"
       border="1px solid"
       borderColor="border"
       cursor="pointer"
@@ -298,7 +298,7 @@ export default function CalendarPage() {
         </HStack>
       </HStack>
 
-      <Card.Root bg="white" border="1px solid" borderColor="border">
+      <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
         <Card.Body>
           {viewMode === "month" ? (
             <>
@@ -358,7 +358,7 @@ export default function CalendarPage() {
                       return (
                         <Box
                           key={i}
-                          bg="white"
+                          bg="#FAFAFA"
                           minH="100px"
                           p={2}
                           cursor="pointer"
@@ -474,7 +474,7 @@ export default function CalendarPage() {
                       <Card.Root
                         key={ev.id}
                         size="sm"
-                        bg="white"
+                        bg="#FAFAFA"
                         border="1px solid"
                         borderColor="border"
                       >
@@ -588,7 +588,7 @@ export default function CalendarPage() {
                 <VStack gap={4}>
                   <Field.Root required>
                     <Field.Label>Activity Type</Field.Label>
-                    <select value={activityForm.activity_type} onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={activityForm.activity_type} onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                       <option value="CALL">Call</option>
                       <option value="EMAIL">Email</option>
                       <option value="MEETING">Meeting</option>
@@ -598,7 +598,7 @@ export default function CalendarPage() {
                   </Field.Root>
                   <Field.Root>
                     <Field.Label>Deal (optional)</Field.Label>
-                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                       <option value="">Select deal...</option>
                       {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name} - {d.company_name}</option>)}
                     </select>

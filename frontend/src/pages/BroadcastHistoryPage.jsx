@@ -68,7 +68,7 @@ export default function BroadcastHistoryPage() {
     <VStack gap={6} align="stretch">
       <Heading size="lg">Broadcast History</Heading>
 
-      <Card.Root bg="white" border="1px solid" borderColor="border">
+      <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
         <Card.Body>
           {loading ? (
             <HStack justify="center" py={12}><Spinner /></HStack>

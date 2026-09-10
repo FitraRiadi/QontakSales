@@ -223,7 +223,7 @@ export default function AccountDetailPage() {
 
       <Box display="grid" gridTemplateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
         <VStack gap={6} align="stretch">
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header><Heading size="sm">Company Information</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3}>
@@ -236,7 +236,7 @@ export default function AccountDetailPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
                 <Heading size="sm">Contacts ({account.contacts?.length || 0})</Heading>
@@ -269,7 +269,7 @@ export default function AccountDetailPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
                 <Heading size="sm">Deals ({account.deals?.length || 0})</Heading>
@@ -297,7 +297,7 @@ export default function AccountDetailPage() {
         </VStack>
 
         <VStack gap={6} align="stretch">
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header><Heading size="sm">Contact Details</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3}>
@@ -309,7 +309,7 @@ export default function AccountDetailPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header><Heading size="sm">Summary</Heading></Card.Header>
             <Card.Body>
               <VStack align="start" gap={3}>
@@ -320,7 +320,7 @@ export default function AccountDetailPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Header>
               <HStack justify="space-between">
                 <Heading size="sm">Activity Log ({activities.length})</Heading>
@@ -372,10 +372,10 @@ export default function AccountDetailPage() {
                   <HStack gap={4} w="full">
                     <Field.Root flex={1} required invalid={!!editErrors.industry}>
                       <Field.Label>Industry</Field.Label>
-                      <select value={form.industry || ""} onChange={(e) => { setEditErrors({ ...editErrors, industry: undefined }); setForm({ ...form, industry: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
+                      <select value={form.industry || ""} onChange={(e) => { setEditErrors({ ...editErrors, industry: undefined }); setForm({ ...form, industry: e.target.value }); }} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option>{Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
                       <Field.ErrorText>{editErrors.industry}</Field.ErrorText>
                     </Field.Root>
-                    <Field.Root flex={1}><Field.Label>Size (optional)</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Size (optional)</Field.Label><select value={form.size || ""} onChange={(e) => setForm({ ...form, size: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}><option value="">Select...</option><option value="1-10">1-10</option><option value="11-50">11-50</option><option value="51-200">51-200</option><option value="201-500">201-500</option><option value="500+">500+</option></select></Field.Root>
                   </HStack>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1} required invalid={!!editErrors.phone}>
@@ -441,7 +441,7 @@ export default function AccountDetailPage() {
                   </HStack>
                   <HStack gap={4} w="full">
                     <Field.Root flex={1}><Field.Label>Job Title (optional)</Field.Label><Input placeholder="VP Sales" value={contactForm.job_title} onChange={(e) => setContactForm({ ...contactForm, job_title: e.target.value })} /></Field.Root>
-                    <Field.Root flex={1}><Field.Label>Role in Deal (optional)</Field.Label><select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>{Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
+                    <Field.Root flex={1}><Field.Label>Role in Deal (optional)</Field.Label><select value={contactForm.role_in_deal} onChange={(e) => setContactForm({ ...contactForm, role_in_deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>{Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field.Root>
                   </HStack>
                 </VStack>
               </Dialog.Body>
@@ -464,7 +464,7 @@ export default function AccountDetailPage() {
                 <VStack gap={4}>
                   <Field.Root required>
                     <Field.Label>Activity Type</Field.Label>
-                    <select value={activityForm.activity_type} onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={activityForm.activity_type} onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                       <option value="CALL">Call</option>
                       <option value="EMAIL">Email</option>
                       <option value="MEETING">Meeting</option>
@@ -474,7 +474,7 @@ export default function AccountDetailPage() {
                   </Field.Root>
                   <Field.Root>
                     <Field.Label>Deal (optional)</Field.Label>
-                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "white" }}>
+                    <select value={activityForm.deal} onChange={(e) => setActivityForm({ ...activityForm, deal: e.target.value })} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", fontSize: "14px", width: "100%", backgroundColor: "#FAFAFA" }}>
                       <option value="">Select deal...</option>
                       {availableDeals.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                     </select>

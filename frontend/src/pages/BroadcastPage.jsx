@@ -122,7 +122,7 @@ export default function BroadcastPage() {
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
         <VStack gap={4} align="stretch">
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Body>
               <Text fontWeight="semibold" mb={2}>Compose Message</Text>
               <Textarea
@@ -149,7 +149,7 @@ export default function BroadcastPage() {
             </Card.Body>
           </Card.Root>
 
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Body>
               <HStack justify="space-between" mb={3}>
                 <Text fontWeight="semibold">Select Contacts</Text>
@@ -222,7 +222,7 @@ export default function BroadcastPage() {
         </VStack>
 
         <VStack gap={4} align="stretch">
-          <Card.Root bg="white" border="1px solid" borderColor="border">
+          <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
             <Card.Body>
               <Text fontWeight="semibold" mb={3}>Message Preview</Text>
               {selectedContacts.length === 0 ? (
@@ -253,7 +253,7 @@ export default function BroadcastPage() {
           </Card.Root>
 
           {results && (
-            <Card.Root bg="white" border="1px solid" borderColor="border">
+            <Card.Root bg="#FAFAFA" border="1px solid" borderColor="border">
               <Card.Body>
                 <Text fontWeight="semibold" mb={3}>Results</Text>
                 <HStack gap={4} mb={3}>

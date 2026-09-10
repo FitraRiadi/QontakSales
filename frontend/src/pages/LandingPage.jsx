@@ -114,7 +114,7 @@ function InfiniteCarousel() {
             key={i}
             minW="200px"
             h="80px"
-            bg="white"
+            bg="#FAFAFA"
             border="1px solid"
             borderColor="border"
             borderRadius="lg"
@@ -175,7 +175,7 @@ export default function LandingPage() {
       </Box>
 
       {/* Hero */}
-      <Box py={{ base: 12, md: 20 }} bg="white">
+      <Box py={{ base: 12, md: 20 }} bg="#FAFAFA">
         <Container maxW="7xl">
           <Stack direction={{ base: "column", md: "row" }} gap={12} align="center">
             <VStack align="start" gap={6} flex={1}>
@@ -208,10 +208,10 @@ export default function LandingPage() {
               <Box bg="gradient-to-br from-primary/5 to-stageContacted/10" borderRadius="2xl" p={8} minH="360px" border="1px solid" borderColor="border" display="flex" alignItems="center" justifyContent="center">
                 <Box as="img" src={heroImg} maxH="340px" alt="Sales Dashboard" />
               </Box>
-              <Box position="absolute" top={-4} right={-4} bg="white" p={3} borderRadius="lg" shadow="lg" border="1px solid" borderColor="border">
+              <Box position="absolute" top={-4} right={-4} bg="#FAFAFA" p={3} borderRadius="lg" shadow="lg" border="1px solid" borderColor="border">
                 <HStack gap={2}><CheckCircle size={16} color="var(--color-accent)" /><Text fontSize="xs" fontWeight="medium">Deal Won!</Text></HStack>
               </Box>
-              <Box position="absolute" bottom={-4} left={-4} bg="white" p={3} borderRadius="lg" shadow="lg" border="1px solid" borderColor="border">
+              <Box position="absolute" bottom={-4} left={-4} bg="#FAFAFA" p={3} borderRadius="lg" shadow="lg" border="1px solid" borderColor="border">
                 <HStack gap={2}><Users size={16} color="var(--color-primary)" /><Text fontSize="xs" fontWeight="medium">+12 New Leads</Text></HStack>
               </Box>
             </Box>
@@ -271,7 +271,7 @@ export default function LandingPage() {
       </Box>
 
       {/* Features */}
-      <Box py={20} bg="white">
+      <Box py={20} bg="#FAFAFA">
         <Container maxW="7xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Features</Box>
@@ -303,7 +303,7 @@ export default function LandingPage() {
       </Box>
 
       {/* Testimonials */}
-      <Box py={20} bg="white">
+      <Box py={20} bg="#FAFAFA">
         <Container maxW="7xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">Testimonials</Box>
@@ -344,7 +344,7 @@ export default function LandingPage() {
           </VStack>
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={8}>
             {plans.map((p) => (
-              <Box key={p.name} p={8} bg="white" borderRadius="2xl" border="2px solid" borderColor={p.highlighted ? "primary" : "border"} position="relative" _hover={{ transform: "translateY(-4px)", shadow: "xl" }} transition="all 200ms ease">
+              <Box key={p.name} p={8} bg="#FAFAFA" borderRadius="2xl" border="2px solid" borderColor={p.highlighted ? "primary" : "border"} position="relative" _hover={{ transform: "translateY(-4px)", shadow: "xl" }} transition="all 200ms ease">
                 {p.highlighted && <Box position="absolute" top={-3} left="50%" transform="translateX(-50%)" bg="primary" color="white" px={4} py={1} borderRadius="full" fontSize="xs" fontWeight="bold">Most Popular</Box>}
                 <Heading size="md" mb={2}>{p.name}</Heading>
                 <HStack baseline gap={1} mb={6}>
@@ -366,7 +366,7 @@ export default function LandingPage() {
       </Box>
 
       {/* FAQ */}
-      <Box py={20} bg="white">
+      <Box py={20} bg="#FAFAFA">
         <Container maxW="3xl">
           <VStack gap={4} mb={12} textAlign="center">
             <Box bg="primary/10" color="primary" px={3} py={1} borderRadius="full" fontSize="sm" fontWeight="medium">FAQ</Box>
@@ -389,7 +389,7 @@ export default function LandingPage() {
           <VStack gap={6}>
             <Heading size="xl">Ready to Boost Your Sales?</Heading>
             <Text opacity={0.9} fontSize="lg">Join hundreds of teams already closing more deals with QontakSales.</Text>
-            <Button size="lg" bg="white" color="primary" onClick={() => navigate("/register")} _hover={{ bg: "muted", transform: "translateY(-1px)" }} px={8}>
+            <Button size="lg" bg="#FAFAFA" color="primary" onClick={() => navigate("/register")} _hover={{ bg: "muted", transform: "translateY(-1px)" }} px={8}>
               Get Started Free <Icon ml={1}><ArrowRight size={18} /></Icon>
             </Button>
           </VStack>
@@ -397,7 +397,7 @@ export default function LandingPage() {
       </Box>
 
       {/* Footer */}
-      <Box py={12} bg="white" borderTop="1px solid" borderColor="border">
+      <Box py={12} bg="#FAFAFA" borderTop="1px solid" borderColor="border">
         <Container maxW="7xl">
           <Stack direction={{ base: "column", md: "row" }} justify="space-between" align="center" gap={4}>
             <HStack gap={3}>

@@ -24,7 +24,7 @@ export default function ContactPage() {
 
   return (
     <Box bg="background" minH="100vh">
-      <Box as="nav" bg="white" borderBottom="1px solid" borderColor="border" py={4}>
+      <Box as="nav" bg="#FAFAFA" borderBottom="1px solid" borderColor="border" py={4}>
         <Container maxW="4xl">
           <HStack justify="space-between">
             <Box as="img" src={brandLogo} h="28px" alt="QontakSales" />
@@ -44,7 +44,7 @@ export default function ContactPage() {
             {contactInfo.map((c) => {
               const IconComp = c.icon;
               return (
-                <Box key={c.label} p={6} bg="white" borderRadius="xl" border="1px solid" borderColor="border" textAlign="center">
+                <Box key={c.label} p={6} bg="#FAFAFA" borderRadius="xl" border="1px solid" borderColor="border" textAlign="center">
                   <Box w={12} h={12} borderRadius="lg" bg="primary/10" display="flex" alignItems="center" justifyContent="center" mx="auto" mb={3}>
                     <Icon size={24} color={c.color}><IconComp /></Icon>
                   </Box>
@@ -55,7 +55,7 @@ export default function ContactPage() {
             })}
           </SimpleGrid>
 
-          <Box p={8} bg="white" borderRadius="2xl" border="1px solid" borderColor="border">
+          <Box p={8} bg="#FAFAFA" borderRadius="2xl" border="1px solid" borderColor="border">
             <Heading size="md" mb={6}>Send a Message</Heading>
             <Box as="form" onSubmit={handleSubmit}>
               <VStack gap={4}>
