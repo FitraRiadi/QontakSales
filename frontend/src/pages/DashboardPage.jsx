@@ -105,8 +105,8 @@ export default function DashboardPage() {
     <VStack gap={6} align="stretch">
       <HStack justify="space-between">
         <Heading fontWeight="semibold" size="lg" color="foreground">Dashboard</Heading>
-        <Button bg="accent" color="white" size="sm" onClick={handleExport} _hover={{ bg: "accent", opacity: 0.9 }}>
-          <Export size={16} /> Export Excel
+        <Button bg="#FAFAFA" color="black" size="sm" onClick={handleExport} _hover={{ bg: "#fafafa9e", opacity: 0.9 }}>
+          <Export size={16} /> Export
         </Button>
       </HStack>
 

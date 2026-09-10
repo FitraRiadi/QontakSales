@@ -27,7 +27,7 @@ import {
   CaretUp,
 } from "@phosphor-icons/react";
 import brandLogo from "@/assets/brand.png";
-import heroImg from "@/assets/heroImg.png";
+import dashboardPreviewLaptop from "@/assets/dashboard-preview-laptop.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
 
@@ -223,103 +223,91 @@ export default function LandingPage() {
 
       {/* Hero */}
       <Box pt={{ base: 12, md: 16 }} pb={{ base: 12, md: 20 }}>
-        <Container maxW="4xl" textAlign="center">
-          <VStack gap={6}>
-            <Heading
-              fontWeight="bold"
-              fontSize={{ base: "40px", md: "56px", lg: "64px" }}
-              color="foreground"
-              lineHeight="tight"
-              letterSpacing="tight"
-            >
-              The Modern CRM
-              <br />
-              For Sales Teams
-            </Heading>
-            <Text
-              fontSize="lg"
-              color="foreground"
-              opacity={0.6}
-              maxW="xl"
-              lineHeight="relaxed"
-            >
-              Manage leads, track pipelines, and close more deals — all in one
-              place. Built for teams who want results, not spreadsheets.
-            </Text>
-            <HStack gap={3} pt={2}>
-              <Button
-                size="md"
-                bg="primary"
-                color="white"
-                fontWeight="medium"
-                onClick={() => navigate("/register")}
-                _hover={{ opacity: 0.85 }}
-                px={6}
-              >
-                Get Started Free
-               
-              </Button>
-              <Button
-                size="md"
-                variant="subtle"
-                color="foreground"
-                onClick={() => navigate("/login")}
-                fontWeight="medium"
-                px={6}
-              >
-                See Demo
-              </Button>
-            </HStack>
-            <HStack gap={5} pt={2} wrap="wrap" justify="center">
-              {["Free to start", "No credit card", "Setup in 2 min"].map(
-                (t) => (
-                  <HStack key={t} gap={1.5}>
-                    <Icon color="accent" size={14}>
-                      <CheckCircle />
-                    </Icon>
-                    <Text fontSize="sm" opacity={0.6}>
-                      {t}
-                    </Text>
-                  </HStack>
-                )
-              )}
-            </HStack>
-
-            {/* Stats */}
-            <SimpleGrid columns={{ base: 2, md: 4 }} gap={6} pt={6}>
-              {stats.map((s) => (
-                <VStack key={s.label} gap={1}>
-                  <Heading fontWeight="semibold" size="lg" color="foreground">
-                    {s.value}
-                  </Heading>
-                  <Text fontSize="sm" color="foreground" opacity={0.5}>
-                    {s.label}
-                  </Text>
-                </VStack>
-              ))}
-            </SimpleGrid>
-          </VStack>
-        </Container>
-      </Box>
-
-      {/* Hero Image */}
-      <Box pb={16}>
         <Container maxW="6xl">
-          <Box
-            borderRadius="xl"
-            overflow="hidden"
-            border="1px solid"
-            borderColor="border"
-            shadow="lg"
-          >
-            <Box
-              as="img"
-              src={heroImg}
-              w="full"
-              alt="QontakSales Dashboard"
-              display="block"
-            />
-          </Box>
+          <Stack direction={{ base: "column", md: "row" }} align="center" gap={10}>
+            <VStack flex={1} gap={6} textAlign={{ base: "center", md: "left" }}>
+              <Heading
+                fontWeight="bold"
+                fontSize={{ base: "40px", md: "56px", lg: "64px" }}
+                color="foreground"
+                lineHeight="tight"
+                letterSpacing="tight"
+              >
+                The Modern CRM
+                <br />
+                For Sales Teams
+              </Heading>
+              <Text
+                fontSize="lg"
+                color="foreground"
+                opacity={0.6}
+                lineHeight="relaxed"
+              >
+                Manage leads, track pipelines, and close more deals — all in one
+                place. Built for teams who want results, not spreadsheets.
+              </Text>
+              <HStack gap={3}>
+                <Button
+                  size="md"
+                  bg="primary"
+                  color="white"
+                  fontWeight="medium"
+                  onClick={() => navigate("/register")}
+                  _hover={{ opacity: 0.85 }}
+                  px={6}
+                >
+                  Get Started Free
+                </Button>
+                <Button
+                  size="md"
+                  variant="subtle"
+                  color="foreground"
+                  onClick={() => navigate("/login")}
+                  fontWeight="medium"
+                  px={6}
+                >
+                  See Demo
+                </Button>
+              </HStack>
+              <HStack gap={5} wrap="wrap" justify={{ base: "center", md: "start" }}>
+                {["Free to start", "No credit card", "Setup in 2 min"].map(
+                  (t) => (
+                    <HStack key={t} gap={1.5}>
+                      <Icon color="accent" size={14}>
+                        <CheckCircle />
+                      </Icon>
+                      <Text fontSize="sm" opacity={0.6}>
+                        {t}
+                      </Text>
+                    </HStack>
+                  )
+                )}
+              </HStack>
+            </VStack>
+
+            <Box flex={1}>
+              <Box
+                as="img"
+                src={dashboardPreviewLaptop}
+                w="full"
+                alt="QontakSales Dashboard"
+                display="block"
+              />
+            </Box>
+          </Stack>
+
+          <SimpleGrid columns={{ base: 2, md: 4 }} gap={6} pt={10}>
+            {stats.map((s) => (
+              <VStack key={s.label} gap={1}>
+                <Heading fontWeight="semibold" size="lg" color="foreground">
+                  {s.value}
+                </Heading>
+                <Text fontSize="sm" color="foreground" opacity={0.5}>
+                  {s.label}
+                </Text>
+              </VStack>
+            ))}
+          </SimpleGrid>
         </Container>
       </Box>
 
