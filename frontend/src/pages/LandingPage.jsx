@@ -207,8 +207,8 @@ export default function LandingPage() {
               </Button>
               <Button
                 size="sm"
-                bg="foreground"
-                color="background"
+                bg="primary"
+                color="white"
                 fontWeight="medium"
                 onClick={() => navigate("/register")}
                 _hover={{ opacity: 0.85 }}
@@ -249,8 +249,8 @@ export default function LandingPage() {
             <HStack gap={3} pt={2}>
               <Button
                 size="md"
-                bg="foreground"
-                color="background"
+                bg="primary"
+                color="white"
                 fontWeight="medium"
                 onClick={() => navigate("/register")}
                 _hover={{ opacity: 0.85 }}
@@ -695,16 +695,16 @@ export default function LandingPage() {
               Join hundreds of teams already closing more deals with
               QontakSales.
             </Text>
-            <Button
-              size="md"
-              bg="foreground"
-              color="background"
-              fontWeight="medium"
-              onClick={() => navigate("/register")}
-              _hover={{ opacity: 0.85 }}
-              px={8}
-            >
-              Get Started Free
+              <Button
+                size="md"
+                bg="primary"
+                color="white"
+                fontWeight="medium"
+                onClick={() => navigate("/register")}
+                _hover={{ opacity: 0.85 }}
+                px={8}
+              >
+                Get Started Free
               <Icon ml={1.5}>
                 <ArrowRight size={16} />
               </Icon>
