@@ -202,6 +202,19 @@ class ForgotPasswordView(APIView):
 class ResetPasswordView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    def get(self, request):
+        token = request.query_params.get("token")
+        uid = request.query_params.get("uid")
+        if not token or not uid:
+            return Response({"valid": False}, status=400)
+        try:
+            user = User.objects.get(pk=int(uid))
+        except (User.DoesNotExist, ValueError, TypeError):
+            return Response({"valid": False}, status=400)
+        if not default_token_generator.check_token(user, token):
+            return Response({"valid": False}, status=400)
+        return Response({"valid": True})
+
     def post(self, request):
         serializer = ResetPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

@@ -3,10 +3,12 @@ import {
   Box,
   Button,
   Card,
+  Dialog,
   Field,
   Heading,
   HStack,
   Input,
+  Portal,
   SimpleGrid,
   Spinner,
   Text,
@@ -15,7 +17,7 @@ import {
   Link,
   createToaster,
 } from "@chakra-ui/react";
-import { User, Lock, Camera, FloppyDisk } from "@phosphor-icons/react";
+import { User, Lock, Camera, FloppyDisk, CheckCircle } from "@phosphor-icons/react";
 import { Link as RouterLink } from "react-router-dom";
 import api from "@/services/api";
 import LoadingPopup from "@/components/ui/LoadingPopup";
@@ -33,7 +35,15 @@ export default function SettingsPage() {
   const [profileErrors, setProfileErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
   const [sendingReset, setSendingReset] = useState(false);
+  const [successDialog, setSuccessDialog] = useState({ open: false, title: "", message: "" });
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (successDialog.open) {
+      const t = setTimeout(() => setSuccessDialog((s) => ({ ...s, open: false })), 2000);
+      return () => clearTimeout(t);
+    }
+  }, [successDialog.open]);
 
   useEffect(() => {
     api.get("/auth/settings/").then((r) => {
@@ -78,7 +88,7 @@ export default function SettingsPage() {
       await api.put("/auth/settings/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toaster.create({ title: "Profile updated", type: "success" });
+      setSuccessDialog({ open: true, title: "Profile Updated", message: "Your profile has been saved successfully." });
     } catch {
       toaster.create({ title: "Update failed", type: "error" });
     } finally {
@@ -103,9 +113,14 @@ export default function SettingsPage() {
         new_password: passwordForm.new_password,
       });
       setPasswordForm({ old_password: "", new_password: "", confirm_password: "" });
-      toaster.create({ title: "Password changed successfully", type: "success" });
+      setSuccessDialog({ open: true, title: "Password Updated", message: "Your password has been changed successfully." });
     } catch (err) {
-      toaster.create({ title: err.response?.data?.error || "Failed to change password", type: "error" });
+      const msg = err.response?.data?.error || "Failed to change password";
+      if (msg.toLowerCase().includes("wrong password")) {
+        setPasswordErrors({ old_password: msg });
+      } else {
+        setPasswordErrors({ new_password: msg });
+      }
     } finally {
       setChangingPassword(false);
     }
@@ -233,6 +248,25 @@ export default function SettingsPage() {
 
       <LoadingPopup open={saving} message="Saving profile..." />
       <LoadingPopup open={changingPassword} message="Changing password..." />
+
+      <Dialog.Root open={successDialog.open} onOpenChange={(e) => setSuccessDialog({ ...successDialog, open: e.open })}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content bg="#FAFAFA" borderRadius="xl">
+              <Dialog.Body p={8} textAlign="center">
+                <VStack gap={4}>
+                  <Box bg="green.50" p={4} borderRadius="full">
+                    <CheckCircle size={40} color="#22C55E" weight="fill" />
+                  </Box>
+                  <Dialog.Title fontWeight="semibold" size="lg">{successDialog.title}</Dialog.Title>
+                  <Text color="gray.500" fontSize="sm">{successDialog.message}</Text>
+                </VStack>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </VStack>
   );
 }

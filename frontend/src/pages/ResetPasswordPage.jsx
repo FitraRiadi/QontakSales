@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Box, Button, Card, Field, Heading, Input, Text, VStack, Link, createToaster } from "@chakra-ui/react";
+import { Box, Button, Card, Field, Heading, Input, Spinner, Text, VStack, Link, createToaster } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { Lock } from "@phosphor-icons/react";
 import api from "@/services/api";
@@ -18,35 +18,30 @@ export default function ResetPasswordPage() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [validating, setValidating] = useState(true);
+  const [tokenValid, setTokenValid] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errs = {};
-    if (!form.new_password) errs.new_password = "Password is required";
-    else if (form.new_password.length < 8) errs.new_password = "Password must be at least 8 characters";
-    if (!form.confirm_password) errs.confirm_password = "Please confirm your password";
-    else if (form.new_password !== form.confirm_password) errs.confirm_password = "Passwords do not match";
-    if (!token || !uid) errs.token = "Invalid reset link";
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-    setErrors({});
-    setLoading(true);
-    try {
-      await api.post("/auth/reset-password/", {
-        token,
-        uid: parseInt(uid),
-        new_password: form.new_password,
-      });
-      setSuccess(true);
-      toaster.create({ title: "Password updated successfully", type: "success" });
-    } catch (err) {
-      const msg = err.response?.data?.error || "Failed to reset password";
-      setErrors({ token: msg });
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (!token || !uid) {
+      setValidating(false);
+      setTokenValid(false);
+      return;
     }
-  };
+    api.get(`/auth/reset-password/?token=${token}&uid=${uid}`)
+      .then((r) => setTokenValid(r.data.valid === true))
+      .catch(() => setTokenValid(false))
+      .finally(() => setValidating(false));
+  }, [token, uid]);
 
-  if (!token || !uid) {
+  if (validating) {
+    return (
+      <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg="muted" px={4}>
+        <Spinner size="xl" color="primary" />
+      </Box>
+    );
+  }
+
+  if (!token || !uid || !tokenValid) {
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg="muted" px={4}>
         <Card.Root maxW="420px" w="full" bg="#FAFAFA" border="1px solid" borderColor="border">
@@ -55,7 +50,7 @@ export default function ResetPasswordPage() {
               <Box as="img" src={brandLogo} h="28px" />
               <Heading fontWeight="semibold" size="lg">Invalid Link</Heading>
               <Text color="gray.500" fontSize="sm">
-                This password reset link is invalid or missing required parameters.
+                This password reset link is invalid or has expired. Please request a new one.
               </Text>
               <Button as={RouterLink} to="/forgot-password" bg="primary" color="white" _hover={{ bg: "secondary" }}>
                 Request New Link
@@ -66,6 +61,31 @@ export default function ResetPasswordPage() {
       </Box>
     );
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errs = {};
+    if (!form.new_password) errs.new_password = "Password is required";
+    else if (form.new_password.length < 8) errs.new_password = "Password must be at least 8 characters";
+    if (!form.confirm_password) errs.confirm_password = "Please confirm your password";
+    else if (form.new_password !== form.confirm_password) errs.confirm_password = "Passwords do not match";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
+    setLoading(true);
+    try {
+      await api.post("/auth/reset-password/", {
+        token,
+        uid: parseInt(uid),
+        new_password: form.new_password,
+      });
+      setSuccess(true);
+    } catch (err) {
+      const msg = err.response?.data?.error || "Failed to reset password";
+      setErrors({ token: msg });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (success) {
     return (
