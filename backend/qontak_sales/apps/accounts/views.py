@@ -2,7 +2,10 @@ from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer, RegisterSerializer, AgentCreateSerializer, EmailTokenObtainPairSerializer
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.conf import settings
+from .serializers import UserSerializer, RegisterSerializer, AgentCreateSerializer, EmailTokenObtainPairSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
 from .models import Company
 from .permissions import IsManager
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -158,3 +161,55 @@ class TeamMembersView(APIView):
     def get(self, request):
         users = User.objects.filter(company=request.user.company)
         return Response(UserSerializer(users, many=True, context={"request": request}).data)
+
+
+class ForgotPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ForgotPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data["email"]
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"message": "If that email exists, a reset link has been sent."})
+
+        token = default_token_generator.make_token(user)
+        reset_url = f"http://localhost:5173/reset-password?token={token}&uid={user.id}"
+
+        send_mail(
+            subject="Reset Your Password - QontakSales",
+            message=f"Hi {user.first_name},\n\nClick the link below to reset your password:\n\n{reset_url}\n\nThis link expires in 1 hour.\nIf you didn't request this, ignore this email.\n\n- QontakSales",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+
+        return Response({"message": "If that email exists, a reset link has been sent."})
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        token = serializer.validated_data["token"]
+        uid = serializer.validated_data["uid"]
+        new_password = serializer.validated_data["new_password"]
+
+        try:
+            user = User.objects.get(pk=uid)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid link."}, status=400)
+
+        if not default_token_generator.check_token(user, token):
+            return Response({"error": "Token expired or invalid. Please request a new one."}, status=400)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({"message": "Password updated successfully."})

@@ -114,3 +114,12 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "qontaksales@gmail.com")
+EMAIL_HOST_PASSWORD = os.getenv("APP_PASSWORD", "")
+DEFAULT_FROM_EMAIL = "QontakSales <qontaksales@gmail.com>"
+PASSWORD_RESET_TIMEOUT = 3600

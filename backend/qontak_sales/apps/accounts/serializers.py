@@ -101,3 +101,13 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
             refresh = self.get_token(user)
             return {"refresh": str(refresh), "access": str(refresh.access_token)}
         raise serializers.ValidationError("Email and password are required.")
+
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    uid = serializers.IntegerField()
+    new_password = serializers.CharField(min_length=8)

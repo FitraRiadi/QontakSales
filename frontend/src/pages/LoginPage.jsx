@@ -175,6 +175,11 @@ export default function LoginPage() {
                     </Box>
                     <Field.ErrorText>{fieldErrors.password}</Field.ErrorText>
                   </Field.Root>
+                  <HStack justify="flex-end">
+                    <Link as={RouterLink} to="/forgot-password" fontSize="sm" color="primary" fontWeight="semibold" _hover={{ textDecoration: "underline" }}>
+                      Forgot your password?
+                    </Link>
+                  </HStack>
                   <Button
                     type="submit"
                     bg="primary"

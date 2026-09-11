@@ -12,9 +12,11 @@ import {
   Text,
   VStack,
   Avatar,
+  Link,
   createToaster,
 } from "@chakra-ui/react";
 import { User, Lock, Camera, FloppyDisk } from "@phosphor-icons/react";
+import { Link as RouterLink } from "react-router-dom";
 import api from "@/services/api";
 import LoadingPopup from "@/components/ui/LoadingPopup";
 
@@ -30,6 +32,7 @@ export default function SettingsPage() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [profileErrors, setProfileErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
+  const [sendingReset, setSendingReset] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -105,6 +108,19 @@ export default function SettingsPage() {
       toaster.create({ title: err.response?.data?.error || "Failed to change password", type: "error" });
     } finally {
       setChangingPassword(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!profileForm.email) { toaster.create({ title: "No email found", type: "error" }); return; }
+    setSendingReset(true);
+    try {
+      await api.post("/auth/forgot-password/", { email: profileForm.email });
+      toaster.create({ title: "Reset link sent to your email", type: "success" });
+    } catch {
+      toaster.create({ title: "Failed to send reset link", type: "error" });
+    } finally {
+      setSendingReset(false);
     }
   };
 
@@ -202,6 +218,11 @@ export default function SettingsPage() {
                   <Field.ErrorText>{passwordErrors.confirm_password}</Field.ErrorText>
                 </Field.Root>
                 <Box mt="auto">
+                  <HStack justify="center" mb={3}>
+                    <Link as={RouterLink} to="/forgot-password" fontSize="sm" color="primary" fontWeight="semibold" _hover={{ textDecoration: "underline" }}>
+                      Forgot your password?
+                    </Link>
+                  </HStack>
                   <Button type="submit" bg="primary" color="white" w="full" loading={changingPassword} _hover={{ bg: "secondary" }}>Change Password</Button>
                 </Box>
               </VStack>
