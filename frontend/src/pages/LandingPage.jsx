@@ -29,6 +29,14 @@ import {
 import brandLogo from "@/assets/brand.png";
 import dashboardPreviewLaptop from "@/assets/dashboard-preview-laptop.png";
 import trustedHighlightBg from "@/assets/trusted-highligh-bg.png";
+import logo1 from "@/assets/trustedcompany/0e2be920-70a4-4334-9194-d324196ab501-removebg-preview.png";
+import logo2 from "@/assets/trustedcompany/10a3dc54-3e31-43bf-8d67-5e51e35d192c-removebg-preview.png";
+import logo3 from "@/assets/trustedcompany/5c2bf62a-3fc0-4292-a9b9-903fe4f28ea9-removebg-preview.png";
+import logo4 from "@/assets/trustedcompany/78c43690-9816-421b-9bee-772f3fe017c0-removebg-preview.png";
+import logo5 from "@/assets/trustedcompany/97437919-bdb2-48b4-bcda-e1f7762d50f0-removebg-preview.png";
+import logo6 from "@/assets/trustedcompany/a36e9a95-dea2-4741-aa56-9e5544b09bc5-removebg-preview.png";
+import logo7 from "@/assets/trustedcompany/c3ffdca2-4009-4748-bb32-76dbcbe7211f-removebg-preview.png";
+import logo8 from "@/assets/trustedcompany/ff518a49-2055-490e-b6d3-7eb38504e8ce-removebg-preview.png";
 import faqIllustration from "@/assets/FAQ-ilustration.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
@@ -83,14 +91,7 @@ const testimonials = [
   { name: "Eko Prasetyo", role: "Director, Prima Sejahtera", text: "QontakSales helped us unify our sales process across 3 regions. Outstanding platform.", rating: 5 },
 ];
 
-const logos = [
-  { name: "PT Maju Jaya", initials: "MJ" },
-  { name: "Berkah Abadi", initials: "BA" },
-  { name: "Global Mandiri", initials: "GM" },
-  { name: "Sejahtera Corp", initials: "SC" },
-  { name: "Sumber Rejeki", initials: "SR" },
-  { name: "Putra Jaya", initials: "PJ" },
-];
+const logos = [logo1, logo2, logo3, logo4, logo5, logo6, logo7, logo8];
 
 const plans = [
   { name: "Starter", price: "Free", period: "forever", features: ["Up to 100 leads", "1 sales agent", "Basic pipeline", "Email support"], cta: "Get Started", highlighted: false },
@@ -131,33 +132,21 @@ function InfiniteCarousel() {
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        {[...logos, ...logos, ...logos].map((logo, i) => (
-          <HStack
+        {[...logos, ...logos, ...logos].map((src, i) => (
+          <Box
             key={i}
-            gap={3}
             flexShrink={0}
             opacity={0.5}
             _hover={{ opacity: 1 }}
             transition="opacity 200ms"
           >
             <Box
-              w={8}
-              h={8}
-              borderRadius="md"
-              bg="foreground"
-              color="background"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              fontSize="xs"
-              fontWeight="bold"
-            >
-              {logo.initials}
-            </Box>
-            <Text fontWeight="medium" fontSize="sm" color="foreground" whiteSpace="nowrap">
-              {logo.name}
-            </Text>
-          </HStack>
+              as="img"
+              src={src}
+              h="64px"
+              alt="Company logo"
+            />
+          </Box>
         ))}
       </Box>
     </Box>
