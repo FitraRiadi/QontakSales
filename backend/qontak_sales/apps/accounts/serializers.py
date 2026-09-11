@@ -90,9 +90,8 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         email = attrs.get("email")
         password = attrs.get("password")
         if email and password:
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
+            user = User.objects.filter(email=email).first()
+            if not user:
                 raise serializers.ValidationError("Invalid email or password.")
             if not user.check_password(password):
                 raise serializers.ValidationError("Invalid email or password.")

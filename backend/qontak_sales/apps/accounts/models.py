@@ -16,6 +16,7 @@ class CustomUser(AbstractUser):
         ("AGENT", "Sales Agent"),
     ]
 
+    email = models.EmailField(unique=True, verbose_name="email address")
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="users", null=True, blank=True
     )

@@ -40,6 +40,8 @@ class ProfileView(APIView):
         if "last_name" in data:
             user.last_name = data["last_name"]
         if "email" in data:
+            if User.objects.filter(email=data["email"]).exclude(pk=user.pk).exists():
+                return Response({"error": "Email already in use."}, status=400)
             user.email = data["email"]
         if "phone" in data:
             user.phone = data["phone"]
@@ -83,6 +85,8 @@ class AgentViewSet(viewsets.ModelViewSet):
         if "last_name" in data:
             agent.last_name = data["last_name"]
         if "email" in data:
+            if User.objects.filter(email=data["email"]).exclude(pk=agent.pk).exists():
+                return Response({"error": "Email already in use."}, status=400)
             agent.email = data["email"]
         if "phone" in data:
             agent.phone = data["phone"]
@@ -116,6 +120,8 @@ class SettingsView(APIView):
         if "last_name" in data:
             user.last_name = data["last_name"]
         if "email" in data:
+            if User.objects.filter(email=data["email"]).exclude(pk=user.pk).exists():
+                return Response({"error": "Email already in use."}, status=400)
             user.email = data["email"]
         if "phone" in data:
             user.phone = data["phone"]
@@ -172,8 +178,11 @@ class ForgotPasswordView(APIView):
         email = serializer.validated_data["email"]
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.filter(email=email).first()
         except User.DoesNotExist:
+            return Response({"message": "If that email exists, a reset link has been sent."})
+
+        if not user:
             return Response({"message": "If that email exists, a reset link has been sent."})
 
         token = default_token_generator.make_token(user)
