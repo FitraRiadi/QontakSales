@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Box,
   Button,
@@ -99,9 +100,33 @@ const testimonials = [
 const logos = [logo1, logo2, logo3, logo4, logo5, logo6, logo7, logo8];
 
 const plans = [
-  { name: "Starter", price: "Free", period: "forever", features: ["Up to 100 leads", "1 sales agent", "Basic pipeline", "Email support"], cta: "Get Started", highlighted: false },
-  { name: "Professional", price: "Rp 299K", period: "/month", features: ["Unlimited leads", "10 sales agents", "Advanced analytics", "Priority support", "Custom tags"], cta: "Start Free Trial", highlighted: true },
-  { name: "Enterprise", price: "Custom", period: "", features: ["Unlimited everything", "Unlimited agents", "API access", "Dedicated support", "Custom integrations"], cta: "Contact Sales", highlighted: false },
+  {
+    name: "Starter",
+    price: "Free",
+    period: "forever",
+    description: "Perfect for solo sales reps getting started with CRM.",
+    features: ["Up to 100 leads", "1 sales agent", "Basic pipeline", "Email support"],
+    cta: "Get Started",
+    highlighted: false,
+  },
+  {
+    name: "Professional",
+    price: "Rp 299K",
+    period: "/month",
+    description: "For growing teams that need more power and insights.",
+    features: ["Unlimited leads", "10 sales agents", "Advanced analytics", "Priority support", "Custom tags"],
+    cta: "Start Free Trial",
+    highlighted: true,
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    period: "",
+    description: "Tailored for large organizations with custom needs.",
+    features: ["Unlimited everything", "Unlimited agents", "API access", "Dedicated support", "Custom integrations"],
+    cta: "Contact Sales",
+    highlighted: false,
+  },
 ];
 
 const faqs = [
@@ -197,6 +222,7 @@ function FaqItem({ question, answer }) {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [selectedPlan, setSelectedPlan] = useState("Professional");
 
   return (
     <Box bg="background" minH="100vh">
@@ -774,84 +800,155 @@ export default function LandingPage() {
               Start free. Upgrade when you're ready.
             </Text>
           </VStack>
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
-            {plans.map((p) => (
-              <Box
-                key={p.name}
-                p={8}
-                bg="background"
-                borderRadius="xl"
-                border="1px solid"
-                borderColor={p.highlighted ? "primary" : "border"}
-                position="relative"
-              >
-                {p.highlighted && (
-                  <Box
-                    position="absolute"
-                    top={-3}
-                    left="50%"
-                    transform="translateX(-50%)"
-                    bg="primary"
-                    color="white"
-                    px={3}
-                    py={0.5}
-                    borderRadius="full"
-                    fontSize="xs"
+
+          {/* Plan Selector */}
+          <Box display="flex" justifyContent="center" mb={10}>
+            <Box
+              bg="muted"
+              borderRadius="full"
+              p={1}
+              display="inline-flex"
+              gap={1}
+              position="relative"
+            >
+              {plans.map((plan) => (
+                <Box
+                  key={plan.name}
+                  position="relative"
+                  cursor="pointer"
+                  px={6}
+                  py={2}
+                  borderRadius="full"
+                  zIndex={1}
+                  onClick={() => setSelectedPlan(plan.name)}
+                >
+                  {selectedPlan === plan.name && (
+                    <motion.div
+                      layoutId="plan-highlight"
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        borderRadius: "9999px",
+                        backgroundColor: "white",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                        zIndex: -1,
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <Text
+                    fontSize="sm"
                     fontWeight="medium"
+                    color={selectedPlan === plan.name ? "foreground" : "foreground"}
+                    opacity={selectedPlan === plan.name ? 1 : 0.5}
+                    position="relative"
+                    zIndex={1}
+                    whiteSpace="nowrap"
                   >
-                    Most Popular
-                  </Box>
-                )}
-                <Text
-                  fontWeight="semibold"
-                  fontSize="md"
-                  mb={2}
-                  color="foreground"
-                >
-                  {p.name}
-                </Text>
-                <HStack baseline gap={1} mb={6}>
-                  <Heading
-                    fontWeight="semibold"
-                    size="2xl"
-                    color={p.highlighted ? "primary" : "foreground"}
-                  >
-                    {p.price}
-                  </Heading>
-                  <Text color="foreground" opacity={0.4} fontSize="sm">
-                    {p.period}
+                    {plan.name}
                   </Text>
-                </HStack>
-                <VStack align="start" gap={3} mb={8}>
-                  {p.features.map((f) => (
-                    <HStack key={f} gap={2}>
-                      <Icon color="accent" size={14}>
-                        <CheckCircle />
-                      </Icon>
-                      <Text fontSize="sm" opacity={0.7}>
-                        {f}
-                      </Text>
-                    </HStack>
-                  ))}
-                </VStack>
-                <Button
-                  w="full"
-                  bg={p.highlighted ? "primary" : "transparent"}
-                  color={p.highlighted ? "white" : "foreground"}
-                  border={p.highlighted ? "none" : "1px solid"}
-                  borderColor="border"
-                  onClick={() => navigate("/register")}
-                  _hover={{
-                    bg: p.highlighted ? "secondary" : "muted",
-                  }}
-                  fontWeight="medium"
-                  size="md"
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Detail Panel */}
+          <AnimatePresence mode="wait">
+            {plans
+              .filter((p) => p.name === selectedPlan)
+              .map((p) => (
+                <motion.div
+                  key={p.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ width: "100%", display: "flex", justifyContent: "center" }}
                 >
-                  {p.cta}
-                </Button>
-              </Box>
-            ))}
-          </SimpleGrid>
+                  <Box
+                    maxW="420px"
+                    w="full"
+                    p={10}
+                    bg="background"
+                    borderRadius="2xl"
+                    border="1px solid"
+                    borderColor={p.highlighted ? "primary" : "border"}
+                    position="relative"
+                    boxShadow={p.highlighted ? "0 4px 24px rgba(37, 99, 235, 0.12)" : "none"}
+                  >
+                    {p.highlighted && (
+                      <Box
+                        position="absolute"
+                        top={-3}
+                        left="50%"
+                        transform="translateX(-50%)"
+                        bg="primary"
+                        color="white"
+                        px={3}
+                        py={0.5}
+                        borderRadius="full"
+                        fontSize="xs"
+                        fontWeight="medium"
+                      >
+                        Most Popular
+                      </Box>
+                    )}
+                    <VStack gap={6} align="start" w="full">
+                      <VStack gap={1} align="start" w="full">
+                        <Text fontWeight="semibold" fontSize="md" color="foreground">
+                          {p.name}
+                        </Text>
+                        <Text fontSize="sm" color="foreground" opacity={0.5}>
+                          {p.description}
+                        </Text>
+                      </VStack>
+                      <HStack baseline gap={1}>
+                        <Heading
+                          fontWeight="semibold"
+                          size="3xl"
+                          color={p.highlighted ? "primary" : "foreground"}
+                        >
+                          {p.price}
+                        </Heading>
+                        {p.period && (
+                          <Text color="foreground" opacity={0.4} fontSize="sm">
+                            {p.period}
+                          </Text>
+                        )}
+                      </HStack>
+                      <VStack align="start" gap={3} w="full">
+                        {p.features.map((f) => (
+                          <HStack key={f} gap={3}>
+                            <Icon color="primary" size={16}>
+                              <CheckCircle />
+                            </Icon>
+                            <Text fontSize="sm" color="foreground" opacity={0.7}>
+                              {f}
+                            </Text>
+                          </HStack>
+                        ))}
+                      </VStack>
+                      <Button
+                        w="full"
+                        bg={p.highlighted ? "primary" : "transparent"}
+                        color={p.highlighted ? "white" : "foreground"}
+                        border={p.highlighted ? "none" : "1px solid"}
+                        borderColor="border"
+                        onClick={() => navigate("/register")}
+                        _hover={{
+                          bg: p.highlighted ? "secondary" : "muted",
+                        }}
+                        fontWeight="medium"
+                        size="md"
+                        mt={2}
+                      >
+                        {p.cta}
+                      </Button>
+                    </VStack>
+                  </Box>
+                </motion.div>
+              ))}
+          </AnimatePresence>
         </Container>
       </Box>
 
