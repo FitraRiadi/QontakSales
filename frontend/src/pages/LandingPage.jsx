@@ -375,8 +375,10 @@ export default function LandingPage() {
                   Track Every Deal from Start to Close
                 </Heading>
                 <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
-                  Switch your deals across stages, from first contact to
-                  closed won.
+                  Manage your entire sales process on a Kanban board with 7
+                  customizable stages — from Qualification to Closed Won.
+                  Drag deals forward, spot bottlenecks instantly, and never
+                  lose track of what matters.
                 </Text>
               </VStack>
               <HStack gap={8} wrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
@@ -450,8 +452,10 @@ export default function LandingPage() {
                   Schedule & Track Every Activity
                 </Heading>
                 <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
-                  Never miss a follow-up. Plan meetings, calls, and tasks
-                  with a built-in calendar that keeps your team aligned.
+                  Schedule meetings, calls, and tasks directly from a deal.
+                  Every activity is logged chronologically so your whole team
+                  has full context — no more missed follow-ups or duplicate
+                  outreach.
                 </Text>
               </VStack>
               <HStack gap={8} wrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
