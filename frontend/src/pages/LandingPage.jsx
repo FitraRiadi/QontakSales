@@ -25,6 +25,9 @@ import {
   ChatCircleText,
   CaretDown,
   CaretUp,
+  CalendarBlank,
+  Clock,
+  ListChecks,
 } from "@phosphor-icons/react";
 import brandLogo from "@/assets/brand.png";
 import dashboardPreviewLaptop from "@/assets/dashboard-preview-laptop.png";
@@ -39,6 +42,7 @@ import logo7 from "@/assets/trustedcompany/c3ffdca2-4009-4748-bb32-76dbcbe7211f-
 import logo8 from "@/assets/trustedcompany/ff518a49-2055-490e-b6d3-7eb38504e8ce-removebg-preview.png";
 import faqIllustration from "@/assets/FAQ-ilustration.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
+import calendarVideo from "@/assets/calendar-higlight-video.webm";
 import pipelineHighlight from "@/assets/pipeline-highlight.png";
 import ctaImg from "@/assets/cta.jpg";
 
@@ -394,6 +398,66 @@ export default function LandingPage() {
                 { icon: Kanban, text: "Visual stages" },
                 { icon: ArrowRight, text: "Drag & drop" },
                 { icon: ChartLineUp, text: "Real-time tracking" },
+              ].map((item) => (
+                <HStack key={item.text} gap={2}>
+                  <Icon color="primary" size={16}>
+                    <item.icon />
+                  </Icon>
+                  <Text
+                    fontSize="sm"
+                    fontWeight="medium"
+                    color="foreground"
+                    opacity={0.6}
+                  >
+                    {item.text}
+                  </Text>
+                </HStack>
+              ))}
+            </HStack>
+          </VStack>
+        </Container>
+      </Box>
+
+      {/* Calendar Highlight */}
+      <Box py={16}>
+        <Container maxW="6xl">
+          <VStack gap={8} textAlign="center">
+            <VStack gap={3}>
+              <Heading
+                fontWeight="bold"
+                size="xl"
+                color="foreground"
+                lineHeight="tight"
+              >
+                Schedule & Track Every Activity
+              </Heading>
+              <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
+                Never miss a follow-up. Plan meetings, calls, and tasks
+                with a built-in calendar that keeps your team aligned.
+              </Text>
+            </VStack>
+            <Box
+              w="full"
+              borderRadius="xl"
+              overflow="hidden"
+              border="1px solid"
+              borderColor="border"
+              shadow="md"
+            >
+              <video
+                src={calendarVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{ width: "100%", display: "block" }}
+              />
+            </Box>
+            <HStack gap={8} wrap="wrap" justify="center">
+              {[
+                { icon: CalendarBlank, text: "Smart scheduling" },
+                { icon: Clock, text: "Reminders & alerts" },
+                { icon: ListChecks, text: "Activity timeline" },
               ].map((item) => (
                 <HStack key={item.text} gap={2}>
                   <Icon color="primary" size={16}>
