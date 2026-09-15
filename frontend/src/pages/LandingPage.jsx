@@ -504,6 +504,112 @@ export default function LandingPage() {
         </Container>
       </Box>
 
+      {/* How It Works */}
+      <Box py={20}>
+        <Container maxW="6xl">
+          <style>{`
+            @keyframes flow-arrow {
+              0%, 100% { opacity: 0.3; transform: translateX(0); }
+              50% { opacity: 0.7; transform: translateX(4px); }
+            }
+            .flow-arrow {
+              animation: flow-arrow 2s ease-in-out infinite;
+            }
+            .flow-arrow:nth-child(2) { animation-delay: 0.3s; }
+            .flow-arrow:nth-child(3) { animation-delay: 0.6s; }
+          `}</style>
+          <VStack gap={3} mb={12} textAlign="center">
+            <Heading
+              fontWeight="bold"
+              size="2xl"
+              color="foreground"
+              lineHeight="tight"
+            >
+              How QontakSales Works
+            </Heading>
+            <Text color="foreground" opacity={0.5} maxW="2xl">
+              From first contact to closed deal — here's how QontakSales
+              helps your team sell smarter.
+            </Text>
+          </VStack>
+          <Stack
+            direction={{ base: "column", lg: "row" }}
+            gap={{ base: 8, lg: 0 }}
+            align="flex-start"
+            justify="center"
+          >
+            {[
+              {
+                num: 1,
+                title: "Add Your Leads",
+                desc: "Import contacts or add them manually. Organize with tags and temperature indicators to prioritize your hottest prospects first.",
+              },
+              {
+                num: 2,
+                title: "Track Deals on the Pipeline",
+                desc: "Visualize your entire sales process on a Kanban board. Drag deals across 7 stages from Qualification to Closed Won.",
+              },
+              {
+                num: 3,
+                title: "Schedule & Log Activities",
+                desc: "Plan meetings, calls, and tasks tied to each deal. Every touchpoint is logged chronologically for full team visibility.",
+              },
+              {
+                num: 4,
+                title: "Monitor & Close",
+                desc: "Track performance with real-time dashboard analytics. Spot bottlenecks, forecast revenue, and close more deals.",
+              },
+            ].map((step, i) => (
+              <HStack key={step.num} gap={0} flex={1} justify="center">
+                <VStack gap={3} textAlign="center" maxW="200px">
+                  <Box
+                    w={12}
+                    h={12}
+                    borderRadius="full"
+                    bg="primary"
+                    color="white"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontWeight="bold"
+                    fontSize="lg"
+                    shadow="0 4px 12px rgba(37, 99, 235, 0.3)"
+                  >
+                    {step.num}
+                  </Box>
+                  <Heading
+                    size="sm"
+                    fontWeight="semibold"
+                    color="foreground"
+                  >
+                    {step.title}
+                  </Heading>
+                  <Text
+                    fontSize="xs"
+                    color="foreground"
+                    opacity={0.5}
+                    lineHeight="relaxed"
+                  >
+                    {step.desc}
+                  </Text>
+                </VStack>
+                {i < 3 && (
+                  <Icon
+                    as={ArrowRight}
+                    className="flow-arrow"
+                    color="primary"
+                    size={24}
+                    flexShrink={0}
+                    mx={2}
+                    display={{ base: "none", lg: "block" }}
+                  />
+                )}
+              </HStack>
+            ))}
+          </Stack>
+        </Container>
+      </Box>
+
       {/* Features */}
       <Box py={20}>
         <Container maxW="6xl">
