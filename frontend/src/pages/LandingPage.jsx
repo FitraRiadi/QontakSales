@@ -359,26 +359,50 @@ export default function LandingPage() {
         <InfiniteCarousel />
       </Box>
 
-      {/* Pipeline Highlight */}
-      <Box py={16}>
-        <Container maxW="6xl">
-          <VStack gap={8} textAlign="center">
-            <VStack gap={3}>
-              <Heading
-                fontWeight="bold"
-                size="xl"
-                color="foreground"
-                lineHeight="tight"
-              >
-                Track Every Deal from Start to Close
-              </Heading>
-              <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
-                Switch your deals across stages, from first contact to
-                closed won.
-              </Text>
+      {/* Product Highlights */}
+      <Box py={20}>
+        <Container maxW="6xl" display="flex" flexDirection="column" gap={20}>
+          {/* Row 1: Text Left, Pipeline Right */}
+          <Stack direction={{ base: "column", lg: "row" }} gap={12} align="center">
+            <VStack flex={1} gap={6} textAlign={{ base: "center", lg: "left" }} align={{ base: "center", lg: "flex-start" }}>
+              <VStack gap={3} align={{ base: "center", lg: "flex-start" }}>
+                <Heading
+                  fontWeight="bold"
+                  size="xl"
+                  color="foreground"
+                  lineHeight="tight"
+                >
+                  Track Every Deal from Start to Close
+                </Heading>
+                <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
+                  Switch your deals across stages, from first contact to
+                  closed won.
+                </Text>
+              </VStack>
+              <HStack gap={8} wrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
+                {[
+                  { icon: Kanban, text: "Visual stages" },
+                  { icon: ArrowRight, text: "Drag & drop" },
+                  { icon: ChartLineUp, text: "Real-time tracking" },
+                ].map((item) => (
+                  <HStack key={item.text} gap={2}>
+                    <Icon color="primary" size={16}>
+                      <item.icon />
+                    </Icon>
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="foreground"
+                      opacity={0.6}
+                    >
+                      {item.text}
+                    </Text>
+                  </HStack>
+                ))}
+              </HStack>
             </VStack>
             <Box
-              w="full"
+              flex={1}
               borderRadius="xl"
               overflow="hidden"
               border="1px solid"
@@ -393,56 +417,18 @@ export default function LandingPage() {
                 display="block"
               />
             </Box>
-            <HStack gap={8} wrap="wrap" justify="center">
-              {[
-                { icon: Kanban, text: "Visual stages" },
-                { icon: ArrowRight, text: "Drag & drop" },
-                { icon: ChartLineUp, text: "Real-time tracking" },
-              ].map((item) => (
-                <HStack key={item.text} gap={2}>
-                  <Icon color="primary" size={16}>
-                    <item.icon />
-                  </Icon>
-                  <Text
-                    fontSize="sm"
-                    fontWeight="medium"
-                    color="foreground"
-                    opacity={0.6}
-                  >
-                    {item.text}
-                  </Text>
-                </HStack>
-              ))}
-            </HStack>
-          </VStack>
-        </Container>
-      </Box>
+          </Stack>
 
-      {/* Calendar Highlight */}
-      <Box py={16}>
-        <Container maxW="6xl">
-          <VStack gap={8} textAlign="center">
-            <VStack gap={3}>
-              <Heading
-                fontWeight="bold"
-                size="xl"
-                color="foreground"
-                lineHeight="tight"
-              >
-                Schedule & Track Every Activity
-              </Heading>
-              <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
-                Never miss a follow-up. Plan meetings, calls, and tasks
-                with a built-in calendar that keeps your team aligned.
-              </Text>
-            </VStack>
+          {/* Row 2: Video Left, Text Right */}
+          <Stack direction={{ base: "column", lg: "row" }} gap={12} align="center">
             <Box
-              w="full"
+              flex={1}
               borderRadius="xl"
               overflow="hidden"
               border="1px solid"
               borderColor="border"
               shadow="md"
+              order={{ base: 1, lg: 0 }}
             >
               <video
                 src={calendarVideo}
@@ -453,28 +439,44 @@ export default function LandingPage() {
                 style={{ width: "100%", display: "block" }}
               />
             </Box>
-            <HStack gap={8} wrap="wrap" justify="center">
-              {[
-                { icon: CalendarBlank, text: "Smart scheduling" },
-                { icon: Clock, text: "Reminders & alerts" },
-                { icon: ListChecks, text: "Activity timeline" },
-              ].map((item) => (
-                <HStack key={item.text} gap={2}>
-                  <Icon color="primary" size={16}>
-                    <item.icon />
-                  </Icon>
-                  <Text
-                    fontSize="sm"
-                    fontWeight="medium"
-                    color="foreground"
-                    opacity={0.6}
-                  >
-                    {item.text}
-                  </Text>
-                </HStack>
-              ))}
-            </HStack>
-          </VStack>
+            <VStack flex={1} gap={6} textAlign={{ base: "center", lg: "left" }} align={{ base: "center", lg: "flex-start" }}>
+              <VStack gap={3} align={{ base: "center", lg: "flex-start" }}>
+                <Heading
+                  fontWeight="bold"
+                  size="xl"
+                  color="foreground"
+                  lineHeight="tight"
+                >
+                  Schedule & Track Every Activity
+                </Heading>
+                <Text color="foreground" opacity={0.5} maxW="lg" lineHeight="relaxed">
+                  Never miss a follow-up. Plan meetings, calls, and tasks
+                  with a built-in calendar that keeps your team aligned.
+                </Text>
+              </VStack>
+              <HStack gap={8} wrap="wrap" justify={{ base: "center", lg: "flex-start" }}>
+                {[
+                  { icon: CalendarBlank, text: "Smart scheduling" },
+                  { icon: Clock, text: "Reminders & alerts" },
+                  { icon: ListChecks, text: "Activity timeline" },
+                ].map((item) => (
+                  <HStack key={item.text} gap={2}>
+                    <Icon color="primary" size={16}>
+                      <item.icon />
+                    </Icon>
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="foreground"
+                      opacity={0.6}
+                    >
+                      {item.text}
+                    </Text>
+                  </HStack>
+                ))}
+              </HStack>
+            </VStack>
+          </Stack>
         </Container>
       </Box>
 
