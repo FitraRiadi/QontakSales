@@ -102,28 +102,52 @@ const logos = [logo1, logo2, logo3, logo4, logo5, logo6, logo7, logo8];
 const plans = [
   {
     name: "Starter",
-    price: "Free",
+    monthlyPrice: "Free",
+    annualPrice: "Free",
     period: "forever",
     description: "Perfect for solo sales reps getting started with CRM.",
-    features: ["Up to 100 leads", "1 sales agent", "Basic pipeline", "Email support"],
+    features: [
+      { text: "Up to 100 leads", included: true },
+      { text: "1 sales agent", included: true },
+      { text: "Basic pipeline", included: true },
+      { text: "Email support", included: true },
+      { text: "Advanced analytics", included: false },
+      { text: "Custom tags", included: false },
+    ],
     cta: "Get Started",
     highlighted: false,
   },
   {
     name: "Professional",
-    price: "Rp 299K",
+    monthlyPrice: "Rp 299K",
+    annualPrice: "Rp 239K",
     period: "/month",
     description: "For growing teams that need more power and insights.",
-    features: ["Unlimited leads", "10 sales agents", "Advanced analytics", "Priority support", "Custom tags"],
+    features: [
+      { text: "Unlimited leads", included: true },
+      { text: "10 sales agents", included: true },
+      { text: "Advanced pipeline", included: true },
+      { text: "Priority support", included: true },
+      { text: "Advanced analytics", included: true },
+      { text: "Custom tags", included: true },
+    ],
     cta: "Start Free Trial",
     highlighted: true,
   },
   {
     name: "Enterprise",
-    price: "Custom",
+    monthlyPrice: "Custom",
+    annualPrice: "Custom",
     period: "",
     description: "Tailored for large organizations with custom needs.",
-    features: ["Unlimited everything", "Unlimited agents", "API access", "Dedicated support", "Custom integrations"],
+    features: [
+      { text: "Unlimited leads", included: true },
+      { text: "Unlimited agents", included: true },
+      { text: "Custom pipeline", included: true },
+      { text: "Dedicated support", included: true },
+      { text: "API access", included: true },
+      { text: "Custom integrations", included: true },
+    ],
     cta: "Contact Sales",
     highlighted: false,
   },
@@ -223,6 +247,7 @@ function FaqItem({ question, answer }) {
 export default function LandingPage() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState("Professional");
+  const [billingCycle, setBillingCycle] = useState("monthly");
 
   return (
     <Box bg="background" minH="100vh">
@@ -787,168 +812,187 @@ export default function LandingPage() {
       {/* Pricing */}
       <Box py={20}>
         <Container maxW="6xl">
-          <VStack gap={3} mb={12} textAlign="center">
+          {/* Hero Section */}
+          <VStack gap={4} mb={12} textAlign="center">
             <Heading
-              fontWeight="semibold"
-              size="xl"
+              fontWeight="bold"
+              size="2xl"
               color="foreground"
               lineHeight="tight"
             >
               Simple Pricing
             </Heading>
-            <Text color="foreground" opacity={0.5}>
-              Start free. Upgrade when you're ready.
+            <Text color="foreground" opacity={0.5} maxW="lg">
+              Start free. Upgrade when you're ready. No hidden fees.
             </Text>
+
+            {/* Billing Toggle */}
+            <VStack gap={2} mt={2}>
+              <Box
+                bg="muted"
+                borderRadius="full"
+                p={1}
+                display="inline-flex"
+                gap={1}
+              >
+                {["monthly", "annual"].map((cycle) => (
+                  <Box
+                    key={cycle}
+                    position="relative"
+                    cursor="pointer"
+                    px={6}
+                    py={2}
+                    borderRadius="full"
+                    zIndex={1}
+                    onClick={() => setBillingCycle(cycle)}
+                  >
+                    {billingCycle === cycle && (
+                      <motion.div
+                        layoutId="billing-toggle"
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          borderRadius: "9999px",
+                          backgroundColor: "white",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                          zIndex: -1,
+                        }}
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="foreground"
+                      opacity={billingCycle === cycle ? 1 : 0.5}
+                      position="relative"
+                      zIndex={1}
+                      textTransform="capitalize"
+                    >
+                      {cycle}
+                    </Text>
+                  </Box>
+                ))}
+              </Box>
+              <Text fontSize="xs" color="foreground" opacity={0.4}>
+                Save 20% with annual billing
+              </Text>
+            </VStack>
           </VStack>
 
-          {/* Plan Selector */}
-          <Box display="flex" justifyContent="center" mb={10}>
-            <Box
-              bg="muted"
-              borderRadius="full"
-              p={1}
-              display="inline-flex"
-              gap={1}
-              position="relative"
-            >
-              {plans.map((plan) => (
+          {/* Feature Comparison Cards */}
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
+            {plans.map((p) => (
+              <motion.div
+                key={p.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{ display: "flex" }}
+              >
                 <Box
-                  key={plan.name}
+                  flex={1}
+                  p={8}
+                  bg="background"
+                  borderRadius="2xl"
+                  border="1px solid"
+                  borderColor={p.highlighted ? "primary" : "border"}
                   position="relative"
-                  cursor="pointer"
-                  px={6}
-                  py={2}
-                  borderRadius="full"
-                  zIndex={1}
-                  onClick={() => setSelectedPlan(plan.name)}
+                  display="flex"
+                  flexDirection="column"
+                  boxShadow={p.highlighted ? "0 4px 24px rgba(37, 99, 235, 0.12)" : "none"}
                 >
-                  {selectedPlan === plan.name && (
-                    <motion.div
-                      layoutId="plan-highlight"
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        borderRadius: "9999px",
-                        backgroundColor: "white",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                        zIndex: -1,
-                      }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
+                  {p.highlighted && (
+                    <Box
+                      position="absolute"
+                      top={-3}
+                      left="50%"
+                      transform="translateX(-50%)"
+                      bg="primary"
+                      color="white"
+                      px={3}
+                      py={0.5}
+                      borderRadius="full"
+                      fontSize="xs"
+                      fontWeight="medium"
+                      whiteSpace="nowrap"
+                    >
+                      Most Popular
+                    </Box>
                   )}
-                  <Text
-                    fontSize="sm"
-                    fontWeight="medium"
-                    color={selectedPlan === plan.name ? "foreground" : "foreground"}
-                    opacity={selectedPlan === plan.name ? 1 : 0.5}
-                    position="relative"
-                    zIndex={1}
-                    whiteSpace="nowrap"
-                  >
-                    {plan.name}
-                  </Text>
-                </Box>
-              ))}
-            </Box>
-          </Box>
 
-          {/* Detail Panel */}
-          <AnimatePresence mode="wait">
-            {plans
-              .filter((p) => p.name === selectedPlan)
-              .map((p) => (
-                <motion.div
-                  key={p.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  style={{ width: "100%", display: "flex", justifyContent: "center" }}
-                >
-                  <Box
-                    maxW="420px"
-                    w="full"
-                    p={10}
-                    bg="background"
-                    borderRadius="2xl"
-                    border="1px solid"
-                    borderColor={p.highlighted ? "primary" : "border"}
-                    position="relative"
-                    boxShadow={p.highlighted ? "0 4px 24px rgba(37, 99, 235, 0.12)" : "none"}
-                  >
-                    {p.highlighted && (
-                      <Box
-                        position="absolute"
-                        top={-3}
-                        left="50%"
-                        transform="translateX(-50%)"
-                        bg="primary"
-                        color="white"
-                        px={3}
-                        py={0.5}
-                        borderRadius="full"
-                        fontSize="xs"
-                        fontWeight="medium"
-                      >
-                        Most Popular
-                      </Box>
-                    )}
-                    <VStack gap={6} align="start" w="full">
-                      <VStack gap={1} align="start" w="full">
-                        <Text fontWeight="semibold" fontSize="md" color="foreground">
-                          {p.name}
-                        </Text>
-                        <Text fontSize="sm" color="foreground" opacity={0.5}>
-                          {p.description}
-                        </Text>
-                      </VStack>
-                      <HStack baseline gap={1}>
-                        <Heading
-                          fontWeight="semibold"
-                          size="3xl"
-                          color={p.highlighted ? "primary" : "foreground"}
-                        >
-                          {p.price}
-                        </Heading>
-                        {p.period && (
-                          <Text color="foreground" opacity={0.4} fontSize="sm">
-                            {p.period}
-                          </Text>
-                        )}
-                      </HStack>
-                      <VStack align="start" gap={3} w="full">
-                        {p.features.map((f) => (
-                          <HStack key={f} gap={3}>
-                            <Icon color="primary" size={16}>
-                              <CheckCircle />
-                            </Icon>
-                            <Text fontSize="sm" color="foreground" opacity={0.7}>
-                              {f}
-                            </Text>
-                          </HStack>
-                        ))}
-                      </VStack>
-                      <Button
-                        w="full"
-                        bg={p.highlighted ? "primary" : "transparent"}
-                        color={p.highlighted ? "white" : "foreground"}
-                        border={p.highlighted ? "none" : "1px solid"}
-                        borderColor="border"
-                        onClick={() => navigate("/register")}
-                        _hover={{
-                          bg: p.highlighted ? "secondary" : "muted",
-                        }}
-                        fontWeight="medium"
-                        size="md"
-                        mt={2}
-                      >
-                        {p.cta}
-                      </Button>
+                  <VStack gap={5} align="start" w="full" flex={1}>
+                    {/* Plan Header */}
+                    <VStack gap={1} align="start" w="full">
+                      <Text fontWeight="semibold" fontSize="md" color="foreground">
+                        {p.name}
+                      </Text>
+                      <Text fontSize="sm" color="foreground" opacity={0.5}>
+                        {p.description}
+                      </Text>
                     </VStack>
-                  </Box>
-                </motion.div>
-              ))}
-          </AnimatePresence>
+
+                    {/* Price */}
+                    <HStack baseline gap={1}>
+                      <Heading
+                        fontWeight="semibold"
+                        size="3xl"
+                        color={p.highlighted ? "primary" : "foreground"}
+                      >
+                        {billingCycle === "annual" ? p.annualPrice : p.monthlyPrice}
+                      </Heading>
+                      {p.period && (
+                        <Text color="foreground" opacity={0.4} fontSize="sm">
+                          {p.period}
+                        </Text>
+                      )}
+                    </HStack>
+
+                    {/* Features */}
+                    <VStack align="start" gap={3} w="full" flex={1}>
+                      {p.features.map((f) => (
+                        <HStack key={f.text} gap={3}>
+                          <Icon
+                            color={f.included ? "primary" : "foreground"}
+                            size={16}
+                            opacity={f.included ? 1 : 0.2}
+                          >
+                            <CheckCircle />
+                          </Icon>
+                          <Text
+                            fontSize="sm"
+                            color="foreground"
+                            opacity={f.included ? 0.7 : 0.3}
+                            textDecoration={f.included ? "none" : "line-through"}
+                          >
+                            {f.text}
+                          </Text>
+                        </HStack>
+                      ))}
+                    </VStack>
+
+                    {/* CTA */}
+                    <Button
+                      w="full"
+                      bg={p.highlighted ? "primary" : "transparent"}
+                      color={p.highlighted ? "white" : "foreground"}
+                      border={p.highlighted ? "none" : "1px solid"}
+                      borderColor="border"
+                      onClick={() => navigate("/register")}
+                      _hover={{
+                        bg: p.highlighted ? "secondary" : "muted",
+                      }}
+                      fontWeight="medium"
+                      size="md"
+                      mt={2}
+                    >
+                      {p.cta}
+                    </Button>
+                  </VStack>
+                </Box>
+              </motion.div>
+            ))}
+          </SimpleGrid>
         </Container>
       </Box>
 
