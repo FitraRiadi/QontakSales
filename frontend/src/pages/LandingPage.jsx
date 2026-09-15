@@ -43,7 +43,7 @@ import logo8 from "@/assets/trustedcompany/ff518a49-2055-490e-b6d3-7eb38504e8ce-
 import faqIllustration from "@/assets/FAQ-ilustration.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import calendarVideo from "@/assets/calendar-higlight-video.webm";
-import pipelineHighlight from "@/assets/pipeline-highlight.png";
+import pipelineVideo from "@/assets/pipiline-highlight-video.webm";
 import ctaImg from "@/assets/cta.jpg";
 
 const features = [
@@ -373,8 +373,11 @@ export default function LandingPage() {
               Powerful Tools, Simple Workflow
             </Heading>
             <Text color="foreground" opacity={0.5} maxW="2xl" lineHeight="relaxed">
-              Manage your pipeline, schedule activities, and track every
-              touchpoint — all from a single dashboard.
+              QontakSales gives your team a complete toolkit to manage
+              leads, close deals faster, and stay organized. From
+              drag-and-drop pipeline boards to activity scheduling and
+              real-time analytics — every feature is designed to help
+              your sales team focus on what matters most: closing revenue.
             </Text>
           </VStack>
 
@@ -427,12 +430,13 @@ export default function LandingPage() {
               borderColor="border"
               shadow="md"
             >
-              <Box
-                as="img"
-                src={pipelineHighlight}
-                w="full"
-                alt="Pipeline Kanban Board"
-                display="block"
+              <video
+                src={pipelineVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{ width: "100%", display: "block" }}
               />
             </Box>
           </Stack>
