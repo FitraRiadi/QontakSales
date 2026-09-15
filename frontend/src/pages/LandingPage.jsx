@@ -362,6 +362,22 @@ export default function LandingPage() {
       {/* Product Highlights */}
       <Box py={20}>
         <Container maxW="6xl" display="flex" flexDirection="column" gap={20}>
+          {/* Section Header */}
+          <VStack gap={3} align="flex-start">
+            <Heading
+              fontWeight="bold"
+              size="2xl"
+              color="foreground"
+              lineHeight="tight"
+            >
+              Powerful Tools, Simple Workflow
+            </Heading>
+            <Text color="foreground" opacity={0.5} maxW="2xl" lineHeight="relaxed">
+              Manage your pipeline, schedule activities, and track every
+              touchpoint — all from a single dashboard.
+            </Text>
+          </VStack>
+
           {/* Row 1: Text Left, Pipeline Right */}
           <Stack direction={{ base: "column", lg: "row" }} gap={12} align="center">
             <VStack flex={1} gap={6} textAlign={{ base: "center", lg: "left" }} align={{ base: "center", lg: "flex-start" }}>
