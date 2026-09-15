@@ -44,6 +44,7 @@ import faqIllustration from "@/assets/FAQ-ilustration.png";
 import dashboardHighlight from "@/assets/dashboard-highlight.png";
 import calendarVideo from "@/assets/calendar-higlight-video.webm";
 import pipelineVideo from "@/assets/pipiline-highlight-video.webm";
+import Stepper, { Step } from "@/components/ui/Stepper";
 import ctaImg from "@/assets/cta.jpg";
 
 const features = [
@@ -507,17 +508,6 @@ export default function LandingPage() {
       {/* How It Works */}
       <Box py={20}>
         <Container maxW="6xl">
-          <style>{`
-            @keyframes flow-arrow {
-              0%, 100% { opacity: 0.3; transform: translateX(0); }
-              50% { opacity: 0.7; transform: translateX(4px); }
-            }
-            .flow-arrow {
-              animation: flow-arrow 2s ease-in-out infinite;
-            }
-            .flow-arrow:nth-child(2) { animation-delay: 0.3s; }
-            .flow-arrow:nth-child(3) { animation-delay: 0.6s; }
-          `}</style>
           <VStack gap={3} mb={12} textAlign="center">
             <Heading
               fontWeight="bold"
@@ -532,81 +522,54 @@ export default function LandingPage() {
               helps your team sell smarter.
             </Text>
           </VStack>
-          <Stack
-            direction={{ base: "column", lg: "row" }}
-            gap={{ base: 8, lg: 0 }}
-            align="flex-start"
-            justify="center"
+          <Stepper
+            initialStep={1}
+            onStepChange={(step) => console.log(step)}
+            onFinalStepCompleted={() => console.log("All steps completed!")}
+            backButtonText="Previous"
+            nextButtonText="Next"
           >
-            {[
-              {
-                num: 1,
-                title: "Add Your Leads",
-                desc: "Import contacts or add them manually. Organize with tags and temperature indicators to prioritize your hottest prospects first.",
-              },
-              {
-                num: 2,
-                title: "Track Deals on the Pipeline",
-                desc: "Visualize your entire sales process on a Kanban board. Drag deals across 7 stages from Qualification to Closed Won.",
-              },
-              {
-                num: 3,
-                title: "Schedule & Log Activities",
-                desc: "Plan meetings, calls, and tasks tied to each deal. Every touchpoint is logged chronologically for full team visibility.",
-              },
-              {
-                num: 4,
-                title: "Monitor & Close",
-                desc: "Track performance with real-time dashboard analytics. Spot bottlenecks, forecast revenue, and close more deals.",
-              },
-            ].map((step, i) => (
-              <HStack key={step.num} gap={0} flex={1} justify="center">
-                <VStack gap={3} textAlign="center" maxW="200px">
-                  <Box
-                    w={12}
-                    h={12}
-                    borderRadius="full"
-                    bg="primary"
-                    color="white"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    fontWeight="bold"
-                    fontSize="lg"
-                    shadow="0 4px 12px rgba(37, 99, 235, 0.3)"
-                  >
-                    {step.num}
-                  </Box>
-                  <Heading
-                    size="sm"
-                    fontWeight="semibold"
-                    color="foreground"
-                  >
-                    {step.title}
-                  </Heading>
-                  <Text
-                    fontSize="xs"
-                    color="foreground"
-                    opacity={0.5}
-                    lineHeight="relaxed"
-                  >
-                    {step.desc}
-                  </Text>
-                </VStack>
-                {i < 3 && (
-                  <Icon
-                    as={ArrowRight}
-                    className="flow-arrow"
-                    color="primary"
-                    size={24}
-                    flexShrink={0}
-                    mx={2}
-                    display={{ base: "none", lg: "block" }}
-                  />
-                )}
-              </HStack>
-            ))}
-          </Stack>
+            <Step>
+              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                1. Add Your Leads
+              </h2>
+              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                Import contacts in bulk or add them one by one. Organize with
+                tags, temperature indicators (Hot/Cold), and custom filters to
+                prioritize your hottest prospects first.
+              </p>
+            </Step>
+            <Step>
+              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                2. Track Deals on the Pipeline
+              </h2>
+              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                Visualize your entire sales process on a Kanban board. Drag deals
+                across 7 stages — from Qualification to Closed Won — and spot
+                bottlenecks instantly.
+              </p>
+            </Step>
+            <Step>
+              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                3. Schedule & Log Activities
+              </h2>
+              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                Plan meetings, calls, and tasks tied directly to each deal. Every
+                touchpoint is logged chronologically so your whole team has full
+                context — no more missed follow-ups or duplicate outreach.
+              </p>
+            </Step>
+            <Step>
+              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                4. Monitor & Close
+              </h2>
+              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                Track performance with real-time dashboard analytics. Spot
+                bottlenecks, forecast revenue, and close more deals with
+                data-driven insights.
+              </p>
+            </Step>
+          </Stepper>
         </Container>
       </Box>
 
