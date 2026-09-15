@@ -114,9 +114,15 @@ export default function Stepper({
                   {backButtonText}
                 </button>
               )}
-              <button onClick={isLastStep ? handleComplete : handleNext} className="next-button" {...nextButtonProps}>
-                {isLastStep ? 'Complete' : nextButtonText}
-              </button>
+              {
+                !isLastStep ? 
+                <button onClick={isLastStep ? handleComplete : handleNext} className="next-button" {...nextButtonProps}>
+                {nextButtonText}
+                </button> :
+                <>
+                </>
+              }
+              
             </div>
           </div>
         )}

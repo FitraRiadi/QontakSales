@@ -522,54 +522,83 @@ export default function LandingPage() {
               helps your team sell smarter.
             </Text>
           </VStack>
-          <Stepper
-            initialStep={1}
-            onStepChange={(step) => console.log(step)}
-            onFinalStepCompleted={() => console.log("All steps completed!")}
-            backButtonText="Previous"
-            nextButtonText="Next"
-          >
-            <Step>
-              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
-                1. Add Your Leads
-              </h2>
-              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
-                Import contacts in bulk or add them one by one. Organize with
-                tags, temperature indicators (Hot/Cold), and custom filters to
-                prioritize your hottest prospects first.
-              </p>
-            </Step>
-            <Step>
-              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
-                2. Track Deals on the Pipeline
-              </h2>
-              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
-                Visualize your entire sales process on a Kanban board. Drag deals
-                across 7 stages — from Qualification to Closed Won — and spot
-                bottlenecks instantly.
-              </p>
-            </Step>
-            <Step>
-              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
-                3. Schedule & Log Activities
-              </h2>
-              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
-                Plan meetings, calls, and tasks tied directly to each deal. Every
-                touchpoint is logged chronologically so your whole team has full
-                context — no more missed follow-ups or duplicate outreach.
-              </p>
-            </Step>
-            <Step>
-              <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
-                4. Monitor & Close
-              </h2>
-              <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
-                Track performance with real-time dashboard analytics. Spot
-                bottlenecks, forecast revenue, and close more deals with
-                data-driven insights.
-              </p>
-            </Step>
-          </Stepper>
+          <Stack direction={{ base: "column", lg: "row" }} gap={12} align="center">
+            <Box flex={1} w="full">
+              <Stepper
+                initialStep={1}
+                onStepChange={(step) => console.log(step)}
+                onFinalStepCompleted={() => console.log("All steps completed!")}
+                backButtonText="Previous"
+                nextButtonText="Next"
+              >
+                <Step>
+                  <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                    1. Add Your Leads
+                  </h2>
+                  <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                    Import contacts in bulk or add them one by one. Organize with
+                    tags, temperature indicators (Hot/Cold), and custom filters to
+                    prioritize your hottest prospects first.
+                  </p>
+                </Step>
+                <Step>
+                  <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                    2. Track Deals on the Pipeline
+                  </h2>
+                  <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                    Visualize your entire sales process on a Kanban board. Drag deals
+                    across 7 stages — from Qualification to Closed Won — and spot
+                    bottlenecks instantly.
+                  </p>
+                </Step>
+                <Step>
+                  <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                    3. Schedule & Log Activities
+                  </h2>
+                  <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                    Plan meetings, calls, and tasks tied directly to each deal. Every
+                    touchpoint is logged chronologically so your whole team has full
+                    context — no more missed follow-ups or duplicate outreach.
+                  </p>
+                </Step>
+                <Step>
+                  <h2 style={{ fontWeight: "bold", fontSize: "1.25rem", marginBottom: "0.5rem", color: "#0F172A" }}>
+                    4. Monitor & Close
+                  </h2>
+                  <p style={{ color: "#64748b", lineHeight: 1.6, fontSize: "0.95rem" }}>
+                    Track performance with real-time dashboard analytics. Spot
+                    bottlenecks, forecast revenue, and close more deals with
+                    data-driven insights.
+                  </p>
+                </Step>
+              </Stepper>
+            </Box>
+            <VStack flex={1} gap={6} align={{ base: "center", lg: "flex-start" }} textAlign={{ base: "center", lg: "left" }}>
+              <Heading fontWeight="semibold" size="lg" color="foreground">
+                Your Sales Process, Simplified
+              </Heading>
+              <Text color="foreground" opacity={0.5} lineHeight="relaxed">
+                No complicated setup. No training required. Just 4 simple
+                steps to transform how your team sells.
+              </Text>
+              <VStack gap={3} align={{ base: "center", lg: "flex-start" }}>
+                {[
+                  "Guided step-by-step onboarding",
+                  "Works for teams of any size",
+                  "Zero learning curve — start selling in minutes",
+                ].map((point) => (
+                  <HStack key={point} gap={2}>
+                    <Icon color="primary" size={16} mt={0.5}>
+                      <CheckCircle />
+                    </Icon>
+                    <Text fontSize="sm" color="foreground" opacity={0.6}>
+                      {point}
+                    </Text>
+                  </HStack>
+                ))}
+              </VStack>
+            </VStack>
+          </Stack>
         </Container>
       </Box>
 
