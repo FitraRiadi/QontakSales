@@ -20,6 +20,7 @@ import {
 import { ArrowLeft, PencilSimple, Trash, Eye, Clock, Newspaper } from "@phosphor-icons/react";
 import DOMPurify from "dompurify";
 import api from "@/services/api";
+import SiteFooter from "@/components/layout/SiteFooter";
 import { fmtDate, fmtDateTime } from "./ArticlesPage";
 
 const toaster = createToaster({ placement: "top" });
@@ -308,6 +309,8 @@ export default function ArticleDetailPage() {
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
+
+      <SiteFooter />
     </Container>
   );
 }

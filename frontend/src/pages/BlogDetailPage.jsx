@@ -16,6 +16,7 @@ import { ArrowLeft, Eye, Newspaper } from "@phosphor-icons/react";
 import DOMPurify from "dompurify";
 import api from "@/services/api";
 import brandLogo from "@/assets/brand.png";
+import SiteFooter from "@/components/layout/SiteFooter";
 import { fmtDate } from "./ArticlesPage";
 
 export default function BlogDetailPage() {
@@ -163,6 +164,8 @@ export default function BlogDetailPage() {
           </>
         )}
       </Container>
+
+      <SiteFooter />
     </Box>
   );
 }
