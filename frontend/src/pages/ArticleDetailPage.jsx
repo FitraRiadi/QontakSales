@@ -10,7 +10,6 @@ import {
   HStack,
   Input,
   Portal,
-  SimpleGrid,
   Spinner,
   Stack,
   Text,
@@ -18,7 +17,7 @@ import {
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { ArrowLeft, PencilSimple, Trash, Eye, Clock, Newspaper, User, CalendarBlank, Tag } from "@phosphor-icons/react";
+import { ArrowLeft, PencilSimple, Trash, Eye, Clock, Newspaper, User, CalendarBlank } from "@phosphor-icons/react";
 import DOMPurify from "dompurify";
 import api from "@/services/api";
 import SiteFooter from "@/components/layout/SiteFooter";
@@ -146,8 +145,34 @@ export default function ArticleDetailPage() {
         {article.title}
       </Heading>
       {article.excerpt && (
-        <Text color="foreground" opacity={0.6} mb={4}>{article.excerpt}</Text>
+        <Text color="foreground" opacity={0.6} mb={3}>{article.excerpt}</Text>
       )}
+
+      <VStack gap={1} align="start" mb={5} fontSize="xs" color="foreground" opacity={0.65}>
+        <HStack gap={2} wrap="wrap">
+          <HStack gap={1}><User size={12} /> Created by <b>{article.author_name}</b></HStack>
+          <Text>·</Text>
+          <Text>{fmtDateTime(article.created_at)}</Text>
+        </HStack>
+        <HStack gap={2} wrap="wrap">
+          <HStack gap={1}><PencilSimple size={12} /> Updated by <b>{article.updated_by_name}</b></HStack>
+          <Text>·</Text>
+          <Text>{article.updated_by ? fmtDateTime(article.updated_at) : "Never updated"}</Text>
+        </HStack>
+        <HStack gap={2} wrap="wrap">
+          <HStack gap={1}><CalendarBlank size={12} /> {isScheduled ? "Scheduled" : "Published"}</HStack>
+          <Text>·</Text>
+          <Text>
+            {isScheduled
+              ? fmtDateTime(article.scheduled_publish_at)
+              : article.effective_published_at
+                ? fmtDateTime(article.effective_published_at)
+                : "Not published yet"}
+          </Text>
+          <Text>·</Text>
+          <HStack gap={1}><Eye size={12} /> {article.view_count} views</HStack>
+        </HStack>
+      </VStack>
 
       {article.cover_image_url && (
         <Box borderRadius="xl" overflow="hidden" mb={6} border="1px solid" borderColor="border">
@@ -178,60 +203,6 @@ export default function ArticleDetailPage() {
           ))}
         </HStack>
       )}
-
-      {/* Article Information */}
-      <Box mt={8} p={5} bg="muted" borderRadius="xl" border="1px solid" borderColor="border">
-        <Text fontWeight="semibold" fontSize="sm" color="foreground" mb={4}>
-          Article Information
-        </Text>
-        <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-          <HStack gap={3} align="start">
-            <Box color="primary" mt={0.5}><User size={18} /></Box>
-            <VStack gap={0} align="start">
-              <Text fontSize="xs" color="foreground" opacity={0.5}>Created by</Text>
-              <Text fontSize="sm" fontWeight="medium" color="foreground">{article.author_name}</Text>
-              <Text fontSize="xs" color="foreground" opacity={0.5}>{fmtDateTime(article.created_at)}</Text>
-            </VStack>
-          </HStack>
-          <HStack gap={3} align="start">
-            <Box color="primary" mt={0.5}><PencilSimple size={18} /></Box>
-            <VStack gap={0} align="start">
-              <Text fontSize="xs" color="foreground" opacity={0.5}>Last updated by</Text>
-              <Text fontSize="sm" fontWeight="medium" color="foreground">{article.updated_by_name}</Text>
-              <Text fontSize="xs" color="foreground" opacity={0.5}>
-                {article.updated_by ? fmtDateTime(article.updated_at) : "Never updated"}
-              </Text>
-            </VStack>
-          </HStack>
-          <HStack gap={3} align="start">
-            <Box color="primary" mt={0.5}><CalendarBlank size={18} /></Box>
-            <VStack gap={0} align="start">
-              <Text fontSize="xs" color="foreground" opacity={0.5}>
-                {isScheduled ? "Scheduled to publish" : "Published on"}
-              </Text>
-              <Text fontSize="sm" fontWeight="medium" color="foreground">
-                {isScheduled
-                  ? fmtDateTime(article.scheduled_publish_at)
-                  : article.effective_published_at
-                    ? fmtDateTime(article.effective_published_at)
-                    : "Not published yet"}
-              </Text>
-            </VStack>
-          </HStack>
-          <HStack gap={3} align="start">
-            <Box color="primary" mt={0.5}><Tag size={18} /></Box>
-            <VStack gap={0} align="start">
-              <Text fontSize="xs" color="foreground" opacity={0.5}>Category</Text>
-              <Text fontSize="sm" fontWeight="medium" color="foreground">
-                {article.category_name || "Uncategorized"}
-              </Text>
-              <HStack gap={1} fontSize="xs" color="foreground" opacity={0.5}>
-                <Eye size={12} /> {article.view_count} views · {article.visibility}
-              </HStack>
-            </VStack>
-          </HStack>
-        </SimpleGrid>
-      </Box>
 
       {/* Actions */}
       {canModify && (

@@ -6,14 +6,13 @@ import {
   Container,
   Heading,
   HStack,
-  SimpleGrid,
   Spinner,
   Stack,
   Text,
   VStack,
   Badge,
 } from "@chakra-ui/react";
-import { ArrowLeft, Eye, Newspaper, User, CalendarBlank, Tag, PencilSimple } from "@phosphor-icons/react";
+import { ArrowLeft, Eye, Newspaper, User, CalendarBlank } from "@phosphor-icons/react";
 import DOMPurify from "dompurify";
 import api from "@/services/api";
 import brandLogo from "@/assets/brand.png";
@@ -85,13 +84,20 @@ export default function BlogDetailPage() {
               <Badge size="sm" colorPalette="purple" variant="subtle" mb={3}>{article.category_name}</Badge>
             )}
             <Heading fontWeight="bold" size="xl" color="foreground" mb={2}>{article.title}</Heading>
-            <HStack gap={2} fontSize="sm" color="foreground" opacity={0.5} mb={6}>
-              <Text>{article.author_name}</Text>
-              <Text>·</Text>
-              <Text>{fmtDate(article.effective_published_at)}</Text>
-              <Text>·</Text>
-              <HStack gap={1}><Eye size={12} /> {article.view_count}</HStack>
-            </HStack>
+            <VStack gap={1} align="start" mb={5} fontSize="xs" color="foreground" opacity={0.65}>
+              <HStack gap={2} wrap="wrap">
+                <HStack gap={1}><User size={12} /> Written by <b>{article.author_name}</b></HStack>
+                <Text>·</Text>
+                <Text>{article.category_name || "Uncategorized"}</Text>
+              </HStack>
+              <HStack gap={2} wrap="wrap">
+                <HStack gap={1}><CalendarBlank size={12} /> Published</HStack>
+                <Text>·</Text>
+                <Text>{fmtDate(article.effective_published_at)}</Text>
+                <Text>·</Text>
+                <HStack gap={1}><Eye size={12} /> {article.view_count} views</HStack>
+              </HStack>
+            </VStack>
             {article.cover_image_url && (
               <Box borderRadius="xl" overflow="hidden" mb={6} border="1px solid" borderColor="border">
                 <Box as="img" src={article.cover_image_url} w="full" maxH="420px" objectFit="cover" alt={article.title} />
@@ -118,48 +124,6 @@ export default function BlogDetailPage() {
                 ))}
               </HStack>
             )}
-
-            {/* Article Information */}
-            <Box mt={8} p={5} bg="muted" borderRadius="xl" border="1px solid" borderColor="border">
-              <Text fontWeight="semibold" fontSize="sm" color="foreground" mb={4}>
-                Article Information
-              </Text>
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-                <HStack gap={3} align="start">
-                  <Box color="primary" mt={0.5}><User size={18} /></Box>
-                  <VStack gap={0} align="start">
-                    <Text fontSize="xs" color="foreground" opacity={0.5}>Written by</Text>
-                    <Text fontSize="sm" fontWeight="medium" color="foreground">{article.author_name}</Text>
-                  </VStack>
-                </HStack>
-                <HStack gap={3} align="start">
-                  <Box color="primary" mt={0.5}><CalendarBlank size={18} /></Box>
-                  <VStack gap={0} align="start">
-                    <Text fontSize="xs" color="foreground" opacity={0.5}>Published on</Text>
-                    <Text fontSize="sm" fontWeight="medium" color="foreground">{fmtDate(article.effective_published_at)}</Text>
-                  </VStack>
-                </HStack>
-                <HStack gap={3} align="start">
-                  <Box color="primary" mt={0.5}><PencilSimple size={18} /></Box>
-                  <VStack gap={0} align="start">
-                    <Text fontSize="xs" color="foreground" opacity={0.5}>Last updated</Text>
-                    <Text fontSize="sm" fontWeight="medium" color="foreground">{fmtDate(article.updated_at)}</Text>
-                  </VStack>
-                </HStack>
-                <HStack gap={3} align="start">
-                  <Box color="primary" mt={0.5}><Tag size={18} /></Box>
-                  <VStack gap={0} align="start">
-                    <Text fontSize="xs" color="foreground" opacity={0.5}>Category</Text>
-                    <Text fontSize="sm" fontWeight="medium" color="foreground">
-                      {article.category_name || "Uncategorized"}
-                    </Text>
-                    <HStack gap={1} fontSize="xs" color="foreground" opacity={0.5}>
-                      <Eye size={12} /> {article.view_count} views
-                    </HStack>
-                  </VStack>
-                </HStack>
-              </SimpleGrid>
-            </Box>
               </Box>
 
               {/* Related sidebar */}
