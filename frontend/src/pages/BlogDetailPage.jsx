@@ -40,7 +40,7 @@ export default function BlogDetailPage() {
             return { a, s };
           })
           .sort((x, y) => y.s - x.s || y.a.view_count - x.a.view_count);
-        setRelated(scored.slice(0, 4).map((x) => x.a));
+        setRelated(scored.slice(0, 7).map((x) => x.a));
       })
       .catch(() => {});
   };
