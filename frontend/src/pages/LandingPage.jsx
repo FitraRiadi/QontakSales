@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
+import api from "@/services/api";
 import {
   Box,
   Button,
@@ -29,6 +30,8 @@ import {
   CalendarBlank,
   Clock,
   ListChecks,
+  Newspaper,
+  Eye,
 } from "@phosphor-icons/react";
 import brandLogo from "@/assets/brand.png";
 import dashboardPreviewLaptop from "@/assets/dashboard-preview-laptop.png";
@@ -248,6 +251,16 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState("Professional");
   const [billingCycle, setBillingCycle] = useState("monthly");
+  const [topArticles, setTopArticles] = useState([]);
+
+  useEffect(() => {
+    api.get("/public-articles/", { params: { ordering: "-view_count" } })
+      .then((r) => {
+        const list = r.data.results || r.data;
+        setTopArticles(Array.isArray(list) ? list.slice(0, 3) : []);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <Box bg="background" minH="100vh">
@@ -995,6 +1008,72 @@ export default function LandingPage() {
           </SimpleGrid>
         </Container>
       </Box>
+
+      {/* Articles - Most Viewed */}
+      {topArticles.length > 0 && (
+        <Box py={20} bg="muted">
+          <Container maxW="6xl">
+            <HStack justify="space-between" align="end" mb={10}>
+              <VStack gap={3} align="start">
+                <Heading fontWeight="bold" size="2xl" color="foreground" lineHeight="tight">
+                  Most Read Articles
+                </Heading>
+                <Text color="foreground" opacity={0.5} maxW="2xl">
+                  Sales tips and playbooks our readers love the most.
+                </Text>
+              </VStack>
+              <Button variant="ghost" size="sm" color="primary" onClick={() => navigate("/blog")} flexShrink={0}>
+                View all <ArrowRight size={14} />
+              </Button>
+            </HStack>
+            <SimpleGrid columns={{ base: 1, md: 3 }} gap={6}>
+              {topArticles.map((a) => (
+                <Box
+                  key={a.id}
+                  cursor="pointer"
+                  bg="background"
+                  borderRadius="2xl"
+                  overflow="hidden"
+                  border="1px solid"
+                  borderColor="border"
+                  _hover={{ shadow: "md", transform: "translateY(-2px)" }}
+                  transition="all 0.2s"
+                  onClick={() => navigate(`/blog/${a.slug}`)}
+                >
+                  {a.cover_image_url ? (
+                    <Box as="img" src={a.cover_image_url} h="180px" w="full" objectFit="cover" alt={a.title} />
+                  ) : (
+                    <Box h="180px" w="full" bg="muted" display="flex" alignItems="center" justifyContent="center">
+                      <Icon size={36} opacity={0.25} color="foreground"><Newspaper /></Icon>
+                    </Box>
+                  )}
+                  <VStack gap={2} align="start" p={6}>
+                    {a.category_name && (
+                      <Text fontSize="xs" fontWeight="semibold" color="primary" textTransform="uppercase">
+                        {a.category_name}
+                      </Text>
+                    )}
+                    <Heading size="md" fontWeight="semibold" color="foreground" lineClamp={2}>
+                      {a.title}
+                    </Heading>
+                    <Text fontSize="sm" color="foreground" opacity={0.5} lineClamp={2}>
+                      {a.excerpt}
+                    </Text>
+                    <HStack justify="space-between" w="full" mt={2}>
+                      <Text fontSize="xs" color="foreground" opacity={0.5}>
+                        {a.author_name}
+                      </Text>
+                      <HStack gap={1} fontSize="xs" color="foreground" opacity={0.5}>
+                        <Icon size={12}><Eye /></Icon> {a.view_count}
+                      </HStack>
+                    </HStack>
+                  </VStack>
+                </Box>
+              ))}
+            </SimpleGrid>
+          </Container>
+        </Box>
+      )}
 
       {/* FAQ */}
       <Box py={20}>

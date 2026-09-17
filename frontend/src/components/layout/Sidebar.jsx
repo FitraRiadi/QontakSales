@@ -1,6 +1,6 @@
 import { Box, VStack, Text, Link as ChakraLink, HStack } from "@chakra-ui/react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import { House, Gear, UserPlus, ChatsCircle, X, CalendarBlank, Buildings, AddressBook, Handshake, Package, Archive } from "@phosphor-icons/react";
+import { House, Gear, UserPlus, ChatsCircle, X, CalendarBlank, Buildings, AddressBook, Handshake, Package, Archive, Newspaper } from "@phosphor-icons/react";
 import brandLogo from "@/assets/brand.png";
 
 const allNavItems = [
@@ -9,6 +9,7 @@ const allNavItems = [
   { label: "Contacts", icon: AddressBook, path: "/contacts" },
   { label: "Deals", icon: Handshake, path: "/deals" },
   { label: "Products", icon: Package, path: "/products" },
+  { label: "Articles", icon: Newspaper, path: "/articles" },
   { label: "Calendar", icon: CalendarBlank, path: "/calendar" },
   { label: "Agents", icon: UserPlus, path: "/agents", managerOnly: true },
   { label: "Broadcast", icon: ChatsCircle, path: "/broadcasts" },

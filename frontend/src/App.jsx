@@ -19,6 +19,11 @@ import ContactsPage from "./pages/ContactsPage";
 import DealsPage from "./pages/DealsPage";
 import DealDetailPage from "./pages/DealDetailPage";
 import ProductsPage from "./pages/ProductsPage";
+import ArticlesPage from "./pages/ArticlesPage";
+import ArticleDetailPage from "./pages/ArticleDetailPage";
+import ArticleEditorPage from "./pages/ArticleEditorPage";
+import BlogPage from "./pages/BlogPage";
+import BlogDetailPage from "./pages/BlogDetailPage";
 import ArchivePage from "./pages/ArchivePage";
 import MainLayout from "./components/layout/MainLayout";
 import AuthGuard from "./components/layout/AuthGuard";
@@ -31,9 +36,11 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route path="/privacy" element={<PrivacyPolicyPage />} />
-      <Route path="/terms" element={<TermsPage />} />
-      <Route path="/contact" element={<ContactPage />} />
+  <Route path="/privacy" element={<PrivacyPolicyPage />} />
+  <Route path="/terms" element={<TermsPage />} />
+  <Route path="/contact" element={<ContactPage />} />
+  <Route path="/blog" element={<BlogPage />} />
+  <Route path="/blog/:slug" element={<BlogDetailPage />} />
       <Route element={<AuthGuard />}>
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -43,6 +50,10 @@ function App() {
           <Route path="/deals" element={<DealsPage />} />
           <Route path="/deals/:id" element={<DealDetailPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/articles/new" element={<ArticleEditorPage />} />
+          <Route path="/articles/:id" element={<ArticleDetailPage />} />
+          <Route path="/articles/:id/edit" element={<ArticleEditorPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/agents" element={<AgentsPage />} />
           <Route path="/broadcasts" element={<BroadcastPage />} />
