@@ -11,12 +11,13 @@ import {
   Input,
   Portal,
   Spinner,
+  Stack,
   Text,
   VStack,
   Badge,
   createToaster,
 } from "@chakra-ui/react";
-import { ArrowLeft, PencilSimple, Trash, Eye, Clock } from "@phosphor-icons/react";
+import { ArrowLeft, PencilSimple, Trash, Eye, Clock, Newspaper } from "@phosphor-icons/react";
 import DOMPurify from "dompurify";
 import api from "@/services/api";
 import { fmtDate, fmtDateTime } from "./ArticlesPage";
@@ -32,14 +33,34 @@ export default function ArticleDetailPage() {
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleAt, setScheduleAt] = useState("");
   const [scheduling, setScheduling] = useState(false);
+  const [related, setRelated] = useState([]);
   const userRole = localStorage.getItem("user_role");
   const userId = localStorage.getItem("user_id");
   const isManager = userRole === "MANAGER";
 
+  const fetchRelated = (current) => {
+    api.get("/articles/")
+      .then((r) => {
+        const list = r.data.results || r.data;
+        const tags = current.tags || [];
+        const scored = list
+          .filter((a) => String(a.id) !== String(current.id))
+          .map((a) => {
+            let s = 0;
+            if (a.category && current.category && a.category === current.category) s += 2;
+            s += (a.tags || []).filter((t) => tags.includes(t)).length;
+            return { a, s };
+          })
+          .sort((x, y) => y.s - x.s || y.a.view_count - x.a.view_count);
+        setRelated(scored.slice(0, 4).map((x) => x.a));
+      })
+      .catch(() => {});
+  };
+
   const fetchArticle = () => {
     setLoading(true);
     api.get(`/articles/${id}/`)
-      .then((r) => { setArticle(r.data); setLoading(false); })
+      .then((r) => { setArticle(r.data); setLoading(false); fetchRelated(r.data); })
       .catch(() => { setLoading(false); toaster.create({ title: "Article not found", type: "error" }); });
   };
 
@@ -102,10 +123,13 @@ export default function ArticleDetailPage() {
   };
 
   return (
-    <Container maxW="3xl" py={{ base: 4, md: 8 }}>
+    <Container maxW="6xl" py={{ base: 4, md: 8 }}>
       <Button size="sm" variant="ghost" mb={4} onClick={() => navigate("/articles")}>
         <ArrowLeft size={16} /> Back to Articles
       </Button>
+
+      <Stack direction={{ base: "column", lg: "row" }} gap={8} align="start">
+        <Box flex={1} minW={0}>
 
       <HStack gap={2} mb={3} wrap="wrap">
         <Badge size="sm" colorPalette={article.status === "PUBLISHED" ? "green" : "yellow"} variant="subtle">
@@ -199,6 +223,50 @@ export default function ArticleDetailPage() {
           </Button>
         </HStack>
       )}
+        </Box>
+
+        {/* Related sidebar */}
+        <Box w={{ base: "full", lg: "300px" }} flexShrink={0}>
+          <Box position={{ lg: "sticky" }} top="80px">
+            <Text fontWeight="semibold" fontSize="sm" color="foreground" mb={3}>
+              Related Articles
+            </Text>
+            <VStack gap={2} align="stretch">
+              {related.map((r) => (
+                <HStack
+                  key={r.id}
+                  gap={3}
+                  p={2}
+                  borderRadius="lg"
+                  cursor="pointer"
+                  align="start"
+                  _hover={{ bg: "muted" }}
+                  onClick={() => navigate(`/articles/${r.id}`)}
+                >
+                  {r.cover_image_url ? (
+                    <Box as="img" src={r.cover_image_url} w="64px" h="64px" borderRadius="md" objectFit="cover" flexShrink={0} alt={r.title} />
+                  ) : (
+                    <Box w="64px" h="64px" borderRadius="md" bg="muted" flexShrink={0} display="flex" alignItems="center" justifyContent="center">
+                      <Newspaper size={20} style={{ opacity: 0.3 }} />
+                    </Box>
+                  )}
+                  <VStack gap={1} align="start" minW={0}>
+                    <Text fontSize="sm" fontWeight="medium" color="foreground" lineClamp={2}>
+                      {r.title}
+                    </Text>
+                    <HStack gap={1} fontSize="xs" color="foreground" opacity={0.5}>
+                      <Eye size={11} /> {r.view_count}
+                    </HStack>
+                  </VStack>
+                </HStack>
+              ))}
+              {related.length === 0 && (
+                <Text fontSize="sm" color="foreground" opacity={0.5}>No related articles yet.</Text>
+              )}
+            </VStack>
+          </Box>
+        </Box>
+      </Stack>
 
       <Dialog.Root open={deleteOpen} onOpenChange={(e) => !e.open && setDeleteOpen(false)}>
         <Portal>
