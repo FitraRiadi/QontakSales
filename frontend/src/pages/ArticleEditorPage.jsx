@@ -13,10 +13,13 @@ import {
   VStack,
   createToaster,
 } from "@chakra-ui/react";
-import { ArrowLeft } from "@phosphor-icons/react";
+import { ArrowLeft, Image as ImageIcon, X } from "@phosphor-icons/react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import api from "@/services/api";
+import ImageCropDialog from "@/components/ui/ImageCropDialog";
+
+const MAX_COVER_MB = 5;
 
 const toaster = createToaster({ placement: "top" });
 
@@ -48,6 +51,11 @@ export default function ArticleEditorPage() {
   });
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
+  const [cropSrc, setCropSrc] = useState(null);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [coverRemoved, setCoverRemoved] = useState(false);
+  const fileInputRef = useRef(null);
   const [errors, setErrors] = useState({});
   const isManager = localStorage.getItem("user_role") === "MANAGER";
 
@@ -136,6 +144,39 @@ export default function ArticleEditorPage() {
 
   const getHtml = () => quillRef.current?.root?.innerHTML || "";
 
+  const handleCoverFile = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toaster.create({ title: "Only image files are allowed", type: "error" });
+      return;
+    }
+    if (file.size > MAX_COVER_MB * 1024 * 1024) {
+      toaster.create({ title: `Cover must be smaller than ${MAX_COVER_MB}MB`, type: "error" });
+      return;
+    }
+    setCropSrc(URL.createObjectURL(file));
+    setCropOpen(true);
+  };
+
+  const applyCrop = (blob) => {
+    setCropOpen(false);
+    setCropSrc(null);
+    if (!blob) {
+      toaster.create({ title: "Crop failed", type: "error" });
+      return;
+    }
+    const file = new File([blob], "cover.jpg", { type: "image/jpeg" });
+    setCoverFile(file);
+    setCoverPreview(URL.createObjectURL(file));
+    setCoverRemoved(false);
+  };
+
+  const clearCover = () => {
+    setCoverFile(null);
+    setCoverPreview(null);
+    setCoverRemoved(true);
+  };
+
   const saveArticle = async (publishNow) => {
     const errs = {};
     if (!form.title.trim()) errs.title = "Title is required";
@@ -165,6 +206,8 @@ export default function ArticleEditorPage() {
         await api.patch(`/articles/${articleId}/`, fd, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+      } else if (coverRemoved) {
+        await api.patch(`/articles/${articleId}/`, { cover_image: null });
       }
       if (publishNow) {
         await api.post(`/articles/${articleId}/publish/`);
@@ -266,25 +309,57 @@ export default function ArticleEditorPage() {
 
         <Field.Root>
           <Field.Label>Cover image</Field.Label>
-          <HStack gap={3}>
-            <Input
+          <Box
+            border="2px dashed"
+            borderColor={dragging ? "primary" : "border"}
+            borderRadius="xl"
+            p={8}
+            textAlign="center"
+            cursor="pointer"
+            bg={dragging ? "muted" : "transparent"}
+            transition="all 0.15s"
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => { e.preventDefault(); setDragging(false); handleCoverFile(e.dataTransfer.files?.[0]); }}
+          >
+            <VStack gap={2}>
+              <Box color="foreground" opacity={0.4}>
+                <ImageIcon size={32} />
+              </Box>
+              <Text fontWeight="medium" fontSize="sm" color="foreground">
+                Upload Image
+              </Text>
+              <Text fontSize="xs" color="foreground" opacity={0.5}>
+                Drag & drop or click to browse · 16:9 recommended · Max {MAX_COVER_MB}MB
+              </Text>
+            </VStack>
+            <input
+              ref={fileInputRef}
               type="file"
               accept="image/*"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                setCoverFile(f || null);
-                setCoverPreview(f ? URL.createObjectURL(f) : coverPreview);
-              }}
-              bg="#FAFAFA"
-              p={1}
+              hidden
+              onChange={(e) => { handleCoverFile(e.target.files?.[0]); e.target.value = ""; }}
             />
-          </HStack>
+          </Box>
           {coverPreview && (
-            <Box mt={2} borderRadius="lg" overflow="hidden" border="1px solid" borderColor="border" maxW="300px">
-              <Box as="img" src={coverPreview} w="full" alt="Cover preview" />
-            </Box>
+            <HStack gap={3} mt={3} align="start">
+              <Box borderRadius="lg" overflow="hidden" border="1px solid" borderColor="border" maxW="300px" flexShrink={0}>
+                <Box as="img" src={coverPreview} w="full" alt="Cover preview" />
+              </Box>
+              <Button size="xs" variant="ghost" color="red.500" onClick={clearCover}>
+                <X size={12} /> Remove
+              </Button>
+            </HStack>
           )}
         </Field.Root>
+
+        <ImageCropDialog
+          open={cropOpen}
+          imageSrc={cropSrc}
+          onClose={() => { setCropOpen(false); setCropSrc(null); }}
+          onApply={applyCrop}
+        />
 
         <Field.Root invalid={!!errors.content}>
           <Field.Label>Content</Field.Label>

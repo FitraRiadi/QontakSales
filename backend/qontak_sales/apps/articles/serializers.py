@@ -104,6 +104,15 @@ class ArticleListSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Category does not belong to your company.")
         return value
 
+    def validate_cover_image(self, value):
+        if value:
+            content_type = getattr(value, "content_type", "") or ""
+            if not content_type.startswith("image/"):
+                raise serializers.ValidationError("Only image files are allowed.")
+            if value.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError("Image must be smaller than 5MB.")
+        return value
+
     def _sync_tags(self, article, tag_names):
         request = self.context.get("request")
         company = request.user.company if request else article.company
