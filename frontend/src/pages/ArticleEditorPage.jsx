@@ -57,15 +57,28 @@ export default function ArticleEditorPage() {
   const [coverRemoved, setCoverRemoved] = useState(false);
   const fileInputRef = useRef(null);
   const [errors, setErrors] = useState({});
+  const [editCategoryId, setEditCategoryId] = useState(null);
+  const catFilledRef = useRef(false);
   const isManager = localStorage.getItem("user_role") === "MANAGER";
 
   useEffect(() => {
     api.get("/article-categories/").then((r) => setCategories(r.data.results || r.data)).catch(() => {});
   }, []);
 
-  // Init Quill once
+  // Fill category name from id once categories are loaded (edit mode)
   useEffect(() => {
-    if (editorRef.current && !quillRef.current) {
+    if (isEdit && editCategoryId && categories.length > 0 && !catFilledRef.current) {
+      const cat = categories.find((c) => String(c.id) === String(editCategoryId));
+      if (cat) {
+        setForm((f) => ({ ...f, category_name: cat.name }));
+        catFilledRef.current = true;
+      }
+    }
+  }, [isEdit, editCategoryId, categories]);
+
+  // Init Quill once the editor container is rendered (edit mode renders it after load)
+  useEffect(() => {
+    if (!loading && editorRef.current && !quillRef.current) {
       const quill = new Quill(editorRef.current, {
         theme: "snow",
         placeholder: "Write your article...",
@@ -86,7 +99,7 @@ export default function ArticleEditorPage() {
       // keep instance across StrictMode remounts via ref guard; cleanup only content
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loading]);
 
   const imageHandler = () => {
     const input = document.createElement("input");
@@ -124,10 +137,11 @@ export default function ArticleEditorPage() {
         setForm({
           title: a.title || "",
           excerpt: a.excerpt || "",
-          category_name: a.category_name || "",
+          category_name: "",
           tags: (a.tags || []).join(", "),
           visibility: a.visibility || "INTERNAL",
         });
+        setEditCategoryId(a.category || null);
         setCoverPreview(a.cover_image_url || null);
         const html = a.content || "";
         if (quillRef.current) quillRef.current.root.innerHTML = html;
@@ -180,7 +194,8 @@ export default function ArticleEditorPage() {
   const saveArticle = async (publishNow) => {
     const errs = {};
     if (!form.title.trim()) errs.title = "Title is required";
-    if (quillRef.current?.getText().trim().length < 1) errs.content = "Content is required";
+    const editorText = quillRef.current?.getText()?.trim() || "";
+    if (editorText.length < 1) errs.content = "Content is required";
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setSaving(true);

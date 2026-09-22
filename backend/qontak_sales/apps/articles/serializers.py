@@ -34,7 +34,9 @@ class ArticleListSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
-    category_name = serializers.CharField(max_length=120, write_only=True, required=False)
+    category_name = serializers.CharField(
+        max_length=120, write_only=True, required=False, allow_blank=True
+    )
     # Writable on create/update, but excluded from list responses (payload too big).
     content = serializers.CharField(write_only=True, required=False, allow_blank=True)
     is_live = serializers.ReadOnlyField()
@@ -126,8 +128,9 @@ class ArticleListSerializer(serializers.ModelSerializer):
         article.tags.set(tags)
 
     def _resolve_category(self, validated_data):
-        name = validated_data.pop("category_name", None)
-        if not name or not name.strip():
+        raw = validated_data.pop("category_name", None)
+        name = (raw or "").strip()
+        if not name:
             return
         request = self.context.get("request")
         company = request.user.company if request else None
