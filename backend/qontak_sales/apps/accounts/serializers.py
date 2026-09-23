@@ -37,6 +37,7 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     company_name = serializers.CharField(max_length=255)
+    phone = serializers.CharField(max_length=20, required=False, allow_blank=True, default="")
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -53,6 +54,7 @@ class RegisterSerializer(serializers.Serializer):
             last_name=" ".join(validated_data["name"].split()[1:]),
             company=company,
             role="MANAGER",
+            phone=validated_data.get("phone", ""),
         )
         return user
 
