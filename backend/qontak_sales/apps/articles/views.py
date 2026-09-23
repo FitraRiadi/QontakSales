@@ -81,6 +81,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
         user = self.request.user
         show_archived = self.request.query_params.get("archived", "false") == "true"
         qs = Article.objects.filter(company=user.company, is_archived=show_archived)
+        qs = qs.select_related("category", "author", "updated_by").prefetch_related("tags")
         if user.role != "MANAGER":
             qs = qs.filter(author=user)
 
@@ -259,6 +260,7 @@ class PublicArticleViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = live_filter(Article.objects.filter(visibility="PUBLIC", is_archived=False))
+        qs = qs.select_related("category", "author").prefetch_related("tags")
         search = self.request.query_params.get("search")
         if search:
             qs = qs.filter(

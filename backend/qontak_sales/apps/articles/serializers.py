@@ -25,7 +25,11 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source="category.name", read_only=True)
+    # Single field for both directions: reads via model property,
+    # writes are popped in create/update and resolved to a Category.
+    category_name = serializers.CharField(
+        max_length=120, required=False, allow_blank=True
+    )
     author_name = serializers.SerializerMethodField()
     updated_by_name = serializers.SerializerMethodField()
     tags = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
@@ -33,9 +37,6 @@ class ArticleListSerializer(serializers.ModelSerializer):
         child=serializers.CharField(max_length=60),
         write_only=True,
         required=False,
-    )
-    category_name = serializers.CharField(
-        max_length=120, write_only=True, required=False, allow_blank=True
     )
     # Writable on create/update, but excluded from list responses (payload too big).
     content = serializers.CharField(write_only=True, required=False, allow_blank=True)

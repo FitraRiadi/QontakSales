@@ -82,6 +82,10 @@ class Article(models.Model):
         return self.title
 
     @property
+    def category_name(self):
+        return self.category.name if self.category_id else None
+
+    @property
     def is_live(self):
         """Effectively published right now (scheduled time has passed, no cron needed)."""
         if self.status != "PUBLISHED":
