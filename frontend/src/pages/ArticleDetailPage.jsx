@@ -52,6 +52,7 @@ export default function ArticleDetailPage() {
             s += (a.tags || []).filter((t) => tags.includes(t)).length;
             return { a, s };
           })
+          .filter((x) => x.s > 0)
           .sort((x, y) => y.s - x.s || y.a.view_count - x.a.view_count);
         setRelated(scored.slice(0, 7).map((x) => x.a));
       })
