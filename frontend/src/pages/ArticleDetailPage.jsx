@@ -234,8 +234,8 @@ export default function ArticleDetailPage() {
         </Box>
 
         {/* Related sidebar */}
-        <Box w={{ base: "full", lg: "300px" }} flexShrink={0}>
-          <Box position={{ lg: "sticky" }} top="80px">
+        <Box w={{ base: "full", lg: "300px" }} flexShrink={0} alignSelf={{ base: "auto", lg: "stretch" }}>
+          <Box position={{ lg: "sticky" }} top="88px" maxH={{ lg: "calc(100vh - 100px)" }} overflowY="auto">
             <Text fontWeight="semibold" fontSize="sm" color="foreground" mb={3}>
               Related Articles
             </Text>
