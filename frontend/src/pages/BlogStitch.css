@@ -3,7 +3,7 @@
 .sb-page * { box-sizing: border-box; }
 
 /* Header sticky */
-.sb-header { position: sticky; top: 0; z-index: 50; background: #ffffff; border-bottom: 1px solid rgba(195,198,215,.35); box-shadow: 0 1px 3px 0 rgba(15,23,42,.04); }
+.sb-header { position: sticky; top: 12px; z-index: 50; width: min(1152px, calc(100% - 32px)); margin: 0 auto; background: #f4f6ff; border: 1px solid rgba(255,255,255,.9); border-radius: 28px; box-shadow: inset 2px 2px 5px rgba(255,255,255,1), inset -4px -4px 10px rgba(15,23,42,.08), 6px 10px 22px rgba(15,23,42,.14); }
 .sb-header-inner { height: 64px; max-width: 1152px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 @media (min-width: 768px) { .sb-header-inner { padding: 0 2rem; } }
 .sb-logo { height: 28px; width: auto; object-fit: contain; display: block; cursor: pointer; }
