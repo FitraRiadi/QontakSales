@@ -8,6 +8,8 @@ import logoNav from "@/assets/landing-stitch/logo-nav.png";
 import logoFooter from "@/assets/landing-stitch/logo-footer.png";
 import heroTeam from "@/assets/landing-stitch/hero-team.png";
 import teamRoster from "@/assets/landing-stitch/team-roster.png";
+import faqMobile from "@/assets/dashboard-highlight.png";
+import trustedHighlight from "@/assets/trusted-highligh-bg.png";
 
 const AV = {
   a: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&h=64&fit=crop&crop=faces",
@@ -23,16 +25,27 @@ const AV = {
 
 const TABS = [
   { id: "pipeline", label: "Pipeline Tracking" },
-  { id: "omnichannel", label: "Omnichannel & WhatsApp" },
-  { id: "automation", label: "Workflow Automation" },
-  { id: "analytics", label: "Predictive Analytics" },
+  { id: "broadcast", label: "WhatsApp Broadcast" },
+  { id: "activities", label: "Activities & Calendar" },
+  { id: "reports", label: "Dashboard & Reports" },
+];
+
+const FAQS = [
+  { q: "What is QontakSales?", a: "A sales workspace for teams: manage accounts and contacts, track deals on a 7-stage visual pipeline, send WhatsApp broadcasts, schedule activities on a shared calendar, and monitor revenue on a live dashboard." },
+  { q: "Is QontakSales free to use?", a: "Yes. Create an account for free with no credit card required and use the full workspace — pipeline, broadcast, activities, dashboard and articles." },
+  { q: "How does WhatsApp broadcast work?", a: "Pick contacts with search and select-all, write one message using {name}, {phone} and {company} variables so each recipient gets a personalized text, send once, then check sent vs failed per batch in Broadcast History." },
+  { q: "What is the difference between Manager and Agent roles?", a: "Managers see everything: all leads and deals, team members, the full broadcast history, and article publishing. Agents work on their own assigned accounts, contacts and deals." },
+  { q: "How does the deal pipeline work?", a: "Seven stages: Qualification, Discovery & Demo, Proposal Sent, Negotiation, Closing, Won and Lost. Move deals forward with one click, see per-stage totals, and managers are notified on every move." },
+  { q: "Can I archive items instead of deleting them?", a: "Yes. Archiving hides accounts, contacts and deals from the workspace without deleting them — restore anything anytime from the Archive page." },
+  { q: "Is my data secure?", a: "Yes. Sign-in uses JWT authentication with hashed passwords, every company workspace is strictly isolated so teams only ever see their own data, and sensitive actions are limited by role." },
 ];
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState("pipeline");
+  const [tab, setTab] = useState("reports");
   const [billing, setBilling] = useState("annual");
   const [insight, setInsight] = useState("All Insights");
+  const [openFaq, setOpenFaq] = useState(0);
   const [articles, setArticles] = useState([]);
   const [articlesLoading, setArticlesLoading] = useState(true);
   const [articlesError, setArticlesError] = useState(false);
@@ -76,10 +89,10 @@ export default function LandingPage() {
     product: {
       label: "Product",
       links: [
-        { icon: "view_column", tint: "#eff6ff", color: "#004ac6", title: "Pipeline Tracking", desc: "Kanban + SLA timers", onClick: () => openTab("pipeline") },
-        { icon: "chat", tint: "#ecfdf5", color: "#006242", title: "Omnichannel & WhatsApp", desc: "Meta BSP inbox", onClick: () => openTab("omnichannel") },
-        { icon: "bolt", tint: "#ede9fe", color: "#6d28d9", title: "Workflow Automation", desc: "No-code follow-ups", onClick: () => openTab("automation") },
-        { icon: "monitoring", tint: "#fef3c7", color: "#92400e", title: "Predictive Analytics", desc: "Quota forecasting", onClick: () => openTab("analytics") },
+        { icon: "view_column", tint: "#eff6ff", color: "#004ac6", title: "Pipeline Tracking", desc: "Kanban 7 stages", onClick: () => openTab("pipeline") },
+        { icon: "chat", tint: "#ecfdf5", color: "#006242", title: "WhatsApp Broadcast", desc: "Template variables", onClick: () => openTab("broadcast") },
+        { icon: "calendar_month", tint: "#ede9fe", color: "#6d28d9", title: "Activities & Calendar", desc: "Timeline per deal", onClick: () => openTab("activities") },
+        { icon: "monitoring", tint: "#fef3c7", color: "#92400e", title: "Dashboard & Reports", desc: "Export Excel", onClick: () => openTab("reports") },
       ],
       feature: { kicker: "LIVE METRICS", title: "$842K closing + 98.4% WA delivery", cta: "Book a Demo", onClick: () => go("/register") },
     },
@@ -88,7 +101,7 @@ export default function LandingPage() {
       links: [
         { icon: "storefront", tint: "#eff6ff", color: "#004ac6", title: "Sales Operations", desc: "Broadcast + velocity", onClick: () => { setOpenMenu(null); scrollTo("product-capabilities"); } },
         { icon: "query_stats", tint: "#fef3c7", color: "#92400e", title: "RevOps & Reporting", desc: "Forecast + quotas", onClick: () => { setOpenMenu(null); scrollTo("product-capabilities"); } },
-        { icon: "security", tint: "#ecfdf5", color: "#006242", title: "Enterprise & Security", desc: "SOC 2 + SSO", onClick: () => { setOpenMenu(null); scrollTo("pricing"); } },
+        { icon: "security", tint: "#ecfdf5", color: "#006242", title: "Roles & Security", desc: "Manager + Agent access", onClick: () => { setOpenMenu(null); scrollTo("pricing"); } },
         { icon: "campaign", tint: "#ede9fe", color: "#6d28d9", title: "WhatsApp Broadcast", desc: "HSM campaigns", onClick: () => { setOpenMenu(null); scrollTo("product-capabilities"); } },
       ],
       feature: { kicker: "CASE STUDY", title: "+68% pipeline conversion, 120+ reps", cta: "See proof", onClick: () => { setOpenMenu(null); scrollTo("insights-resources"); } },
@@ -219,9 +232,9 @@ export default function LandingPage() {
                 <h1 className="sq-h1">Accelerate deals and unify customer touchpoints <span className="blue">on your terms</span></h1>
               </motion.div>
               <motion.div className="sq-hero-side" variants={heroChild}>
-                <p className="sq-body">Get business-grade WhatsApp Cloud API, visual deal pipelines, VoIP calling, and automated SLA routing&nbsp; all in one scalable revenue engine.</p>
+                <p className="sq-body">Manage accounts, contacts and deals on a visual pipeline, broadcast WhatsApp with template variables, log every activity, and track revenue on one dashboard.</p>
                 <motion.button className="sq-pill-dark" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => go("/register")}>
-                  <span>Get Demo Account</span>
+                  <span>Get Started</span>
                   <span className="circle"><span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span></span>
                 </motion.button>
               </motion.div>
@@ -231,7 +244,7 @@ export default function LandingPage() {
               <motion.div className="sq-hero-card sq-hero-a" variants={heroChild}>
                 <div style={{ position: "relative", zIndex: 10, maxWidth: 28 + "rem" }}>
                   <h2 className="sq-h3">Sales Operations</h2>
-                  <p className="sq-body" style={{ fontSize: 12 }}>The all-in-one suite for WhatsApp broadcast, pipeline velocity, and automated SLA routing.</p>
+                  <p className="sq-body" style={{ fontSize: 12 }}>The all-in-one suite for lead management, visual deal pipelines, and WhatsApp broadcast.</p>
                 </div>
                 <motion.div
                   className="sq-hero-img"
@@ -267,7 +280,7 @@ export default function LandingPage() {
                         </div>
                         <span style={{ fontSize: 11, fontWeight: 700 }}>Active Team</span>
                       </div>
-                      <span style={{ fontSize: 11, color: "#006242", fontWeight: 800 }}>99.8% Sync</span>
+                      <span style={{ fontSize: 11, color: "#006242", fontWeight: 800 }}>7 Stages</span>
                     </div>
                   </div>
                   <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -280,13 +293,13 @@ export default function LandingPage() {
                 <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 8 }}>
                   <div className="sq-stat-box">
                     <p style={{ fontSize: 11, color: "#565e74" }}>Closing Deals</p>
-                    <p style={{ fontWeight: 800, fontSize: 16 }}>$842,000</p>
-                    <span style={{ display: "inline-block", padding: "2px 6px", borderRadius: 4, background: "#ecfdf5", color: "#006242", fontWeight: 800, fontSize: 10, marginTop: 4 }}>+28% YoY</span>
+                    <p style={{ fontWeight: 800, fontSize: 16 }}>Rp 842JT</p>
+                    <span style={{ display: "inline-block", padding: "2px 6px", borderRadius: 4, background: "#ecfdf5", color: "#006242", fontWeight: 800, fontSize: 10, marginTop: 4 }}>Won stage</span>
                   </div>
                   <div className="sq-stat-box">
-                    <p style={{ fontSize: 11, color: "#565e74" }}>Cycle Duration</p>
-                    <p style={{ fontWeight: 800, fontSize: 16 }}>14 Days</p>
-                    <span style={{ display: "inline-block", padding: "2px 6px", borderRadius: 4, background: "#eff6ff", color: "#004ac6", fontWeight: 800, fontSize: 10, marginTop: 4 }}>Fast Track</span>
+                    <p style={{ fontSize: 11, color: "#565e74" }}>Win Rate</p>
+                    <p style={{ fontWeight: 800, fontSize: 16 }}>Live %</p>
+                    <span style={{ display: "inline-block", padding: "2px 6px", borderRadius: 4, background: "#eff6ff", color: "#004ac6", fontWeight: 800, fontSize: 10, marginTop: 4 }}>Dashboard metric</span>
                   </div>
                 </div>
                 <div className="sq-card-foot"><span style={{ fontWeight: 800 }}>Enterprise</span><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>arrow_upward</span></div>
@@ -295,12 +308,12 @@ export default function LandingPage() {
               <motion.div className="sq-hero-card sq-hero-c" variants={heroChild}>
                 <div style={{ margin: "auto 0", display: "flex", flexDirection: "column", gap: 8 }}>
                   <div className="sq-stat-box">
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontWeight: 800, fontSize: 12 }}>WhatsApp Broadcast</span><span style={{ fontSize: 10, color: "#565e74", fontWeight: 700 }}>98.4%</span></div>
-                    <p style={{ fontSize: 11, color: "#434655" }}>Instant delivery via Meta verified cloud pipe.</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontWeight: 800, fontSize: 12 }}>Template Variables</span><span style={{ fontSize: 10, color: "#565e74", fontWeight: 700 }}>{"{name} {phone}"}</span></div>
+                    <p style={{ fontSize: 11, color: "#434655" }}>Personalize every broadcast with {"{company}"} and contact fields.</p>
                   </div>
                   <div className="sq-stat-box">
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontWeight: 800, fontSize: 12 }}>SLA Auto-Assignment</span><span style={{ fontSize: 10, color: "#006242", fontWeight: 800 }}>0.4s</span></div>
-                    <p style={{ fontSize: 11, color: "#434655" }}>Routing to active rep with zero delay.</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontWeight: 800, fontSize: 12 }}>Scheduled Activities</span><span style={{ fontSize: 10, color: "#006242", fontWeight: 800 }}>4 types</span></div>
+                    <p style={{ fontSize: 11, color: "#434655" }}>Meeting, Call, Email and Follow-up logged chronologically.</p>
                   </div>
                 </div>
                 <div className="sq-card-foot"><span style={{ fontWeight: 800 }}>WhatsApp Broadcast</span><span className="material-symbols-outlined" style={{ color: "#006242" }}>check_circle</span></div>
@@ -335,7 +348,7 @@ export default function LandingPage() {
             <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
               <span className="sq-eyebrow">Complete Revenue Operations Architecture</span>
               <h2 className="sq-h2">Everything your sales floor needs to close predictably</h2>
-              <p className="sq-sub">Replace disconnected spreadsheets, separate telephony apps, and manual WhatsApp chats with one cohesive operating engine.</p>
+              <p className="sq-sub">Replace scattered spreadsheets and chat histories with a visual deal pipeline, WhatsApp broadcast, scheduled activities, and live revenue reports.</p>
             </motion.div>
             <div className="sq-tabs" role="tablist">
               <div className="sq-tabs-inner">
@@ -354,101 +367,123 @@ export default function LandingPage() {
             <div className={"sq-panel" + (tab === "pipeline" ? " show" : "")}>
               <div className="sq-split">
                 <div className="sq-split-5" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <h3 className="sq-h3">Total visibility into every deal stage and SLA requirement</h3>
-                  <p className="sq-body">Organize leads across customizable stages. Flag stagnant deals automatically with deal-rot timers and configure required fields before advancing high-value opportunities.</p>
-                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Custom deal velocity timers and bottleneck triggers</span></div>
-                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Automatic currency conversion and tax calculation</span></div>
-                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Role-based deal access permissions and audit trails</span></div>
+                  <h3 className="sq-h3">Track every deal across 7 fixed stages</h3>
+                  <p className="sq-body">Qualification, Discovery &amp; Demo, Proposal Sent, Negotiation, Closing, Won and Lost. Move deals forward with one click, see per-stage totals, and managers get notified on every stage change.</p>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>7 fixed stages with deal count &amp; total value each</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>One-click move forward, backward, Won or Lost</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Automatic manager notifications on stage change</span></div>
                 </div>
                 <div className="sq-split-7 sq-mock">
                   <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: 8, borderBottom: "1px solid rgba(195,198,215,.3)", marginBottom: 12 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 4, fontWeight: 800, fontSize: 14 }}><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>view_column</span> Enterprise Pipeline - Q3</div>
-                    <span style={{ fontSize: 12, color: "#565e74", fontFamily: "monospace" }}>18 Deals • Total Value $1.42M</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, fontWeight: 800, fontSize: 14 }}><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>view_column</span> Sales Pipeline - This Quarter</div>
+                    <span style={{ fontSize: 12, color: "#565e74", fontFamily: "monospace" }}>18 Deals • Total Value Rp 1,42M</span>
                   </div>
                   <div className="sq-kanban">
                     <div className="sq-kanban-col">
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>DISCOVERY (7)</span><span style={{ fontSize: 12, fontWeight: 700 }}>$240k</span></div>
-                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Astra Agro Inc</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#eff6ff", color: "#004ac6", fontWeight: 700 }}>Tier 1</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>$65,000 • 3 days in stage</p></div>
-                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Nusa Logistics</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#f1f5f9", color: "#565e74", fontWeight: 700 }}>SME</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>$18,500 • Action today</p></div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>DISCOVERY (7)</span><span style={{ fontSize: 12, fontWeight: 700 }}>Rp 240JT</span></div>
+                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Astra Agro Inc</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#eff6ff", color: "#004ac6", fontWeight: 700 }}>New</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 65JT • Move forward in one click</p></div>
+                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Nusa Logistics</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#f1f5f9", color: "#565e74", fontWeight: 700 }}>Demo done</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 18,5JT • Action today</p></div>
                     </div>
                     <div className="sq-kanban-col">
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>PROPOSAL (5)</span><span style={{ fontSize: 12, fontWeight: 700 }}>$510k</span></div>
-                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Bhinneka Retail</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#ecfdf5", color: "#006242", fontWeight: 700 }}>90% Fit</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>$120,000 • Contract sent</p></div>
-                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Indomobil Fleet</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#fef3c7", color: "#92400e", fontWeight: 700 }}>Stalled</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>$88,000 • WA Followup</p></div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>PROPOSAL (5)</span><span style={{ fontSize: 12, fontWeight: 700 }}>Rp 510JT</span></div>
+                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Bhinneka Retail</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#ecfdf5", color: "#006242", fontWeight: 700 }}>Sent</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 120JT • Contract sent</p></div>
+                      <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Indomobil Fleet</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#fef3c7", color: "#92400e", fontWeight: 700 }}>Follow-up</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 88JT • WA follow-up logged</p></div>
                     </div>
                     <div className="sq-kanban-col">
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>CLOSING WON (6)</span><span style={{ fontSize: 12, fontWeight: 800, color: "#006242" }}>$670k</span></div>
-                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Sinarmas Multi</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>WON</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>$320,000 • Annual plan</p></div>
-                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Ruang Financial</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>WON</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>$145,000 • 3yr agreement</p></div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>WON (6)</span><span style={{ fontSize: 12, fontWeight: 800, color: "#006242" }}>Rp 870JT</span></div>
+                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Sinarmas Multi</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>WON</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 320JT • Annual plan</p></div>
+                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Ruang Financial</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>WON</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 145JT • 3-year agreement</p></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className={"sq-panel" + (tab === "omnichannel" ? " show" : "")}>
+            <div className={"sq-panel" + (tab === "broadcast" ? " show" : "")}>
               <div className="sq-split">
                 <div className="sq-split-5" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <span className="sq-badge" style={{ background: "#d1fae5", color: "#064e3b", alignSelf: "flex-start" }}>OFFICIAL META BSP INFRASTRUCTURE</span>
-                  <h3 className="sq-h3">Native WhatsApp, Instagram DM, and Voice from one inbox</h3>
-                  <p className="sq-body">Connect multiple verified green-badge WhatsApp numbers to a central team inbox. Route inbound leads by sales territory, assign tickets automatically, and trigger verified HSM blast campaigns.</p>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <div className="sq-stat-box" style={{ flex: 1, textAlign: "center" }}><p style={{ fontWeight: 800, color: "#004ac6" }}>0.4s</p><p style={{ fontSize: 12, color: "#565e74" }}>Dispatch Latency</p></div>
-                    <div className="sq-stat-box" style={{ flex: 1, textAlign: "center" }}><p style={{ fontWeight: 800, color: "#006242" }}>100%</p><p style={{ fontSize: 12, color: "#565e74" }}>Official Meta API</p></div>
-                    <div className="sq-stat-box" style={{ flex: 1, textAlign: "center" }}><p style={{ fontWeight: 800 }}>Unlimited</p><p style={{ fontSize: 12, color: "#565e74" }}>Live Agents</p></div>
-                  </div>
+                  <h3 className="sq-h3">Broadcast WhatsApp with template variables</h3>
+                  <p className="sq-body">Pick contacts, write one message with {"{name}"}, {"{phone}"} and {"{company}"} variables, send to tens or hundreds at once — then track sent vs failed per batch in history.</p>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>{"{name}"}, {"{phone}"}, {"{company}"} auto personalization</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Contact picker with search and select-all</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Per-batch history: sent, failed and detail</span></div>
                 </div>
                 <div className="sq-split-7 sq-mock">
                   <div className="sq-chat">
                     <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: 8, borderBottom: "1px solid rgba(195,198,215,.3)", marginBottom: 8 }}>
                       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                         <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#006242", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12 }}>WA</div>
-                        <div><h4 style={{ margin: 0, fontSize: 14 }}>Enterprise Priority Routing</h4><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>WhatsApp Official Broadcast #84920</p></div>
+                        <div><h4 style={{ margin: 0, fontSize: 14 }}>New Broadcast</h4><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>To: 128 selected contacts</p></div>
                       </div>
-                      <span style={{ padding: "4px 8px", borderRadius: 999, fontSize: 12, fontWeight: 700, background: "#6ffbbe", color: "#002113" }}>Green Badge Verified</span>
+                      <span style={{ padding: "4px 8px", borderRadius: 999, fontSize: 12, fontWeight: 700, background: "#eff6ff", color: "#004ac6" }}>128 recipients</span>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 12 }}>
-                      <div style={{ padding: 10, borderRadius: 6, background: "#eff4ff" }}><b>Customer (Budi Santoso):</b> &quot;Hello, we want to expand our team seats to 150 licenses. Can you send an amended quote?&quot;</div>
-                      <div style={{ padding: 10, borderRadius: 6, background: "#eff6ff", marginLeft: 24, borderLeft: "2px solid #2563eb" }}><b style={{ color: "#004ac6" }}>Qontak Bot + Sales Rep (Jessica):</b> &quot;Hi Budi, I&apos;ve generated quote Q-2024-819 with the enterprise 15% tiered volume discount. Forwarding to your WhatsApp right now!&quot;</div>
+                      <div style={{ padding: 10, borderRadius: 6, background: "#eff4ff" }}>Halo <b>{"{name}"}</b> dari <b>{"{company}"}</b>, ada promo khusus bulan ini. Balas pesan ini atau hubungi kami di <b>{"{phone}"}</b> ya!</div>
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#dbeafe", color: "#004ac6" }}>{"{name}"}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#dbeafe", color: "#004ac6" }}>{"{phone}"}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#dbeafe", color: "#004ac6" }}>{"{company}"}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 4, borderTop: "1px solid rgba(195,198,215,.3)", fontSize: 11, color: "#565e74" }}>
+                        <span>Promo Lebaran • <b style={{ color: "#006242" }}>125 sent</b> • <b style={{ color: "#ba1a1a" }}>3 failed</b></span>
+                        <span>History per batch</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className={"sq-panel" + (tab === "automation" ? " show" : "")}>
+            <div className={"sq-panel" + (tab === "activities" ? " show" : "")}>
               <div className="sq-split">
                 <div className="sq-split-5" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <span className="sq-badge" style={{ background: "#ede9fe", color: "#4c1d95", alignSelf: "flex-start" }}>NO-CODE LOGIC BUILDER</span>
-                  <h3 className="sq-h3">Build multi-step follow up rules without writing code</h3>
-                  <p className="sq-body">Automate cold outreach, re-engage dead leads, and trigger internal approvals. Create conditions like: &quot;If prospect opens proposal link twice in 24 hours, alert assigned account executive.&quot;</p>
+                  <h3 className="sq-h3">Schedule and log every customer touchpoint</h3>
+                  <p className="sq-body">Plan Meetings, Calls, Emails and Follow-ups with due dates, see them on the calendar, and keep a chronological timeline on every deal and account. Cancel or reschedule in one click.</p>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>4 activity types with scheduled dates</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Calendar view with one-click cancel</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Chronological timeline per deal &amp; account</span></div>
                 </div>
                 <div className="sq-split-7 sq-mock" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <div className="sq-step"><div><p style={{ margin: 0, fontSize: 12, fontWeight: 800 }}>TRIGGER: New Form Submission or Webhook</p><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>Source: High-Intent Pricing Page Calculator</p></div><span style={{ fontSize: 12, fontFamily: "monospace", color: "#006242", fontWeight: 800 }}>Auto-run</span></div>
-                  <div style={{ width: 2, height: 16, background: "#c3c6d7", margin: "0 auto" }} />
-                  <div className="sq-step"><div><p style={{ margin: 0, fontSize: 12, fontWeight: 800 }}>CONDITION: Lead Score &gt; 80 AND Company Size &gt; 50</p><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>Enrichment: Clearbit &amp; LinkedIn profile match</p></div><span style={{ fontSize: 12, fontFamily: "monospace", color: "#565e74" }}>Filter</span></div>
-                  <div style={{ width: 2, height: 16, background: "#c3c6d7", margin: "0 auto" }} />
-                  <div className="sq-step sq-step-action"><div><p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: "#006242" }}>ACTION: Assign Senior AE &amp; Send Instant WhatsApp Greeting</p><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>Average response time: 24 seconds</p></div><span className="material-symbols-outlined" style={{ color: "#006242" }}>check_circle</span></div>
+                  <div className="sq-step"><div style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ca8a04", flexShrink: 0 }} /><div><p style={{ margin: 0, fontSize: 12, fontWeight: 800 }}>MEETING • Bhinneka Retail</p><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>Demo produk + negosiasi termin • Tomorrow, 10:00</p></div></div><span style={{ fontSize: 11, fontWeight: 700, color: "#92400e", background: "#fef3c7", padding: "2px 8px", borderRadius: 999 }}>Scheduled</span></div>
+                  <div className="sq-step"><div style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ width: 10, height: 10, borderRadius: "50%", background: "#2563eb", flexShrink: 0 }} /><div><p style={{ margin: 0, fontSize: 12, fontWeight: 800 }}>CALL • Nusa Logistics</p><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>Follow-up penawaran armada • Logged today</p></div></div><span style={{ fontSize: 11, fontWeight: 700, color: "#004ac6", background: "#eff6ff", padding: "2px 8px", borderRadius: 999 }}>Logged</span></div>
+                  <div className="sq-step"><div style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ width: 10, height: 10, borderRadius: "50%", background: "#7c3aed", flexShrink: 0 }} /><div><p style={{ margin: 0, fontSize: 12, fontWeight: 800 }}>EMAIL • Astra Agro Inc</p><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>Quotation Q-2024-819 sent • Logged yesterday</p></div></div><span style={{ fontSize: 11, fontWeight: 700, color: "#004ac6", background: "#eff6ff", padding: "2px 8px", borderRadius: 999 }}>Logged</span></div>
+                  <div className="sq-step sq-step-action"><div style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ width: 10, height: 10, borderRadius: "50%", background: "#006242", flexShrink: 0 }} /><div><p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: "#006242" }}>FOLLOW-UP • Indomobil Fleet</p><p style={{ margin: 0, fontSize: 11, color: "#565e74" }}>Kirim ulang brosur via WhatsApp • Due Friday</p></div></div><span className="material-symbols-outlined" style={{ color: "#006242" }}>check_circle</span></div>
                 </div>
               </div>
             </div>
 
-            <div className={"sq-panel" + (tab === "analytics" ? " show" : "")}>
+            <div className={"sq-panel" + (tab === "reports" ? " show" : "")}>
               <div className="sq-split">
                 <div className="sq-split-5" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <span className="sq-badge" style={{ background: "#fef3c7", color: "#92400e", alignSelf: "flex-start" }}>REVENUE FORECASTING</span>
-                  <h3 className="sq-h3">Real-time quota tracking with predictive win probability</h3>
-                  <p className="sq-body">Gain clarity on which reps will hit target. Sales Qontak analyzes historical conversion duration, conversation sentiment, and contact frequency to forecast quarterly ARR accurately.</p>
+                  <h3 className="sq-h3">Revenue, win rate and pipeline reports</h3>
+                  <p className="sq-body">Total revenue in Rupiah, win rate, active and total leads, a monthly revenue bar chart and a stage distribution donut — refreshed straight from your real pipeline. Export the full report to Excel in one click.</p>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Total Revenue (Rp), Win Rate, Active &amp; Total Leads</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Monthly revenue bar + stage donut charts</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>One-click Excel export of the full report</span></div>
                 </div>
                 <div className="sq-split-7 sq-mock">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
-                    <div className="sq-stat-box"><p style={{ fontSize: 12, color: "#565e74" }}>Q3 Committed ARR</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>$1.84M</p><p style={{ fontSize: 12, color: "#006242", fontWeight: 700 }}>108% of quota target</p></div>
-                    <div className="sq-stat-box"><p style={{ fontSize: 12, color: "#565e74" }}>Avg Sales Cycle</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>19 Days</p><p style={{ fontSize: 12, color: "#004ac6", fontWeight: 700 }}>-14 days vs last quarter</p></div>
+                    <div className="sq-stat-box"><p style={{ fontSize: 12, color: "#565e74" }}>Total Revenue</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>Rp 842JT</p><p style={{ fontSize: 12, color: "#006242", fontWeight: 700 }}>Won deals, all time</p></div>
+                    <div className="sq-stat-box"><p style={{ fontSize: 12, color: "#565e74" }}>Win Rate</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>Live %</p><p style={{ fontSize: 12, color: "#004ac6", fontWeight: 700 }}>Won vs total deals</p></div>
                   </div>
                   <div className="sq-stat-box">
-                    <span style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Top Performing Account Executives</span>
-                    <div style={{ fontSize: 12, marginBottom: 8 }}><div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, marginBottom: 4 }}><span>Faza Felix (Enterprise AE)</span><span style={{ color: "#006242" }}>$480k / $400k (120%)</span></div><div style={{ width: "100%", height: 8, background: "#e5eeff", borderRadius: 999 }}><div style={{ height: "100%", width: "100%", background: "#006242", borderRadius: 999 }} /></div></div>
-                    <div style={{ fontSize: 12 }}><div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, marginBottom: 4 }}><span>Jihan Zas (Fintech AE)</span><span style={{ color: "#2563eb" }}>$390k / $350k (111%)</span></div><div style={{ width: "100%", height: 8, background: "#e5eeff", borderRadius: 999 }}><div style={{ height: "100%", width: "90%", background: "#2563eb", borderRadius: 999 }} /></div></div>
+                    <span style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Monthly revenue (Rp JT)</span>
+                    <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 72 }}>
+                      {[35, 55, 42, 70, 58, 88].map((h, i) => (
+                        <motion.div
+                          key={`${tab}-${i}`}
+                          initial={{ height: "0%" }}
+                          whileInView={{ height: `${h}%` }}
+                          viewport={{ once: true, margin: "-80px" }}
+                          transition={{ duration: 0.55, delay: 0.2 + i * 0.12, ease: EASE }}
+                          style={{ flex: 1, background: i === 5 ? "#006242" : "#2563eb", borderRadius: "4px 4px 0 0" }}
+                        />
+                      ))}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 11, color: "#565e74" }}>
+                      <span>Stage donut included</span>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontWeight: 700, color: "#004ac6" }}><span className="material-symbols-outlined" style={{ fontSize: 14 }}>download</span> Export Excel</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -686,7 +721,78 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 8. BOTTOM CTA */}
+        {/* 8. FAQ */}
+        <section className="sq-section-lg sq-bg-white" id="faq">
+          <div className="sq-container">
+            <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
+              <span className="sq-eyebrow">Need to know</span>
+              <h2 className="sq-h2">Frequently Asked Questions</h2>
+              <p className="sq-sub">Everything you need to know about the workspace, roles and data.</p>
+            </motion.div>
+            <div className="sq-faq-grid">
+              <motion.div
+                className="sq-faq-media"
+                initial={{ opacity: 0, x: -28 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-70px" }}
+                transition={{ duration: 0.55, ease: EASE }}
+              >
+                <img src={faqMobile} alt="QontakSales mobile dashboard" />
+              </motion.div>
+              <motion.div
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-60px" }}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
+              >
+                {FAQS.map((f, i) => (
+                  <motion.div
+                    key={i}
+                    className={"sq-faq-item" + (openFaq === i ? " open" : "")}
+                    variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE } } }}
+                  >
+                    <button className="sq-faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
+                      <span>{f.q}</span>
+                      <span className="material-symbols-outlined sq-faq-caret">expand_more</span>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {openFaq === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0, transition: { duration: 0.18 } }}
+                          transition={{ duration: 0.25, ease: EASE }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <p>{f.a}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* 9. TEAM BANNER */}
+        <div className="sq-container">
+          <motion.div
+            className="sq-cta-visual-wrap"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-70px" }}
+            transition={{ duration: 0.55, ease: EASE }}
+          >
+            <img src={trustedHighlight} alt="Trusted by sales teams" className="sq-cta-visual" />
+            <div className="sq-cta-caption">
+              <h2>Made for teams that grow together</h2>
+              <p>One workspace for your entire sales floor. Pipeline, broadcast, activities and reports.</p>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* 10. BOTTOM CTA */}
         <section className="sq-section-lg sq-bg-white">
           <div className="sq-container">
             <motion.div
@@ -708,31 +814,33 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="sq-footer">
+      <footer className="sq-footer" style={{backgroundColor:'#fffbfb'}}>
         <div className="sq-container">
           <div className="sq-footer-grid">
             <div className="sq-footer-brand">
               <img alt="Sales Qontak" src={logoFooter} style={{ height: 32, marginBottom: 12 }} />
-              <p className="sq-body">The complete enterprise CRM &amp; Omnichannel customer engagement platform built for scale.</p>
+              <p className="sq-body">Pipeline, broadcast, activities &amp; reporting for sales teams in one workspace.</p>
             </div>
-            <div><h5>Solutions</h5><ul>{["Omnichannel Chat", "Sales CRM", "Helpdesk & Ticketing", "Sales Automation", "Predictive Lead Scoring"].map((l) => (<li key={l}><button onClick={() => document.getElementById("product-capabilities")?.scrollIntoView({ behavior: "smooth" })}>{l}</button></li>))}</ul></div>
-            <div><h5>Integrations</h5><ul>{["WhatsApp Official API", "Instagram DM API", "Shopify Commerce", "VoIP & Call Center", "Rest APIs & Webhooks"].map((l) => (<li key={l}><button onClick={() => document.getElementById("product-capabilities")?.scrollIntoView({ behavior: "smooth" })}>{l}</button></li>))}</ul></div>
-            <div><h5>Resources</h5><ul>
-              <li><button onClick={() => go("/blog")}>Documentation &amp; Docs</button></li>
-              <li><button onClick={() => go("/blog")}>Developer Portal</button></li>
-              <li><button onClick={() => go("/blog")}>Customer Stories</button></li>
-              <li><button onClick={() => go("/blog")}>Sales Academy</button></li>
-              <li><button onClick={() => go("/blog")}>Security Whitepaper</button></li>
+            <div><h5>Product</h5><ul>
+              <li><button onClick={() => openTab("pipeline")}>Pipeline Tracking</button></li>
+              <li><button onClick={() => openTab("broadcast")}>WhatsApp Broadcast</button></li>
+              <li><button onClick={() => openTab("activities")}>Activities &amp; Calendar</button></li>
+              <li><button onClick={() => openTab("reports")}>Dashboard &amp; Reports</button></li>
+              <li><button onClick={() => go("/blog")}>Articles &amp; Blog</button></li>
             </ul></div>
-            <div><h5>Company</h5><ul>
-              <li><button onClick={() => go("/contact")}>About Us</button></li>
-              <li><button onClick={() => go("/contact")}>Careers</button></li>
-              <li><button onClick={() => go("/contact")}>Press &amp; Media</button></li>
+            <div><h5>Resources</h5><ul>
+              <li><button onClick={() => go("/blog")}>Blog</button></li>
+              <li><button onClick={() => scrollTo("faq")}>FAQ</button></li>
+              <li><button onClick={() => go("/contact")}>Contact</button></li>
               <li><button onClick={() => go("/privacy")}>Privacy Policy</button></li>
               <li><button onClick={() => go("/terms")}>Terms of Service</button></li>
             </ul></div>
+            <div><h5>Account</h5><ul>
+              <li><button onClick={() => go("/login")}>Sign in</button></li>
+              <li><button onClick={() => go("/register")}>Create Account</button></li>
+            </ul></div>
           </div>
-          <div className="sq-bottom"><span>© 2026 Sales Qontak Inc. All rights reserved. SOC 2 Type II Certified.</span><span>Built for scale • Meta BSP • Enterprise CRM</span></div>
+          <div className="sq-bottom"><span>© 2026 Qontak Sales. All rights reserved.</span><span>Created By IamFit Space</span></div>
         </div>
       </footer>
     </div>

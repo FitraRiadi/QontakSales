@@ -237,6 +237,21 @@
 .sq-link { display: inline-flex; align-items: center; gap: 4px; color: var(--sq-primary-container); font-size: 12px; font-weight: 600; background: none; border: none; cursor: pointer; padding: 0; }
 .sq-link:hover { text-decoration: underline; }
 
+/* FAQ */
+.sq-faq-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: start; margin-top: 2.5rem; }
+@media (min-width: 1024px) { .sq-faq-grid { grid-template-columns: minmax(0,5fr) minmax(0,7fr); } }
+.sq-faq-media { display: flex; justify-content: center; }
+@media (min-width: 1024px) { .sq-faq-media { position: sticky; top: 104px; } }
+.sq-faq-media img { width: 100%; max-width: 360px; max-height: 560px; object-fit: contain; border-radius: 16px; }
+.sq-faq-item { border-bottom: 1px solid rgba(195,198,215,.5); }
+.sq-faq-item:first-child { border-top: 1px solid rgba(195,198,215,.5); }
+.sq-faq-q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 4px; background: none; border: none; cursor: pointer; font-family: "Plus Jakarta Sans", sans-serif; font-size: 16px; font-weight: 600; color: #0b1c30; text-align: left; }
+.sq-faq-q:hover { color: #004ac6; }
+.sq-faq-caret { transition: transform .2s; color: #565e74; flex-shrink: 0; }
+.sq-faq-item.open .sq-faq-caret { transform: rotate(180deg); color: #2563eb; }
+.sq-faq-item.open .sq-faq-q { color: #004ac6; }
+.sq-faq-grid p { margin: 0 0 18px; padding: 0 4px; font-size: 14px; line-height: 1.7; color: #434655; }
+
 /* Pricing */
 .sq-billing { display: inline-flex; padding: 4px; background: var(--sq-container); border-radius: 9999px; border: 1px solid rgba(195,198,215,.4); gap: 4px; }
 .sq-billing button { position: relative; padding: 8px 20px; border-radius: 9999px; font-size: 14px; font-weight: 600; border: none; background: transparent; color: var(--sq-secondary); cursor: pointer; }
@@ -254,6 +269,15 @@
 .sq-btn-outline:hover { background: var(--sq-low); }
 .sq-btn-primary { width: 100%; background: var(--sq-primary-container); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 1rem; }
 .sq-btn-primary:hover { background: var(--sq-primary); }
+
+/* Team banner above CTA — plain, no border/shadow/shader */
+.sq-cta-visual-wrap { position: relative; }
+.sq-cta-visual { width: 100%; height: auto; max-height: 420px; object-fit: cover; display: block; }
+.sq-cta-caption { position: absolute; left: 50%; top: 62%; transform: translate(-50%, -50%); width: min(90%, 620px); text-align: center; color: #0b1c30; }
+.sq-cta-caption h2 { display: inline-block; background: rgba(255,255,255,.85); padding: 16px 36px; border-radius: 24px; box-shadow: inset 2px 2px 6px rgba(255,255,255,.95), inset -4px -4px 10px rgba(15,23,42,.12), 8px 12px 24px rgba(15,23,42,.22); font-family: "Plus Jakarta Sans", sans-serif; font-size: 28px; line-height: 36px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 8px; }
+@media (min-width: 768px) { .sq-cta-caption h2 { font-size: 40px; line-height: 48px; } }
+.sq-cta-caption p { font-size: 14px; line-height: 1.6; color: #434655; margin: 0; text-shadow: 0 1px 8px rgba(255,255,255,.6); }
+@media (min-width: 768px) { .sq-cta-caption p { font-size: 16px; } }
 
 /* CTA + footer */
 .sq-cta-card { background: var(--sq-inverse); border-radius: 16px; padding: 3rem 2rem; text-align: center; color: #fff; }

@@ -108,17 +108,17 @@ function Showcase() {
           <div className="sa-pipe">
             <div className="sa-pipebox">
               <div className="t"><span>Discovery</span><span className="sa-count">5</span></div>
-              <div className="v">$240k</div>
+              <div className="v">Rp240M</div>
               <div className="sa-bar"><i style={{ width: "40%", background: "#004ac6" }} /></div>
             </div>
             <div className="sa-pipebox">
               <div className="t"><span>Proposal Sent</span><span className="sa-count">8</span></div>
-              <div className="v">$510k</div>
+              <div className="v">Rp510M</div>
               <div className="sa-bar"><i style={{ width: "75%", background: "#2563eb" }} /></div>
             </div>
             <div className="sa-pipebox">
               <div className="t"><span>Closing Stage</span><span className="sa-count won">Won</span></div>
-              <div className="v" style={{ color: "#006242" }}>$870k</div>
+              <div className="v" style={{ color: "#006242" }}>Rp870M</div>
               <div className="sa-bar"><i style={{ width: "100%", background: "#006242" }} /></div>
             </div>
           </div>
@@ -129,9 +129,9 @@ function Showcase() {
           <p>Post WhatsApp API integration &amp; smart triage</p>
         </motion.div>
         <motion.div className="sa-card sa-metric" variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } } }}>
-          <div className="mhead"><span>Deal Velocity</span><span className="material-symbols-outlined" style={{ fontSize: 18, color: "#004ac6" }}>speed</span></div>
-          <div className="mbig" style={{ color: "#004ac6" }}>2.8x</div>
-          <p>Automated lead SLA routing across territories</p>
+          <div className="mhead"><span>Activity Timeline</span><span className="material-symbols-outlined" style={{ fontSize: 18, color: "#004ac6" }}>speed</span></div>
+          <div className="mbig" style={{ color: "#004ac6" }}>4 types</div>
+          <p>Meeting, Call, Email and Follow-up logged per deal</p>
         </motion.div>
         <motion.div className="sa-card span2 sa-endorse" variants={{ hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } } }}>
           <div className="ph"><img src={showcaseTeam} alt="Sales Collaboration and Community" /></div>
@@ -143,7 +143,7 @@ function Showcase() {
             <p className="sa-quote">&ldquo;Our team&apos;s deal velocity and qualified pipeline conversion jumped 42% within 60 days of deploying Sales Qontak.&rdquo;</p>
             <div className="sa-trust">
               <span className="material-symbols-outlined" style={{ fontSize: 14, color: "#006242" }}>shield_with_heart</span>
-              <span>Meta Tier-1 Official BSP • 99.98% SLA Guaranteed</span>
+              <span>WhatsApp broadcast • Visual pipeline • Live dashboard</span>
             </div>
           </div>
         </motion.div>
