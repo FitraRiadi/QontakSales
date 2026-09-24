@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  Card,
   Dialog,
   Heading,
   HStack,
@@ -11,13 +10,14 @@ import {
   Portal,
   SimpleGrid,
   Spinner,
+  Table,
   Text,
   VStack,
-  Badge,
   createToaster,
 } from "@chakra-ui/react";
 import { Plus, Newspaper, Eye, PencilSimple, Trash } from "@phosphor-icons/react";
 import api from "@/services/api";
+import "./LandingPageStitch.css";
 
 const toaster = createToaster({ placement: "top" });
 
@@ -31,27 +31,29 @@ export const fmtDateTime = (d) => {
   return new Date(d).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 };
 
+const readMins = (text) => {
+  const words = (text || "").trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200) || 1);
+};
+
 function StatusBadges({ article }) {
   const isScheduled =
     article.status === "PUBLISHED" && article.scheduled_publish_at && !article.is_live;
+  const st =
+    article.status === "PUBLISHED"
+      ? { bg: "#ecfdf5", fg: "#006242" }
+      : { bg: "#fef3c7", fg: "#92400e" };
+  const pill = { fontSize: 11, fontWeight: 700, padding: "2px 10px", borderRadius: 9999 };
   return (
-    <HStack gap={1} wrap="wrap">
-      <Badge
-        size="sm"
-        colorPalette={article.status === "PUBLISHED" ? "green" : "yellow"}
-        variant="subtle"
-      >
-        {article.status}
-      </Badge>
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+      <span style={{ ...pill, background: st.bg, color: st.fg }}>{article.status}</span>
       {isScheduled && (
-        <Badge size="sm" colorPalette="blue" variant="subtle">
-          SCHEDULED
-        </Badge>
+        <span style={{ ...pill, background: "#eff6ff", color: "#004ac6" }}>SCHEDULED</span>
       )}
-      <Badge size="sm" colorPalette="gray" variant="outline">
+      <span style={{ ...pill, background: "transparent", color: "#565e74", border: "1px solid #c3c6d7" }}>
         {article.visibility}
-      </Badge>
-    </HStack>
+      </span>
+    </div>
   );
 }
 
@@ -64,6 +66,7 @@ export default function ArticlesPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categories, setCategories] = useState([]);
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState("table");
   const [deleteDialog, setDeleteDialog] = useState(null);
   const userRole = localStorage.getItem("user_role");
   const userId = localStorage.getItem("user_id");
@@ -111,9 +114,19 @@ export default function ArticlesPage() {
           <Newspaper size={24} />
           <Heading fontWeight="semibold" size="lg" color="foreground">Articles</Heading>
         </HStack>
-        <Button size="sm" bg="primary" color="white" onClick={() => navigate("/articles/new")}>
-          <Plus size={14} /> Write Article
-        </Button>
+        <HStack gap={3}>
+          <HStack gap={1} bg="muted" borderRadius="lg" p={1}>
+            <Button size="xs" variant={viewMode === "card" ? "solid" : "ghost"} bg={viewMode === "card" ? "foreground" : undefined} color={viewMode === "card" ? "background" : undefined} onClick={() => setViewMode("card")}>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1" /><rect x="9" y="1" width="6" height="6" rx="1" /><rect x="1" y="9" width="6" height="6" rx="1" /><rect x="9" y="9" width="6" height="6" rx="1" /></svg>
+            </Button>
+            <Button size="xs" variant={viewMode === "table" ? "solid" : "ghost"} bg={viewMode === "table" ? "foreground" : undefined} color={viewMode === "table" ? "background" : undefined} onClick={() => setViewMode("table")}>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" rx="0.5" /><rect x="1" y="7" width="14" height="2" rx="0.5" /><rect x="1" y="12" width="14" height="2" rx="0.5" /></svg>
+            </Button>
+          </HStack>
+          <Button size="sm" bg="primary" color="white" onClick={() => navigate("/articles/new")}>
+            <Plus size={14} /> Write Article
+          </Button>
+        </HStack>
       </HStack>
 
       <HStack gap={3} mb={6} wrap="wrap">
@@ -155,40 +168,41 @@ export default function ArticlesPage() {
         </Box>
       ) : (
         <>
+          {viewMode === "card" ? (
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
             {paged.map((a) => (
-              <Card.Root
+              <div
                 key={a.id}
-                cursor="pointer"
-                overflow="hidden"
-                _hover={{ shadow: "md" }}
+                className="sq-article"
                 onClick={() => navigate(`/articles/${a.id}`)}
+                style={{ cursor: "pointer" }}
               >
-                {a.cover_image_url ? (
-                  <Box as="img" src={a.cover_image_url} h="160px" w="full" objectFit="cover" alt={a.title} />
-                ) : (
-                  <Box h="160px" w="full" bg="muted" display="flex" alignItems="center" justifyContent="center">
-                    <Newspaper size={36} style={{ opacity: 0.25 }} />
-                  </Box>
-                )}
-                <Card.Body gap={2}>
-                  <StatusBadges article={a} />
-                  <Heading size="sm" fontWeight="semibold" color="foreground" lineClamp={2}>
-                    {a.title}
-                  </Heading>
-                  <Text fontSize="sm" color="foreground" opacity={0.5} lineClamp={2}>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    {a.category_name ? (
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: ".04em" }}>{a.category_name}</span>
+                    ) : <span />}
+                    <span style={{ fontSize: 12, color: "#565e74", flexShrink: 0 }}>{readMins(a.excerpt)} min read</span>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <StatusBadges article={a} />
+                  </div>
+                  <h3>{a.title}</h3>
+                  <p className="sq-body" style={{ marginBottom: 12 }}>
                     {a.excerpt || "No excerpt"}
-                  </Text>
-                  <HStack justify="space-between" mt={2}>
-                    <Text fontSize="xs" color="foreground" opacity={0.5}>
+                  </p>
+                </div>
+                <div>
+                  <div style={{ paddingTop: 8, borderTop: "1px solid rgba(195,198,215,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                    <Text fontSize="xs" color="foreground" opacity={0.5} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {a.author_name} · {fmtDate(a.created_at)}
                     </Text>
-                    <HStack gap={1} fontSize="xs" color="foreground" opacity={0.5}>
+                    <HStack gap={1} fontSize="xs" color="foreground" opacity={0.5} flexShrink={0}>
                       <Eye size={12} /> {a.view_count}
                     </HStack>
-                  </HStack>
+                  </div>
                   {canModify(a) && (
-                    <HStack gap={2} mt={2} onClick={(e) => e.stopPropagation()}>
+                    <HStack gap={2} mt={3} onClick={(e) => e.stopPropagation()}>
                       <Button size="xs" variant="ghost" onClick={() => navigate(`/articles/${a.id}/edit`)}>
                         <PencilSimple size={12} /> Edit
                       </Button>
@@ -197,10 +211,56 @@ export default function ArticlesPage() {
                       </Button>
                     </HStack>
                   )}
-                </Card.Body>
-              </Card.Root>
+                </div>
+              </div>
             ))}
           </SimpleGrid>
+          ) : (
+          <Box overflowX="auto">
+            <Table.Root size="sm" interactive>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader>Title</Table.ColumnHeader>
+                  <Table.ColumnHeader>Category</Table.ColumnHeader>
+                  <Table.ColumnHeader>Status</Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign="end">Views</Table.ColumnHeader>
+                  <Table.ColumnHeader>Updated</Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign="end">Actions</Table.ColumnHeader>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {paged.map((a) => (
+                  <Table.Row key={a.id} cursor="pointer" _hover={{ bg: "muted" }} onClick={() => navigate(`/articles/${a.id}`)}>
+                    <Table.Cell maxW="340px">
+                      <Text fontWeight="medium" lineClamp={2}>{a.title}</Text>
+                      <Text fontSize="xs" color="gray.500" lineClamp={1}>{a.excerpt || "No excerpt"}</Text>
+                    </Table.Cell>
+                    <Table.Cell fontSize="sm">{a.category_name || "—"}</Table.Cell>
+                    <Table.Cell><StatusBadges article={a} /></Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <HStack justify="end" gap={1} fontSize="xs"><Eye size={12} /> {a.view_count}</HStack>
+                    </Table.Cell>
+                    <Table.Cell fontSize="sm" whiteSpace="nowrap">{fmtDate(a.updated_at)}</Table.Cell>
+                    <Table.Cell textAlign="end" onClick={(e) => e.stopPropagation()}>
+                      {canModify(a) ? (
+                        <HStack justify="end" gap={1}>
+                          <Button size="xs" variant="ghost" onClick={() => navigate(`/articles/${a.id}/edit`)}>
+                            <PencilSimple size={12} /> Edit
+                          </Button>
+                          <Button size="xs" variant="ghost" color="red.500" onClick={() => setDeleteDialog(a)}>
+                            <Trash size={12} /> Delete
+                          </Button>
+                        </HStack>
+                      ) : (
+                        <Text fontSize="xs" color="gray.400">—</Text>
+                      )}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          </Box>
+          )}
           {totalPages > 1 && (
             <HStack justify="center" mt={6} gap={2}>
               <Button size="sm" variant="ghost" disabled={page === 1} onClick={() => setPage(page - 1)}>Prev</Button>

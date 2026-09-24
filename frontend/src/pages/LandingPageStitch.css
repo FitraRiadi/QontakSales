@@ -1,5 +1,6 @@
 /* Sales Qontak Stitch Landing — 100% port, tanpa Chakra. Scoped .sq-landing */
-.sq-landing {
+/* Token di :root biar class .sq-* bisa dipakai ulang di halaman lain (blog, dsb) */
+:root {
   --sq-surface: #f8f9ff;
   --sq-lowest: #ffffff;
   --sq-low: #eff4ff;
@@ -17,6 +18,8 @@
   --sq-tertiary-fixed: #6ffbbe;
   --sq-on-tertiary-fixed: #002113;
   --sq-inverse: #213145;
+}
+.sq-landing {
   background: var(--sq-surface);
   color: var(--sq-on);
   font-family: "Inter", system-ui, sans-serif;

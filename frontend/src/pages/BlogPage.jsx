@@ -1,107 +1,199 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Card,
-  Container,
-  Heading,
-  HStack,
-  Input,
-  SimpleGrid,
-  Spinner,
-  Text,
-  VStack,
-  Badge,
-} from "@chakra-ui/react";
-import { ArrowLeft, Eye, Newspaper } from "@phosphor-icons/react";
+import { motion, AnimatePresence } from "framer-motion";
 import api from "@/services/api";
-import brandLogo from "@/assets/brand.png";
-import { fmtDate } from "./ArticlesPage";
+import { EASE } from "./landingMotion";
+import "./LandingPageStitch.css";
+import "./BlogStitch.css";
+import logoNav from "@/assets/landing-stitch/logo-nav.png";
+
+const readMins = (text) => {
+  const words = (text || "").trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200) || 1);
+};
+
+function ArticleCard({ a, onOpen }) {
+  return (
+    <motion.article
+      className="sq-article"
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.97 }}
+      transition={{ duration: 0.3, ease: EASE }}
+      onClick={onOpen}
+      style={{ cursor: "pointer" }}
+    >
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 8 }}>
+          {a.category_name ? (
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: ".04em" }}>{a.category_name}</span>
+          ) : <span />}
+          <span style={{ fontSize: 12, color: "#565e74", flexShrink: 0 }}>{readMins(a.excerpt)} min read</span>
+        </div>
+        <h3>{a.title}</h3>
+        <p className="sq-body" style={{ marginBottom: 12 }}>{a.excerpt}</p>
+      </div>
+      <div style={{ paddingTop: 8, borderTop: "1px solid rgba(195,198,215,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+        <span style={{ fontSize: 12, color: "#565e74", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.author_name || "Sales Qontak Team"}</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 12, color: "#565e74", flexShrink: 0 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>visibility</span> {a.view_count ?? 0}
+          </span>
+          <span className="sq-link">Read <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_forward</span></span>
+        </span>
+      </div>
+    </motion.article>
+  );
+}
 
 export default function BlogPage() {
   const navigate = useNavigate();
+  const go = (p) => navigate(p);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [search, setSearch] = useState("");
+  const [cat, setCat] = useState("All");
+  const [sort, setSort] = useState("-published_at");
+
+  const fetchAll = () => {
+    setLoading(true);
+    setError(false);
+    const params = { ordering: sort };
+    if (search.trim()) params.search = search.trim();
+    api.get("/public-articles/", { params })
+      .then((r) => {
+        const list = r.data.results || r.data;
+        setArticles(Array.isArray(list) ? list : []);
+        setLoading(false);
+      })
+      .catch(() => { setLoading(false); setError(true); });
+  };
 
   useEffect(() => {
-    setLoading(true);
-    const params = { ordering: "-published_at" };
-    if (search) params.search = search;
-    const t = setTimeout(() => {
-      api.get("/public-articles/", { params })
-        .then((r) => { setArticles(r.data.results || r.data); setLoading(false); })
-        .catch(() => setLoading(false));
-    }, 300);
+    const t = setTimeout(fetchAll, 300);
     return () => clearTimeout(t);
-  }, [search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, sort]);
+
+  const cats = ["All", ...new Set(articles.map((a) => a.category_name).filter(Boolean))].slice(0, 6);
+  const filtered = cat === "All" ? articles : articles.filter((a) => a.category_name === cat);
+  const [featured, ...rest] = filtered;
+  const resetAll = () => { setSearch(""); setCat("All"); };
 
   return (
-    <Box bg="background" minH="100vh">
-      <Box as="nav" borderBottom="1px solid" borderColor="border" bg="background">
-        <Container maxW="6xl" px={4} py={3}>
-          <HStack justify="space-between">
-            <Box as="img" src={brandLogo} h="28px" alt="QontakSales" cursor="pointer" onClick={() => navigate("/")} />
-            <HStack gap={2}>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>Log in</Button>
-              <Button size="sm" bg="primary" color="white" onClick={() => navigate("/register")}>Get Started</Button>
-            </HStack>
-          </HStack>
-        </Container>
-      </Box>
+    <div className="sb-page">
+      <header className="sb-header">
+        <div className="sb-header-inner">
+          <img src={logoNav} className="sb-logo" alt="Sales Qontak" onClick={() => go("/")} />
+          <div className="sb-header-cta">
+            <button className="sb-signin" onClick={() => go("/login")}>Sign In</button>
+            <button className="sq-btn-demo" onClick={() => go("/register")}>Book a Demo</button>
+          </div>
+        </div>
+      </header>
 
-      <Container maxW="6xl" py={12}>
-        <VStack gap={3} mb={8} textAlign="center">
-          <Heading fontWeight="bold" size="2xl" color="foreground">Blog</Heading>
-          <Text color="foreground" opacity={0.5}>Sales tips, playbooks, and product updates.</Text>
-        </VStack>
+      <div className="sb-wrap">
+        <div className="sb-hero">
+          <h1>Blog</h1>
+          <p>Sales tips, playbooks, and product updates.</p>
+        </div>
 
-        <Box maxW="420px" mx="auto" mb={10}>
-          <Input
+        <div className="sb-search">
+          <span className="material-symbols-outlined">search</span>
+          <input
             placeholder="Search articles..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            bg="#FAFAFA"
+            onChange={(e) => { setSearch(e.target.value); setCat("All"); }}
           />
-        </Box>
+        </div>
+
+        <div className="sb-toolbar">
+          <div className="sq-pills" style={{ marginBottom: 0 }}>
+            {cats.map((c) => (
+              <button key={c} className={"sq-pill" + (cat === c ? " active" : "")} onClick={() => setCat(c)}>
+                {c === "All" ? "All Articles" : c}
+              </button>
+            ))}
+          </div>
+          <div className="sb-sort">
+            <button className={sort === "-published_at" ? "active" : ""} onClick={() => setSort("-published_at")}>Latest</button>
+            <button className={sort === "-view_count" ? "active" : ""} onClick={() => setSort("-view_count")}>Most viewed</button>
+          </div>
+        </div>
 
         {loading ? (
-          <Box display="flex" justifyContent="center" py={16}><Spinner size="lg" color="primary" /></Box>
-        ) : articles.length === 0 ? (
-          <Box textAlign="center" py={16}>
-            <Newspaper size={40} style={{ margin: "0 auto", opacity: 0.3 }} />
-            <Text mt={4} color="foreground" opacity={0.5}>No articles yet</Text>
-          </Box>
-        ) : (
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
-            {articles.map((a) => (
-              <Card.Root key={a.id} cursor="pointer" overflow="hidden" _hover={{ shadow: "md" }} onClick={() => navigate(`/blog/${a.slug}`)}>
-                {a.cover_image_url ? (
-                  <Box as="img" src={a.cover_image_url} h="180px" w="full" objectFit="cover" alt={a.title} />
-                ) : (
-                  <Box h="180px" w="full" bg="muted" display="flex" alignItems="center" justifyContent="center">
-                    <Newspaper size={36} style={{ opacity: 0.25 }} />
-                  </Box>
-                )}
-                <Card.Body gap={2}>
-                  {a.category_name && <Badge size="sm" colorPalette="purple" variant="subtle" alignSelf="flex-start">{a.category_name}</Badge>}
-                  <Heading size="md" fontWeight="semibold" color="foreground" lineClamp={2}>{a.title}</Heading>
-                  <Text fontSize="sm" color="foreground" opacity={0.5} lineClamp={2}>{a.excerpt}</Text>
-                  <HStack justify="space-between" mt={2}>
-                    <Text fontSize="xs" color="foreground" opacity={0.5}>{a.author_name} · {fmtDate(a.effective_published_at)}</Text>
-                    <HStack gap={1} fontSize="xs" color="foreground" opacity={0.5}><Eye size={12} /> {a.view_count}</HStack>
-                  </HStack>
-                </Card.Body>
-              </Card.Root>
+          <div className="sq-cards3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="sq-article" aria-hidden="true">
+                <div className="sq-skel" style={{ width: "40%", height: 12, marginBottom: 12 }} />
+                <div className="sq-skel" style={{ width: "100%", height: 22, marginBottom: 8 }} />
+                <div className="sq-skel" style={{ width: "90%", height: 22, marginBottom: 12 }} />
+                <div className="sq-skel" style={{ width: "100%", height: 14, marginBottom: 8 }} />
+                <div className="sq-skel" style={{ width: "60%", height: 14 }} />
+              </div>
             ))}
-          </SimpleGrid>
+          </div>
+        ) : error ? (
+          <div className="sq-article" style={{ textAlign: "center", padding: "3rem 1.5rem", maxWidth: 480, margin: "0 auto" }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 36, color: "#94a3b8" }}>cloud_off</span>
+            <p style={{ fontWeight: 700, margin: "8px 0 4px" }}>Failed to load articles</p>
+            <p className="sq-body" style={{ margin: "0 0 12px" }}>Check your connection and try again.</p>
+            <button className="sq-btn-outline" style={{ width: "auto", padding: "10px 28px", marginTop: 0 }} onClick={fetchAll}>Retry</button>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="sq-article" style={{ textAlign: "center", padding: "3rem 1.5rem", maxWidth: 480, margin: "0 auto" }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 36, color: "#94a3b8" }}>newspaper</span>
+            <p style={{ fontWeight: 700, margin: "8px 0 4px" }}>No articles yet</p>
+            <p className="sq-body" style={{ margin: "0 0 12px" }}>Try different keywords or categories.</p>
+            <button className="sq-btn-outline" style={{ width: "auto", padding: "10px 28px", marginTop: 0 }} onClick={resetAll}>Reset filters</button>
+          </div>
+        ) : (
+          <>
+            {featured && cat === "All" && !search.trim() && (
+              <motion.button
+                className="sb-featured"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, ease: EASE }}
+                onClick={() => go(`/blog/${featured.slug}`)}
+              >
+                <span className="sb-feat-tag">
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>star</span> Featured
+                  {featured.category_name ? ` · ${featured.category_name}` : ""}
+                </span>
+                <h2>{featured.title}</h2>
+                <p>{featured.excerpt}</p>
+                <span className="sb-feat-meta">
+                  <span>{featured.author_name || "Sales Qontak Team"}</span>
+                  <span>·</span>
+                  <span>{readMins(featured.excerpt)} min read</span>
+                  <span>·</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>visibility</span> {featured.view_count ?? 0}
+                  </span>
+                  <span className="sb-feat-cta" style={{ marginLeft: "auto" }}>Read article <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span></span>
+                </span>
+              </motion.button>
+            )}
+            <motion.div className="sq-cards3" layout>
+              <AnimatePresence mode="popLayout">
+                {(cat === "All" && !search.trim() ? rest : filtered).map((a) => (
+                  <ArticleCard key={a.id} a={a} onOpen={() => go(`/blog/${a.slug}`)} />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </>
         )}
 
-        <Box textAlign="center" mt={10}>
-          <Button variant="ghost" size="sm" onClick={() => navigate("/")}><ArrowLeft size={14} /> Back to Home</Button>
-        </Box>
-      </Container>
-    </Box>
+        <div className="sb-footer">
+          <button className="sq-link" style={{ fontSize: 14 }} onClick={() => go("/")}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_back</span> Back to Home
+          </button>
+          <small>© 2026 Sales Qontak Inc.</small>
+        </div>
+      </div>
+    </div>
   );
 }

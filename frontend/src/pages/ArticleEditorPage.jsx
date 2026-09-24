@@ -9,6 +9,7 @@ import {
   HStack,
   Input,
   Spinner,
+  Stack,
   Text,
   VStack,
   createToaster,
@@ -18,6 +19,7 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import api from "@/services/api";
 import ImageCropDialog from "@/components/ui/ImageCropDialog";
+import { fmtDateTime } from "./ArticlesPage";
 
 const MAX_COVER_MB = 5;
 
@@ -58,6 +60,7 @@ export default function ArticleEditorPage() {
   const fileInputRef = useRef(null);
   const [errors, setErrors] = useState({});
   const [editCategoryId, setEditCategoryId] = useState(null);
+  const [meta, setMeta] = useState(null);
   const catFilledRef = useRef(false);
   const isManager = localStorage.getItem("user_role") === "MANAGER";
 
@@ -142,6 +145,7 @@ export default function ArticleEditorPage() {
           visibility: a.visibility || "INTERNAL",
         });
         setEditCategoryId(a.category || null);
+        setMeta(a);
         setCoverPreview(a.cover_image_url || null);
         const html = a.content || "";
         if (quillRef.current) quillRef.current.root.innerHTML = html;
@@ -251,7 +255,7 @@ export default function ArticleEditorPage() {
   }
 
   return (
-    <Container maxW="3xl" py={{ base: 4, md: 8 }}>
+    <Container maxW="6xl" py={{ base: 4, md: 8 }}>
       <Button size="sm" variant="ghost" mb={4} onClick={() => navigate(isEdit ? `/articles/${id}` : "/articles")}>
         <ArrowLeft size={16} /> Back
       </Button>
@@ -259,6 +263,8 @@ export default function ArticleEditorPage() {
         {isEdit ? "Edit Article" : "Write Article"}
       </Heading>
 
+      <Stack direction={{ base: "column", lg: "row" }} gap={6} align="stretch">
+        <Box flex={1} minW={0}>
       <VStack gap={4} align="stretch">
         <Field.Root invalid={!!errors.title}>
           <Field.Label>Title</Field.Label>
@@ -279,6 +285,24 @@ export default function ArticleEditorPage() {
             onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
             bg="#FAFAFA"
           />
+        </Field.Root>
+
+        <Field.Root invalid={!!errors.content}>
+          <Field.Label>Content</Field.Label>
+          <Box
+            bg="white"
+            borderRadius="lg"
+            border="1px solid"
+            borderColor="border"
+            overflow="hidden"
+            sx={{
+              "& .ql-toolbar": { border: "none", borderBottom: "1px solid var(--color-border)" },
+              "& .ql-container": { border: "none", minHeight: "300px", fontSize: "15px" },
+            }}
+          >
+            <div ref={editorRef} />
+          </Box>
+          {errors.content && <Field.ErrorText>{errors.content}</Field.ErrorText>}
         </Field.Root>
 
         <HStack gap={4} align="start" wrap="wrap">
@@ -375,45 +399,94 @@ export default function ArticleEditorPage() {
           onClose={() => { setCropOpen(false); setCropSrc(null); }}
           onApply={applyCrop}
         />
+          </VStack>
+        </Box>
 
-        <Field.Root invalid={!!errors.content}>
-          <Field.Label>Content</Field.Label>
-          <Box
-            bg="white"
-            borderRadius="lg"
-            border="1px solid"
-            borderColor="border"
-            overflow="hidden"
-            sx={{
-              "& .ql-toolbar": { border: "none", borderBottom: "1px solid var(--color-border)" },
-              "& .ql-container": { border: "none", minHeight: "300px", fontSize: "15px" },
-            }}
-          >
-            <div ref={editorRef} />
-          </Box>
-          {errors.content && <Field.ErrorText>{errors.content}</Field.ErrorText>}
-        </Field.Root>
+        <Box w={{ base: "100%", lg: "1px" }} h={{ base: "1px", lg: "auto" }} bg="black" flexShrink={0} borderRadius="full" />
 
-        <HStack gap={2} mt={2}>
-          {isManager ? (
-            <>
-              <Button bg="primary" color="white" onClick={() => saveArticle(true)} loading={saving}>
-                Publish Now
-              </Button>
-              <Button variant="outline" onClick={() => saveArticle(false)} loading={saving}>
-                Save Draft
-              </Button>
-            </>
-          ) : (
-            <Button bg="primary" color="white" onClick={() => saveArticle(false)} loading={saving}>
-              Save
-            </Button>
-          )}
-          <Text fontSize="xs" color="foreground" opacity={0.4}>
-            {!isManager && "Saved as draft — a manager will review & publish."}
-          </Text>
-        </HStack>
-      </VStack>
+        <Box w={{ base: "full", lg: "300px" }} flexShrink={0}>
+          <VStack gap={4} align="stretch" position={{ lg: "sticky" }} top="88px">
+            <Box border="1px solid" borderColor="border" borderRadius="xl" p={5} bg="#FAFAFA">
+              <Heading size="sm" mb={4}>Status</Heading>
+              <VStack gap={3} align="stretch">
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Status</Text>
+                  <Box
+                    fontSize="11px"
+                    fontWeight="bold"
+                    px={3}
+                    py={0.5}
+                    borderRadius="full"
+                    bg={meta?.status === "PUBLISHED" ? "#ecfdf5" : "#fef3c7"}
+                    color={meta?.status === "PUBLISHED" ? "#006242" : "#92400e"}
+                  >
+                    {meta?.status || "DRAFT"}
+                  </Box>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Visibility</Text>
+                  <Text fontSize="sm" fontWeight="medium">{form.visibility}</Text>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Author</Text>
+                  <Text fontSize="sm" fontWeight="medium">{meta?.author_name || "—"}</Text>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Created</Text>
+                  <Text fontSize="sm" fontWeight="medium">{meta ? fmtDateTime(meta.created_at) : "—"}</Text>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Last update</Text>
+                  <Text fontSize="sm" fontWeight="medium">
+                    {meta?.updated_by ? `${meta.updated_by_name} · ${fmtDateTime(meta.updated_at)}` : "Never updated"}
+                  </Text>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Published</Text>
+                  <Text fontSize="sm" fontWeight="medium">
+                    {!meta
+                      ? "Not published yet"
+                      : meta.scheduled_publish_at && !meta.is_live
+                        ? fmtDateTime(meta.scheduled_publish_at)
+                        : meta.effective_published_at
+                          ? fmtDateTime(meta.effective_published_at)
+                          : "Not published yet"}
+                  </Text>
+                </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="foreground" opacity={0.6}>Views</Text>
+                  <Text fontSize="sm" fontWeight="medium">{meta?.view_count ?? "—"}</Text>
+                </HStack>
+              </VStack>
+            </Box>
+
+            <Box border="1px solid" borderColor="border" borderRadius="xl" p={5} bg="#FAFAFA">
+              <Heading size="sm" mb={4}>Publish</Heading>
+              <VStack gap={2} align="stretch">
+                {isManager ? (
+                  <>
+                    <Button bg="primary" color="white" onClick={() => saveArticle(true)} loading={saving}>
+                      Publish Now
+                    </Button>
+                    <Button variant="outline" onClick={() => saveArticle(false)} loading={saving}>
+                      Save Draft
+                    </Button>
+                  </>
+                ) : (
+                  <Button bg="primary" color="white" onClick={() => saveArticle(false)} loading={saving}>
+                    Save
+                  </Button>
+                )}
+                {!isManager && (
+                  <Text fontSize="xs" color="foreground" opacity={0.4}>
+                    Saved as draft — a manager will review & publish.
+                  </Text>
+                )}
+              </VStack>
+            </Box>
+          </VStack>
+        </Box>
+      </Stack>
     </Container>
   );
 }

@@ -576,10 +576,10 @@ export default function LandingPage() {
             ) : visibleArticles.length === 0 ? (
               <div className="sq-article" style={{ gridColumn: "1 / -1", textAlign: "center", padding: "2.5rem 1.5rem" }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 32, color: "#94a3b8" }}>newspaper</span>
-                <p style={{ fontWeight: 700, margin: "8px 0 4px" }}>Belum ada artikel</p>
-                <p className="sq-body" style={{ margin: "0 0 12px" }}>Playbook dan panduan terbaru segera hadir di sini.</p>
+                <p style={{ fontWeight: 700, margin: "8px 0 4px" }}>No articles yet</p>
+                <p className="sq-body" style={{ margin: "0 0 12px" }}>Fresh playbooks and guides are on the way.</p>
                 {insight !== "All Insights" && (
-                  <button className="sq-btn-outline" style={{ width: "auto", padding: "10px 28px", marginTop: 0 }} onClick={() => setInsight("All Insights")}>Lihat semua</button>
+                  <button className="sq-btn-outline" style={{ width: "auto", padding: "10px 28px", marginTop: 0 }} onClick={() => setInsight("All Insights")}>View all</button>
                 )}
               </div>
             ) : (

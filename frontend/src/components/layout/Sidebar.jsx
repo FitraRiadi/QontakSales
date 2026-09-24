@@ -9,11 +9,11 @@ const allNavItems = [
   { label: "Contacts", icon: AddressBook, path: "/contacts" },
   { label: "Deals", icon: Handshake, path: "/deals" },
   { label: "Products", icon: Package, path: "/products" },
-  { label: "Articles", icon: Newspaper, path: "/articles" },
   { label: "Calendar", icon: CalendarBlank, path: "/calendar" },
   { label: "Agents", icon: UserPlus, path: "/agents", managerOnly: true },
   { label: "Broadcast", icon: ChatsCircle, path: "/broadcasts" },
   { label: "Broadcast History", icon: ChatsCircle, path: "/broadcasts/history" },
+  { label: "Articles", icon: Newspaper, path: "/articles" },
   { label: "Archive", icon: Archive, path: "/archive" },
 ];
 
