@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/services/api";
 import { EASE } from "./landingMotion";
+import SiteNav from "@/components/layout/SiteNav";
 import BackgroundRipple from "@/components/ui/BackgroundRipple";
 import "./LandingPageStitch.css";
 import "./BlogStitch.css";
@@ -50,7 +51,16 @@ function ArticleCard({ a, onOpen }) {
 
 export default function BlogPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const go = (p) => navigate(p);
+  const goPricing = () => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }), 250);
+    } else {
+      document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -92,15 +102,28 @@ export default function BlogPage() {
 
   return (
     <div className="sb-page">
-      <header className="sb-header">
-        <div className="sb-header-inner">
-          <img src={logoNav} className="sb-logo" alt="Sales Qontak" onClick={() => go("/")} />
-          <div className="sb-header-cta">
-            <button className="sb-signin" onClick={() => go("/login")}>Sign In</button>
-            <button className="sq-btn-demo" onClick={() => go("/register")}>Book a Demo</button>
-          </div>
-        </div>
-      </header>
+      <SiteNav
+        logo={logoNav}
+        onLogo={() => go("/")}
+        sticky
+        maxWidth={1200}
+        links={[
+          { label: "Product", onClick: () => go("/") },
+          { label: "Pricing", onClick: goPricing },
+          { label: "Blog", active: true, onClick: () => go("/blog") },
+        ]}
+        mobileLinks={[
+          { label: "Product", onClick: () => go("/") },
+          { label: "Pricing", onClick: goPricing },
+          { label: "Blog", onClick: () => go("/blog") },
+        ]}
+        signinLabel="Sign In"
+        onSignin={() => go("/login")}
+        demoLabel="Book a Demo"
+        onDemo={() => go("/register")}
+        mobileSigninLabel="Sign In"
+        onMobileSignin={() => go("/login")}
+      />
 
       <div className="sb-wrap">
         <div style={{ position: "relative" }}>

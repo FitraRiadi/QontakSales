@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
 import DOMPurify from "dompurify";
 import api from "@/services/api";
 import SiteFooter from "@/components/layout/SiteFooter";
+import SiteNav from "@/components/layout/SiteNav";
 import { fmtDate } from "./ArticlesPage";
+import { EASE } from "./landingMotion";
 import "./LandingPageStitch.css";
 import "./BlogStitch.css";
 import logoNav from "@/assets/landing-stitch/logo-nav.png";
@@ -23,7 +25,16 @@ const readMins = (text) => {
 export default function BlogDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const go = (p) => navigate(p);
+  const goPricing = () => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }), 250);
+    } else {
+      document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [related, setRelated] = useState([]);
@@ -76,15 +87,28 @@ export default function BlogDetailPage() {
   return (
     <div className="sb-page">
       <motion.div className="sb-progress" style={{ scaleX: scrollYProgress }} />
-      <header className="sb-header">
-        <div className="sb-header-inner">
-          <img src={logoNav} className="sb-logo" alt="Sales Qontak" onClick={() => go("/")} />
-          <div className="sb-header-cta">
-            <button className="sb-signin" onClick={() => go("/login")}>Sign In</button>
-            <button className="sq-btn-demo" onClick={() => go("/register")}>Book a Demo</button>
-          </div>
-        </div>
-      </header>
+      <SiteNav
+        logo={logoNav}
+        onLogo={() => go("/")}
+        sticky
+        maxWidth={1200}
+        links={[
+          { label: "Product", onClick: () => go("/") },
+          { label: "Pricing", onClick: goPricing },
+          { label: "Blog", active: true, onClick: () => go("/blog") },
+        ]}
+        mobileLinks={[
+          { label: "Product", onClick: () => go("/") },
+          { label: "Pricing", onClick: goPricing },
+          { label: "Blog", onClick: () => go("/blog") },
+        ]}
+        signinLabel="Sign In"
+        onSignin={() => go("/login")}
+        demoLabel="Book a Demo"
+        onDemo={() => go("/register")}
+        mobileSigninLabel="Sign In"
+        onMobileSignin={() => go("/login")}
+      />
 
       <div className="sb-wrap">
         {loading ? (

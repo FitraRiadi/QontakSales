@@ -46,6 +46,11 @@
 @media (min-width: 1024px) { .sq-nav { display: flex; } }
 .sq-nav a { font-size: 14px; font-weight: 600; color: var(--sq-on-variant); transition: color .15s; padding: 4px 0; }
 .sq-nav a:hover { color: var(--sq-on); }
+.sq-header-sticky { position: sticky; left: auto; transform: none; margin: 0 auto; }
+.sq-nav-link { font-size: 14px; font-weight: 600; color: var(--sq-on-variant); background: none; border: none; cursor: pointer; padding: 4px 0; font-family: inherit; transition: color .15s; }
+.sq-nav-link:hover { color: var(--sq-on); }
+.sq-nav-link.active { color: var(--sq-on); font-weight: 700; }
+.sq-header-sticky .sq-mobile { position: absolute; top: calc(100% + 8px); left: 8px; right: 8px; z-index: 60; border: 1px solid rgba(195,198,215,.5); border-radius: 20px; box-shadow: 0 16px 32px -12px rgba(15,23,42,.25); }
 
 /* Mega-menu — compact, max 880px, centered */
 .sq-nav-item { position: static; }

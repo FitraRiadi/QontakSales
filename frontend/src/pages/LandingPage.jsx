@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
-import { Reveal, Stagger, staggerChild, megaList, megaItem, heroParent, heroChild, EASE } from "./landingMotion";
+import { Reveal, Stagger, staggerChild, heroParent, heroChild, EASE } from "./landingMotion";
+import SiteNav from "@/components/layout/SiteNav";
 import BackgroundRipple from "@/components/ui/BackgroundRipple";
+import TextFlip from "@/components/ui/TextFlip";
 import api from "@/services/api";
 import "./LandingPageStitch.css";
 import logoNav from "@/assets/landing-stitch/logo-nav.png";
@@ -50,17 +52,13 @@ export default function LandingPage() {
   const [articles, setArticles] = useState([]);
   const [articlesLoading, setArticlesLoading] = useState(true);
   const [articlesError, setArticlesError] = useState(false);
-  const [openMenu, setOpenMenu] = useState(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileSection, setMobileSection] = useState(null);
-  const closeTimer = useRef(null);
 
   const go = (p) => navigate(p);
   const starter = billing === "annual" ? "$29" : "$36";
   const growth = billing === "annual" ? "$79" : "$99";
 
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  const openTab = (id) => { setTab(id); setOpenMenu(null); setMobileOpen(false); setTimeout(() => scrollTo("product-capabilities"), 60); };
+  const openTab = (id) => { setTab(id); setTimeout(() => scrollTo("product-capabilities"), 60); };
 
   const fetchArticles = () => {
     setArticlesLoading(true);
@@ -83,8 +81,6 @@ export default function LandingPage() {
 
   const insightCats = ["All Insights", ...new Set(articles.map((a) => a.category_name).filter(Boolean))].slice(0, 5);
   const visibleArticles = (insight === "All Insights" ? articles : articles.filter((a) => a.category_name === insight)).slice(0, 3);
-  const scheduleClose = () => { clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => setOpenMenu(null), 140); };
-  const cancelClose = () => clearTimeout(closeTimer.current);
 
   const MENUS = {
     product: {
@@ -121,108 +117,25 @@ export default function LandingPage() {
   return (
     <MotionConfig reducedMotion="user">
     <div className="sq-landing">
-      <header className="sq-header">
-        <div className="sq-header-inner">
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            <img alt="Sales Qontak" className="sq-logo" src={logoNav} />
-          </a>
-          <nav className="sq-nav" onMouseLeave={scheduleClose} onKeyDown={(e) => { if (e.key === "Escape") setOpenMenu(null); }}>
-            {Object.entries(MENUS).map(([key, m]) => (
-              <div key={key} className="sq-nav-item" onMouseEnter={() => { cancelClose(); setOpenMenu(key); }}>
-                <button
-                  className={"sq-nav-btn" + (openMenu === key ? " open" : "")}
-                  aria-expanded={openMenu === key}
-                  aria-haspopup="true"
-                  onClick={() => setOpenMenu(openMenu === key ? null : key)}
-                  onFocus={() => setOpenMenu(key)}
-                >
-                  {m.label}
-                  <span className="material-symbols-outlined sq-caret">expand_more</span>
-                </button>
-                <AnimatePresence>
-                {openMenu === key && (
-                  <motion.div
-                    className="sq-mega"
-                    initial={{ opacity: 0, x: "-50%", y: 8 }}
-                    animate={{ opacity: 1, x: "-50%", y: 0 }}
-                    exit={{ opacity: 0, x: "-50%", y: 6, transition: { duration: 0.12 } }}
-                    transition={{ duration: 0.18, ease: EASE }}
-                    onMouseEnter={cancelClose} onMouseLeave={scheduleClose}
-                  >
-                    <motion.div className="sq-mega-links" variants={megaList} initial="hidden" animate="show" exit="hidden">
-                      {m.links.map((l) => (
-                        <motion.button key={l.title} className="sq-mega-link" variants={megaItem} onClick={l.onClick}>
-                          <span className="sq-mega-icon" style={{ background: l.tint, color: l.color }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{l.icon}</span>
-                          </span>
-                          <span className="sq-mega-text">
-                            <span className="sq-mega-title">{l.title}</span>
-                            <span className="sq-mega-desc">{l.desc}</span>
-                          </span>
-                        </motion.button>
-                      ))}
-                    </motion.div>
-                    <motion.button
-                      className="sq-mega-feature"
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0, transition: { delay: 0.12, duration: 0.2 } }}
-                      onClick={m.feature.onClick}
-                    >
-                      <span className="sq-mega-kicker">{m.feature.kicker}</span>
-                      <span className="sq-mega-feature-title">{m.feature.title}</span>
-                      <span className="sq-mega-feature-cta">{m.feature.cta} <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span></span>
-                    </motion.button>
-                  </motion.div>
-                )}
-                </AnimatePresence>
-              </div>
-            ))}
-            <a href="#pricing">Enterprise</a>
-            <a href="#pricing">Pricing</a>
-          </nav>
-          <div className="sq-header-cta">
-            <button className="sq-signin" onClick={() => go("/login")}>Sign in</button>
-            <button className="sq-btn-demo" onClick={() => go("/register")}>Book a Demo</button>
-            <button className="sq-burger" aria-label="Menu" aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
-              <span className="material-symbols-outlined">{mobileOpen ? "close" : "menu"}</span>
-            </button>
-          </div>
-        </div>
-        <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            className="sq-mobile"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0, transition: { duration: 0.15 } }}
-            transition={{ duration: 0.22, ease: EASE }}
-            style={{ overflow: "hidden" }}
-          >
-            {Object.entries(MENUS).map(([key, m]) => (
-              <div key={key} className="sq-mobile-group">
-                <button className="sq-mobile-head" onClick={() => setMobileSection(mobileSection === key ? null : key)}>
-                  {m.label}
-                  <span className="material-symbols-outlined" style={{ transform: mobileSection === key ? "rotate(180deg)" : "none" }}>expand_more</span>
-                </button>
-                {mobileSection === key && (
-                  <div className="sq-mobile-links">
-                    {m.links.map((l) => (
-                      <button key={l.title} className="sq-mobile-link" onClick={() => { l.onClick(); setMobileOpen(false); }}>
-                        <span className="material-symbols-outlined" style={{ color: l.color, fontSize: 20 }}>{l.icon}</span>
-                        <span><b>{l.title}</b><br /><small>{l.desc}</small></span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            <a className="sq-mobile-link" href="#pricing" onClick={() => setMobileOpen(false)}>Enterprise</a>
-            <a className="sq-mobile-link" href="#pricing" onClick={() => setMobileOpen(false)}>Pricing</a>
-            <button className="sq-btn-demo" style={{ width: "100%", marginTop: 8 }} onClick={() => go("/login")}>Sign in</button>
-          </motion.div>
-        )}
-        </AnimatePresence>
-      </header>
+      <SiteNav
+        logo={logoNav}
+        onLogo={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        menus={MENUS}
+        links={[
+          { label: "Enterprise", href: "#pricing" },
+          { label: "Pricing", href: "#pricing" },
+        ]}
+        mobileLinks={[
+          { label: "Enterprise", href: "#pricing" },
+          { label: "Pricing", href: "#pricing" },
+        ]}
+        signinLabel="Sign In"
+        onSignin={() => go("/login")}
+        demoLabel="Book a Demo"
+        onDemo={() => go("/register")}
+        mobileSigninLabel="Sign in"
+        onMobileSignin={() => go("/login")}
+      />
 
       <main className="sq-main">
         {/* 1. HERO */}
@@ -231,7 +144,7 @@ export default function LandingPage() {
           <div className="sq-container">
             <motion.div className="sq-hero-top" variants={heroParent} initial="hidden" animate="show">
               <motion.div variants={heroChild}>
-                <h1 className="sq-h1">Accelerate deals and unify customer touchpoints <span className="blue">on your terms</span></h1>
+                <h1 className="sq-h1">Accelerate deals and unify customer touchpoints <span className="blue"><TextFlip words={["on your terms", "in one workspace", "without spreadsheets"]} /></span></h1>
               </motion.div>
               <motion.div className="sq-hero-side" variants={heroChild}>
                 <p className="sq-body">Manage accounts, contacts and deals on a visual pipeline, broadcast WhatsApp with template variables, log every activity, and track revenue on one dashboard.</p>
