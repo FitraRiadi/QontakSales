@@ -92,6 +92,10 @@
 .sq-btn-demo { display: inline-flex; align-items: center; justify-content: center; background: var(--sq-primary-container); color: #fff; font-size: 14px; font-weight: 600; padding: 8px 24px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,.06); transition: background .15s, transform .15s; }
 .sq-btn-demo:hover { background: var(--sq-primary); }
 .sq-btn-demo:active { transform: scale(.99); }
+/* Clay khusus tombol di pil nav (landing + blog) */
+.sq-header .sq-btn-demo, .sb-header .sq-btn-demo { border-radius: 16px; border: 1px solid rgba(255,255,255,.35); box-shadow: inset 2px 2px 4px rgba(255,255,255,.35), inset -2px -2px 5px rgba(0,0,0,.18), 4px 6px 14px rgba(37,99,235,.35); }
+.sq-header .sq-btn-demo:hover, .sb-header .sq-btn-demo:hover { background: var(--sq-primary); }
+.sq-header .sq-btn-demo:active, .sb-header .sq-btn-demo:active { box-shadow: inset 3px 3px 8px rgba(0,0,0,.25); }
 .sq-main { padding-top: 88px; min-height: calc(100vh - 80px); }
 
 /* Type */
@@ -117,15 +121,15 @@
 .sq-pill-dark .circle { width: 28px; height: 28px; border-radius: 9999px; background: var(--sq-lowest); color: var(--sq-on); display: inline-flex; align-items: center; justify-content: center; }
 .sq-hero-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: stretch; }
 @media (min-width: 768px) { .sq-hero-grid { grid-template-columns: repeat(12, 1fr); } }
-.sq-hero-card { border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(195,198,215,.3); position: relative; overflow: hidden; min-height: 460px; display: flex; flex-direction: column; justify-content: space-between; }
+.sq-hero-card { border-radius: 24px; padding: 1.5rem; border: 1px solid rgba(255,255,255,.9); position: relative; overflow: hidden; min-height: 460px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 2px 2px 6px rgba(255,255,255,.9), inset -5px -5px 12px rgba(15,23,42,.08), 10px 14px 28px rgba(15,23,42,.12); }
 @media (min-width: 768px) { .sq-hero-card { padding: 2rem; } }
 .sq-hero-a { background: var(--sq-low); }
 @media (min-width: 768px) { .sq-hero-a { grid-column: span 12; } }
 @media (min-width: 1024px) { .sq-hero-a { grid-column: span 7; } }
-.sq-hero-b { background: var(--sq-container); box-shadow: 0 1px 3px rgba(15,23,42,.04); }
+.sq-hero-b { background: var(--sq-container); }
 @media (min-width: 768px) { .sq-hero-b { grid-column: span 6; } }
 @media (min-width: 1024px) { .sq-hero-b { grid-column: span 2; } }
-.sq-hero-c { background: var(--sq-high); box-shadow: 0 1px 3px rgba(15,23,42,.04); }
+.sq-hero-c { background: var(--sq-high); }
 @media (min-width: 768px) { .sq-hero-c { grid-column: span 6; } }
 @media (min-width: 1024px) { .sq-hero-c { grid-column: span 3; } }
 .sq-hero-img { position: absolute; right: 8px; bottom: -16px; width: 256px; pointer-events: none; z-index: 0; }
@@ -133,7 +137,7 @@
 .sq-hero-img img { width: 100%; height: auto; object-fit: contain; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,.12)); }
 .sq-mini-row { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: end; margin-top: 1.5rem; position: relative; z-index: 10; }
 @media (min-width: 640px) { .sq-mini-row { grid-template-columns: 1fr 1fr; } }
-.sq-mini-card { background: var(--sq-lowest); padding: 1rem; border-radius: 12px; border: 1px solid rgba(195,198,215,.3); box-shadow: 0 1px 2px rgba(0,0,0,.05); max-width: 20rem; }
+.sq-mini-card { background: var(--sq-lowest); padding: 1rem; border-radius: 16px; border: 1px solid rgba(195,198,215,.3); box-shadow: 0 1px 2px rgba(0,0,0,.05); max-width: 20rem; }
 .sq-mini-top { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .sq-mini-avatars { display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid rgba(195,198,215,.25); margin-top: 8px; }
 .sq-avatar-stack { display: flex; align-items: center; }
@@ -142,7 +146,7 @@
 .sq-avatar-more { background: var(--sq-primary-container); color: #fff; font-size: 9px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 .sq-circle-btn { width: 40px; height: 40px; border-radius: 9999px; background: var(--sq-inverse); color: #fff; display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,.15); }
 .sq-circle-btn:hover { background: #1e293b; }
-.sq-stat-box { background: var(--sq-lowest); padding: 12px; border-radius: 8px; border: 1px solid rgba(195,198,215,.25); box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+.sq-stat-box { background: var(--sq-lowest); padding: 12px; border-radius: 14px; border: 1px solid rgba(195,198,215,.25); box-shadow: 0 1px 2px rgba(0,0,0,.05); }
 .sq-stat-box p { margin: 0; }
 .sq-card-foot { padding-top: 8px; border-top: 1px solid rgba(195,198,215,.3); display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
 
@@ -162,11 +166,11 @@
 .sq-metric { background: var(--sq-lowest); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(195,198,215,.3); text-align: center; }
 .sq-metric .big { font-family: "Plus Jakarta Sans", sans-serif; font-size: 40px; line-height: 48px; font-weight: 700; margin: 0 0 4px; }
 .sq-tabs { display: flex; justify-content: center; margin-bottom: 1.5rem; }
-.sq-tabs-inner { display: inline-flex; flex-wrap: wrap; justify-content: center; padding: 4px; background: var(--sq-container); border-radius: 8px; border: 1px solid rgba(195,198,215,.4); gap: 4px; }
-.sq-tab-btn { position: relative; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; border: 1px solid transparent; background: transparent; color: var(--sq-secondary); cursor: pointer; transition: color .15s; }
+.sq-tabs-inner { display: inline-flex; flex-wrap: wrap; justify-content: center; padding: 6px; background: var(--sq-container); border-radius: 20px; border: 1px solid rgba(255,255,255,.9); gap: 4px; box-shadow: inset 2px 2px 5px rgba(255,255,255,.8), inset -3px -3px 8px rgba(15,23,42,.07), 6px 8px 18px rgba(15,23,42,.1); }
+.sq-tab-btn { position: relative; padding: 8px 16px; border-radius: 14px; font-size: 14px; font-weight: 600; border: 1px solid transparent; background: transparent; color: var(--sq-secondary); cursor: pointer; transition: color .15s; }
 .sq-tab-btn:hover { color: var(--sq-on); }
 .sq-tab-btn.active { color: var(--sq-on); border-color: transparent; background: transparent; font-weight: 700; }
-.sq-tab-pill { position: absolute; inset: 0; background: var(--sq-lowest); border: 1px solid rgba(195,198,215,.3); border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.sq-tab-pill { position: absolute; inset: 0; background: var(--sq-lowest); border: 1px solid rgba(255,255,255,.9); border-radius: 14px; box-shadow: inset 1px 1px 3px rgba(255,255,255,1), inset -2px -2px 5px rgba(15,23,42,.08), 3px 4px 10px rgba(15,23,42,.12); }
 .sq-tab-label { position: relative; z-index: 1; }
 .sq-panel { display: none; }
 .sq-panel.show { display: block; }
@@ -202,10 +206,10 @@
 /* Integrations */
 .sq-int-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 @media (min-width: 640px) { .sq-int-grid { grid-template-columns: repeat(3, 1fr); } }
-.sq-int { padding: 1rem; border-radius: 12px; background: var(--sq-low); border: 1px solid rgba(195,198,215,.3); transition: border-color .15s; }
-.sq-int:hover { border-color: rgba(37,99,235,.5); transform: translateY(-3px); }
-.sq-int { transition: border-color .15s, transform .22s ease, box-shadow .22s ease; }
-.sq-int:hover { box-shadow: 0 8px 16px -10px rgba(15,23,42,.18); }
+.sq-int { padding: 1rem; border-radius: 20px; background: var(--sq-low); border: 1px solid rgba(255,255,255,.9); box-shadow: inset 2px 2px 5px rgba(255,255,255,.85), inset -3px -3px 8px rgba(15,23,42,.07), 5px 7px 16px rgba(15,23,42,.1); }
+.sq-int:hover { transform: translateY(-3px); }
+.sq-int { transition: transform .22s ease, box-shadow .22s ease; }
+.sq-int:hover { box-shadow: inset 2px 2px 5px rgba(255,255,255,.85), inset -3px -3px 8px rgba(15,23,42,.07), 8px 12px 22px rgba(15,23,42,.16); }
 
 /* Hover lift interaktif untuk kartu-kartu */
 .sq-metric, .sq-tcard, .sq-article, .sq-price { transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
