@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/services/api";
 import { EASE } from "./landingMotion";
+import BackgroundRipple from "@/components/ui/BackgroundRipple";
 import "./LandingPageStitch.css";
 import "./BlogStitch.css";
 import logoNav from "@/assets/landing-stitch/logo-nav.png";
@@ -56,6 +57,8 @@ export default function BlogPage() {
   const [search, setSearch] = useState("");
   const [cat, setCat] = useState("All");
   const [sort, setSort] = useState("-published_at");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 9;
 
   const fetchAll = () => {
     setLoading(true);
@@ -79,8 +82,13 @@ export default function BlogPage() {
 
   const cats = ["All", ...new Set(articles.map((a) => a.category_name).filter(Boolean))].slice(0, 6);
   const filtered = cat === "All" ? articles : articles.filter((a) => a.category_name === cat);
-  const [featured, ...rest] = filtered;
-  const resetAll = () => { setSearch(""); setCat("All"); };
+  const isDefaultView = cat === "All" && !search.trim();
+  const featured = isDefaultView ? filtered[0] : null;
+  const gridList = isDefaultView ? filtered.slice(1) : filtered;
+  const totalPages = Math.max(1, Math.ceil(gridList.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const paged = gridList.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const resetAll = () => { setSearch(""); setCat("All"); setPage(1); };
 
   return (
     <div className="sb-page">
@@ -95,9 +103,12 @@ export default function BlogPage() {
       </header>
 
       <div className="sb-wrap">
-        <div className="sb-hero">
-          <h1>Blog</h1>
-          <p>Sales tips, playbooks, and product updates.</p>
+        <div style={{ position: "relative" }}>
+          <BackgroundRipple rows={6} cols={27} cellSize={52} />
+          <div className="sb-hero" style={{ position: "relative", zIndex: 1 }}>
+            <h1>Blog</h1>
+            <p>Sales tips, playbooks, and product updates.</p>
+          </div>
         </div>
 
         <div className="sb-search">
@@ -105,21 +116,21 @@ export default function BlogPage() {
           <input
             placeholder="Search articles..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCat("All"); }}
+            onChange={(e) => { setSearch(e.target.value); setCat("All"); setPage(1); }}
           />
         </div>
 
         <div className="sb-toolbar">
           <div className="sq-pills" style={{ marginBottom: 0 }}>
             {cats.map((c) => (
-              <button key={c} className={"sq-pill" + (cat === c ? " active" : "")} onClick={() => setCat(c)}>
+              <button key={c} className={"sq-pill" + (cat === c ? " active" : "")} onClick={() => { setCat(c); setPage(1); }}>
                 {c === "All" ? "All Articles" : c}
               </button>
             ))}
           </div>
           <div className="sb-sort">
-            <button className={sort === "-published_at" ? "active" : ""} onClick={() => setSort("-published_at")}>Latest</button>
-            <button className={sort === "-view_count" ? "active" : ""} onClick={() => setSort("-view_count")}>Most viewed</button>
+            <button className={sort === "-published_at" ? "active" : ""} onClick={() => { setSort("-published_at"); setPage(1); }}>Latest</button>
+            <button className={sort === "-view_count" ? "active" : ""} onClick={() => { setSort("-view_count"); setPage(1); }}>Most viewed</button>
           </div>
         </div>
 
@@ -151,7 +162,7 @@ export default function BlogPage() {
           </div>
         ) : (
           <>
-            {featured && cat === "All" && !search.trim() && (
+            {featured && (
               <motion.button
                 className="sb-featured"
                 initial={{ opacity: 0, y: 20 }}
@@ -179,11 +190,32 @@ export default function BlogPage() {
             )}
             <motion.div className="sq-cards3" layout>
               <AnimatePresence mode="popLayout">
-                {(cat === "All" && !search.trim() ? rest : filtered).map((a) => (
+                {paged.map((a) => (
                   <ArticleCard key={a.id} a={a} onOpen={() => go(`/blog/${a.slug}`)} />
                 ))}
               </AnimatePresence>
             </motion.div>
+            {totalPages > 1 && (
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginTop: 24 }}>
+                <button
+                  className="sq-btn-outline"
+                  style={{ width: "auto", padding: "8px 20px", marginTop: 0, opacity: safePage === 1 ? 0.4 : 1 }}
+                  disabled={safePage === 1}
+                  onClick={() => setPage(safePage - 1)}
+                >
+                  Prev
+                </button>
+                <span style={{ fontSize: 14, color: "#565e74" }}>{safePage} / {totalPages}</span>
+                <button
+                  className="sq-btn-outline"
+                  style={{ width: "auto", padding: "8px 20px", marginTop: 0, opacity: safePage === totalPages ? 0.4 : 1 }}
+                  disabled={safePage === totalPages}
+                  onClick={() => setPage(safePage + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </>
         )}
 

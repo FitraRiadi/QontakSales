@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import { Reveal, Stagger, staggerChild, megaList, megaItem, heroParent, heroChild, EASE } from "./landingMotion";
+import BackgroundRipple from "@/components/ui/BackgroundRipple";
 import api from "@/services/api";
 import "./LandingPageStitch.css";
 import logoNav from "@/assets/landing-stitch/logo-nav.png";
@@ -226,6 +227,7 @@ export default function LandingPage() {
       <main className="sq-main">
         {/* 1. HERO */}
         <section className="sq-hero">
+          <BackgroundRipple />
           <div className="sq-container">
             <motion.div className="sq-hero-top" variants={heroParent} initial="hidden" animate="show">
               <motion.div variants={heroChild}>

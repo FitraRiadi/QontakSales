@@ -27,9 +27,12 @@
 
 /* Toolbar: pills + sort */
 .sb-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.5rem; }
-.sb-sort { display: inline-flex; padding: 4px; background: #e5eeff; border-radius: 9999px; border: 1px solid rgba(195,198,215,.4); gap: 4px; }
+/* Clay khusus toolbar blog (pills landing tidak ikut berubah) */
+.sb-toolbar .sq-pills { background: #e5eeff; border: 1px solid rgba(255,255,255,.9); border-radius: 9999px; padding: 4px; gap: 2px; box-shadow: inset 2px 2px 5px rgba(255,255,255,.8), inset -3px -3px 8px rgba(15,23,42,.07), 5px 7px 15px rgba(15,23,42,.1); }
+.sb-toolbar .sq-pill.active { background: #fff; border: 1px solid rgba(255,255,255,.9); box-shadow: inset 1px 1px 3px rgba(255,255,255,1), inset -2px -2px 5px rgba(15,23,42,.08), 3px 4px 10px rgba(15,23,42,.12); }
+.sb-sort { display: inline-flex; padding: 4px; background: #e5eeff; border-radius: 9999px; border: 1px solid rgba(255,255,255,.9); gap: 2px; box-shadow: inset 2px 2px 5px rgba(255,255,255,.8), inset -3px -3px 8px rgba(15,23,42,.07), 5px 7px 15px rgba(15,23,42,.1); }
 .sb-sort button { position: relative; padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 600; border: none; background: transparent; color: #565e74; cursor: pointer; font-family: inherit; }
-.sb-sort button.active { color: #0b1c30; }
+.sb-sort button.active { color: #0b1c30; background: #fff; box-shadow: inset 1px 1px 3px rgba(255,255,255,1), inset -2px -2px 5px rgba(15,23,42,.08), 3px 4px 10px rgba(15,23,42,.12); }
 
 /* Featured */
 .sb-featured { background: #213145; color: #fff; border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; cursor: pointer; border: none; width: 100%; text-align: left; font-family: inherit; display: block; transition: transform .2s ease, box-shadow .2s ease; }

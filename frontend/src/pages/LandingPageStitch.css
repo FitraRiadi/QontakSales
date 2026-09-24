@@ -150,6 +150,10 @@
 .sq-stat-box p { margin: 0; }
 .sq-card-foot { padding-top: 8px; border-top: 1px solid rgba(195,198,215,.3); display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
 
+/* Hero ripple backdrop */
+.sq-hero { overflow: hidden; }
+.sq-hero > .sq-container { position: relative; z-index: 1; }
+
 /* Sections */
 .sq-section { padding: 2.5rem 0; border-bottom: 1px solid rgba(195,198,215,.3); }
 .sq-section-lg { padding: 6rem 0; border-bottom: 1px solid rgba(195,198,215,.3); }
