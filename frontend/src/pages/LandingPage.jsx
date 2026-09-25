@@ -378,10 +378,10 @@ export default function LandingPage() {
                 </div>
                 <div className="sq-split-7 sq-mock">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
-                    <div className="sq-stat-box"><p style={{ fontSize: 12, color: "#565e74" }}>Total Revenue</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>Rp 842JT</p><p style={{ fontSize: 12, color: "#006242", fontWeight: 700 }}>Won deals, all time</p></div>
-                    <div className="sq-stat-box"><p style={{ fontSize: 12, color: "#565e74" }}>Win Rate</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>Live %</p><p style={{ fontSize: 12, color: "#004ac6", fontWeight: 700 }}>Won vs total deals</p></div>
+                    <div className="sq-stat-box clay"><p style={{ fontSize: 12, color: "#565e74" }}>Total Revenue</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>Rp 842JT</p><p style={{ fontSize: 12, color: "#006242", fontWeight: 700 }}>Won deals, all time</p></div>
+                    <div className="sq-stat-box clay"><p style={{ fontSize: 12, color: "#565e74" }}>Win Rate</p><p style={{ fontWeight: 800, fontSize: 20, margin: "4px 0" }}>Live %</p><p style={{ fontSize: 12, color: "#004ac6", fontWeight: 700 }}>Won vs total deals</p></div>
                   </div>
-                  <div className="sq-stat-box">
+                  <div className="sq-stat-box clay">
                     <span style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Monthly revenue (Rp JT)</span>
                     <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 72 }}>
                       {[35, 55, 42, 70, 58, 88].map((h, i) => (
@@ -415,7 +415,7 @@ export default function LandingPage() {
               <p className="sq-body" style={{ maxWidth: 28 + "rem" }}>Discover how modern sales, RevOps, and customer success executives deploy Sales Qontak to supercharge conversion rates.</p>
             </motion.div>
             <Stagger className="sq-testi-grid">
-              <motion.div variants={staggerChild} className="sq-tcard white sq-span-8">
+              <motion.div variants={staggerChild} className="sq-tcard white sq-span-8 clay">
                 <div className="sq-tcard-inner">
                   <div className="l">
                     <span className="sq-badge" style={{ background: "#6ffbbe", color: "#002113", marginBottom: 8 }}>CUSTOMER CASE STUDY</span>
