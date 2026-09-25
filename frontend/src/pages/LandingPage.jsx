@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, MotionConfig, useReducedMotion } from "framer-motion";
 import { Reveal, Stagger, staggerChild, heroParent, heroChild, EASE } from "./landingMotion";
 import SiteNav from "@/components/layout/SiteNav";
+import GeminiFonnte from "@/components/ui/GeminiFonnte";
 import Topography from "@/components/ui/Topography";
 import BackgroundRipple from "@/components/ui/BackgroundRipple";
 import TextFlip from "@/components/ui/TextFlip";
@@ -305,7 +306,18 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 3. CAPABILITIES */}
+        {/* 3. POWERED BY FONNTE */}
+        <section id="fonnte" className="sq-bg-white">
+          <div className="sq-container sq-fonnte-head">
+            <motion.div className="sq-center" style={{ marginBottom: 0 }} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
+              <h2 className="sq-h2">Powered By Fonnte</h2>
+              <p className="sq-sub">Every WhatsApp broadcast runs on your own Fonnte API key.</p>
+            </motion.div>
+          </div>
+          <GeminiFonnte />
+        </section>
+
+        {/* 4. CAPABILITIES */}
         <section className="sq-section-lg sq-bg-white" id="product-capabilities">
           <div className="sq-container">
             <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -455,7 +467,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 4. TESTIMONIALS */}
+        {/* 5. TESTIMONIALS */}
         <section className="sq-section-lg sq-bg-base">
           <div className="sq-container">
             <motion.div className="sq-testi-head" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -498,7 +510,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 5. INTEGRATIONS */}
+        {/* 6. INTEGRATIONS */}
         <section className="sq-section-lg sq-bg-white">
           <div className="sq-container">
             <div className="sq-split">
@@ -537,7 +549,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 6. INSIGHTS */}
+        {/* 7. INSIGHTS */}
         <section className="sq-section-lg sq-bg-base" id="insights-resources">
           <div className="sq-container">
             <motion.div className="sq-testi-head" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -625,7 +637,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 7. COMPARISON */}
+        {/* 8. COMPARISON */}
         <section className="sq-section-lg sq-bg-white" id="comparison">
           <div className="sq-container">
             <motion.div className="sq-center left" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -667,7 +679,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 8. PRICING */}
+        {/* 9. PRICING */}
         <section className="sq-section-lg sq-bg-base" id="pricing">
           <div className="sq-container">
             <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -726,7 +738,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 9. FAQ */}
+        {/* 10. FAQ */}
         <section className="sq-section-lg sq-bg-white" id="faq">
           <div className="sq-container">
             <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -780,7 +792,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 10. TEAM BANNER */}
+        {/* 11. TEAM BANNER */}
         <div className="sq-container">
           <motion.div
             className="sq-cta-visual-wrap"
@@ -797,7 +809,7 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
-        {/* 11. BOTTOM CTA */}
+        {/* 12. BOTTOM CTA */}
         <section className="sq-section-lg sq-bg-white">
           <div className="sq-container">
             <motion.div
