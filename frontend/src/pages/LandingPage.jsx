@@ -34,6 +34,24 @@ const TABS = [
   { id: "reports", label: "Dashboard & Reports" },
 ];
 
+const CMP_ROWS = [
+  { f: "Visual Kanban board", d: "7 fixed stages with per-stage totals", q: "yes", s: "no", e: "yes" },
+  { f: "One-click stage move", d: "Forward, backward, Won/Lost + manager alerts", q: "yes", s: "no", e: "yes" },
+  { f: "WhatsApp broadcast", d: "{name}, {phone}, {company} variables", q: "yes", s: "no", e: "addon" },
+  { f: "Delivery history", d: "Sent vs failed, tracked per batch", q: "yes", s: "no", e: "yes" },
+  { f: "Activities & calendar", d: "Meeting, Call, Email, Follow-up timeline", q: "yes", s: "manual", e: "yes" },
+  { f: "Revenue reports", d: "Rupiah dashboard + one-click Excel export", q: "yes", s: "manual", e: "yes" },
+  { f: "Manager & Agent roles", d: "Team-wide vs own-data access", q: "yes", s: "no", e: "yes" },
+  { f: "Start free", d: "No credit card required", q: "yes", s: "yes", e: "no" },
+];
+
+function CmpCell({ v, hl }) {
+  const cls = "sq-cmp-c" + (hl ? " hl" : "");
+  if (v === "yes") return <div className={cls}><span className="material-symbols-outlined" style={{ color: "#006242", fontSize: 22 }}>check_circle</span></div>;
+  if (v === "no") return <div className={cls}><span className="material-symbols-outlined" style={{ color: "#c3c6d7", fontSize: 22 }}>cancel</span></div>;
+  return <div className={cls}><span className={v === "manual" ? "sq-cmp-tag muted" : "sq-cmp-tag amber"}>{v === "manual" ? "Manual" : "Paid add-on"}</span></div>;
+}
+
 const FAQS = [
   { q: "What is QontakSales?", a: "A sales workspace for teams: manage accounts and contacts, track deals on a 7-stage visual pipeline, send WhatsApp broadcasts, schedule activities on a shared calendar, and monitor revenue on a live dashboard." },
   { q: "Is QontakSales free to use?", a: "Yes. Create an account for free with no credit card required and use the full workspace — pipeline, broadcast, activities, dashboard and articles." },
@@ -607,7 +625,49 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 7. PRICING */}
+        {/* 7. COMPARISON */}
+        <section className="sq-section-lg sq-bg-white" id="comparison">
+          <div className="sq-container">
+            <motion.div className="sq-center left" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
+              <span className="sq-eyebrow">Honest comparison</span>
+              <h2 className="sq-h2">Why teams switch to QontakSales</h2>
+              <p className="sq-sub">No inflated claims. Just what each option actually gives you, feature by feature.</p>
+            </motion.div>
+            <motion.div
+              className="sq-cmp"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.55, ease: EASE }}
+            >
+              <div className="sq-cmp-table">
+                <div className="sq-cmp-row sq-cmp-head">
+                  <div className="sq-cmp-f" />
+                  <div className="sq-cmp-h hl">QontakSales</div>
+                  <div className="sq-cmp-h">Spreadsheets</div>
+                  <div className="sq-cmp-h">Enterprise CRMs</div>
+                </div>
+                {CMP_ROWS.map((r, i) => (
+                  <motion.div
+                    key={r.f}
+                    className="sq-cmp-row"
+                    initial={{ opacity: 0, x: -18 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.4, delay: i * 0.06, ease: EASE }}
+                  >
+                    <div className="sq-cmp-f"><b>{r.f}</b><small>{r.d}</small></div>
+                    <CmpCell v={r.q} hl />
+                    <CmpCell v={r.s} />
+                    <CmpCell v={r.e} />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 8. PRICING */}
         <section className="sq-section-lg sq-bg-base" id="pricing">
           <div className="sq-container">
             <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -666,7 +726,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 8. FAQ */}
+        {/* 9. FAQ */}
         <section className="sq-section-lg sq-bg-white" id="faq">
           <div className="sq-container">
             <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
@@ -720,7 +780,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 9. TEAM BANNER */}
+        {/* 10. TEAM BANNER */}
         <div className="sq-container">
           <motion.div
             className="sq-cta-visual-wrap"
@@ -737,7 +797,7 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
-        {/* 10. BOTTOM CTA */}
+        {/* 11. BOTTOM CTA */}
         <section className="sq-section-lg sq-bg-white">
           <div className="sq-container">
             <motion.div
@@ -788,6 +848,7 @@ export default function LandingPage() {
               <li><button onClick={() => openTab("broadcast")}>WhatsApp Broadcast</button></li>
               <li><button onClick={() => openTab("activities")}>Activities &amp; Calendar</button></li>
               <li><button onClick={() => openTab("reports")}>Dashboard &amp; Reports</button></li>
+              <li><button onClick={() => scrollTo("comparison")}>Compare</button></li>
               <li><button onClick={() => go("/blog")}>Articles &amp; Blog</button></li>
             </ul></div>
             <div><h5>Resources</h5><ul>

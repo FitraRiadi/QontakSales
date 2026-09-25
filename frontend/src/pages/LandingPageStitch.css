@@ -266,6 +266,22 @@
 .sq-faq-item.open .sq-faq-q { color: #004ac6; }
 .sq-faq-grid p { margin: 0 0 18px; padding: 0 4px; font-size: 14px; line-height: 1.7; color: #434655; }
 
+/* Comparison */
+.sq-cmp { overflow-x: auto; margin-top: 2.5rem; padding-bottom: 8px; }
+.sq-cmp-table { min-width: 680px; background: #fff; border: 1px solid rgba(195,198,215,.4); border-radius: 20px; overflow: hidden; box-shadow: inset 2px 2px 6px rgba(255,255,255,1), inset -4px -4px 10px rgba(15,23,42,.05), 8px 12px 26px rgba(15,23,42,.1); }
+.sq-cmp-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; border-bottom: 1px solid rgba(195,198,215,.3); }
+.sq-cmp-row:last-child { border-bottom: none; }
+.sq-cmp-f { padding: 16px 20px; }
+.sq-cmp-f b { display: block; font-size: 14px; color: #0b1c30; }
+.sq-cmp-f small { font-size: 12px; color: #565e74; }
+.sq-cmp-h { display: flex; align-items: center; justify-content: center; padding: 16px 12px; font-size: 14px; font-weight: 600; color: #565e74; }
+.sq-cmp-h.hl { background: var(--sq-primary-container); color: #fff; font-family: "Plus Jakarta Sans", sans-serif; font-size: 15px; font-weight: 700; box-shadow: inset 2px 2px 5px rgba(255,255,255,.35), inset -3px -3px 8px rgba(0,0,0,.18); }
+.sq-cmp-c { display: flex; align-items: center; justify-content: center; padding: 14px 12px; }
+.sq-cmp-c.hl { background: #eff4ff; }
+.sq-cmp-tag { font-size: 12px; font-weight: 600; color: #0b1c30; white-space: nowrap; }
+.sq-cmp-tag.amber { color: #0b1c30; background: none; }
+.sq-cmp-tag.muted { color: #0b1c30; background: none; }
+.sq-center.left { text-align: left; margin: 0 0 3rem; }
 /* Pricing */
 .sq-billing { display: inline-flex; padding: 4px; background: var(--sq-container); border-radius: 9999px; border: 1px solid rgba(195,198,215,.4); gap: 4px; }
 .sq-billing button { position: relative; padding: 8px 20px; border-radius: 9999px; font-size: 14px; font-weight: 600; border: none; background: transparent; color: var(--sq-secondary); cursor: pointer; }
