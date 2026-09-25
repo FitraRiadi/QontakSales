@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Bell, List, SignOut, Gear, ArrowsClockwise, ArrowUUpLeft, ArrowLeft } from "@phosphor-icons/react";
 import api from "@/services/api";
+import logoNav from "@/assets/landing-stitch/logo-nav.png";
 
 export default function TopBar({ onMenuClick }) {
   const navigate = useNavigate();
@@ -177,14 +178,19 @@ export default function TopBar({ onMenuClick }) {
       )}
 
       <HStack
-        h="64px" px={{ base: 4, md: 6 }} bg="#FAFAFA"
-        borderBottom="1px solid" borderColor="border"
-        justify="flex-end" gap={4}
+        h="14" px={{ base: 4, md: 6 }} bg="#edf2ff"
+        borderBottom="1px solid" borderColor="rgba(255,255,255,.9)"
+        boxShadow="inset 0 2px 5px rgba(255,255,255,.9), inset 0 -3px 8px rgba(15,23,42,.05), 0 8px 20px -12px rgba(15,23,42,.18)"
+        justify="space-between" gap={4}
       >
-        <Box display={{ base: "block", md: "none" }} cursor="pointer" onClick={onMenuClick} p={2} borderRadius="md" _hover={{ bg: "muted" }}>
-          <List size={22} color="#0F172A" />
-        </Box>
+        <HStack gap={3}>
+          <Box display={{ base: "block", md: "none" }} cursor="pointer" onClick={onMenuClick} p={2} borderRadius="md" _hover={{ bg: "muted" }}>
+            <List size={22} color="#0F172A" />
+          </Box>
+          <Box as="img" src={logoNav} h="24px" alt="Sales Qontak" cursor="pointer" onClick={() => navigate("/dashboard")} />
+        </HStack>
 
+        <HStack gap={4}>
         {/* Notifications */}
         <Box ref={notifRef} position="relative">
           <HStack cursor="pointer" p={2} borderRadius="md" _hover={{ bg: "muted" }} onClick={() => setShowNotif(!showNotif)} position="relative">
@@ -194,7 +200,7 @@ export default function TopBar({ onMenuClick }) {
             )}
           </HStack>
           {showNotif && (
-            <Box position="absolute" top="100%" right={0} mt={2} w="360px" bg="#FAFAFA" border="1px solid" borderColor="border" borderRadius="lg" shadow="lg" zIndex={50} maxH="400px" overflow="auto">
+            <Box position="absolute" top="100%" right={0} mt={2} w="360px" bg="white" border="1px solid" borderColor="rgba(255,255,255,.9)" borderRadius="xl" boxShadow="inset 2px 2px 5px rgba(255,255,255,1), inset -3px -3px 8px rgba(15,23,42,.06), 8px 14px 28px rgba(15,23,42,.16)" zIndex={50} maxH="400px" overflow="auto">
               <HStack justify="space-between" p={3} borderBottom="1px solid" borderColor="border">
                 <Text fontWeight="semibold" fontSize="sm">Notifications</Text>
                 {unreadCount > 0 && (
@@ -228,7 +234,7 @@ export default function TopBar({ onMenuClick }) {
 
           {/* Main User Menu */}
           {showMenu && (
-            <Box position="absolute" top="100%" right={0} mt={2} w="220px" bg="#FAFAFA" border="1px solid" borderColor="border" borderRadius="lg" shadow="lg" zIndex={50}>
+            <Box position="absolute" top="100%" right={0} mt={2} w="220px" bg="white" border="1px solid" borderColor="rgba(255,255,255,.9)" borderRadius="xl" boxShadow="inset 2px 2px 5px rgba(255,255,255,1), inset -3px -3px 8px rgba(15,23,42,.06), 8px 14px 28px rgba(15,23,42,.16)" zIndex={50}>
               <Box p={3} borderBottom="1px solid" borderColor="border">
                 <Text fontWeight="semibold" fontSize="sm">{user?.first_name} {user?.last_name}</Text>
                 <Text fontSize="xs" color="foreground" opacity={0.5}>{user?.role}</Text>
@@ -255,7 +261,7 @@ export default function TopBar({ onMenuClick }) {
 
           {/* Switch Account Submenu */}
           {showSwitchSubmenu && (
-            <Box ref={submenuRef} position="absolute" top="100%" right={0} mt={2} w="300px" bg="#FAFAFA" border="1px solid" borderColor="border" borderRadius="lg" shadow="lg" zIndex={50}>
+            <Box ref={submenuRef} position="absolute" top="100%" right={0} mt={2} w="300px" bg="white" border="1px solid" borderColor="rgba(255,255,255,.9)" borderRadius="xl" boxShadow="inset 2px 2px 5px rgba(255,255,255,1), inset -3px -3px 8px rgba(15,23,42,.06), 8px 14px 28px rgba(15,23,42,.16)" zIndex={50}>
               <HStack p={3} borderBottom="1px solid" borderColor="border" justify="space-between">
                 <HStack gap={2} cursor="pointer" _hover={{ opacity: 0.7 }} onClick={closeSwitchSubmenu}>
                   <ArrowLeft size={16} />
@@ -312,6 +318,7 @@ export default function TopBar({ onMenuClick }) {
             </Box>
           )}
         </Box>
+        </HStack>
       </HStack>
     </>
   );

@@ -1,0 +1,62 @@
+.sb-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(115, 118, 134, 0.4) transparent;
+}
+.sb-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.sb-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sb-scroll::-webkit-scrollbar-thumb {
+  background: rgba(115, 118, 134, 0.35);
+  border-radius: 999px;
+}
+
+/* Tooltip portal (fixed di body, nol pengaruh ke scroll sidebar) */
+.sb-tip-fixed {
+  position: fixed;
+  transform: translateY(-50%);
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+  pointer-events: none;
+  animation: sb-tip-in 150ms ease;
+}
+@keyframes sb-tip-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Tampil/sembunyi responsif (pengganti class Tailwind) */
+.sb-desktop {
+  display: none;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .sb-desktop {
+    display: flex;
+  }
+}
+.sb-mobile-panel {
+  display: flex;
+  flex-direction: column;
+}
+.sb-mobileonly {
+  display: block;
+}
+@media (min-width: 768px) {
+  .sb-mobileonly {
+    display: none;
+  }
+}

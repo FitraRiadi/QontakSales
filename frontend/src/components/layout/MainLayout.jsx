@@ -15,13 +15,15 @@ export default function MainLayout() {
   }, [pathname]);
 
   return (
-    <Flex h="100vh" bg="background" overflow="hidden">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <Flex flex={1} flexDirection="column" minW={0}>
-        <TopBar onMenuClick={() => setSidebarOpen(true)} />
-        <Box ref={contentRef} flex={1} p={{ base: 4, md: 6 }} overflow="auto">
-          <Outlet />
-        </Box>
+    <Flex h="100vh" bg="background" overflow="hidden" flexDirection="column">
+      <TopBar onMenuClick={() => setSidebarOpen(true)} />
+      <Flex flex={1} minH={0}>
+        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Flex flex={1} flexDirection="column" minW={0} minH={0}>
+          <Box ref={contentRef} flex={1} p={{ base: 4, md: 6 }} overflow="auto" bg="muted">
+            <Outlet />
+          </Box>
+        </Flex>
       </Flex>
     </Flex>
   );
