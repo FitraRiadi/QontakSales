@@ -229,7 +229,7 @@ export default function TopBar({ onMenuClick, pinned, onTogglePin }) {
             )}
           </HStack>
           {showNotif && (
-            <Box position="absolute" top="100%" right={0} mt={2} w="360px" bg="white" border="1px solid" borderColor="rgba(255,255,255,.9)" borderRadius="xl" boxShadow="inset 2px 2px 5px rgba(255,255,255,1), inset -3px -3px 8px rgba(15,23,42,.06), 8px 14px 28px rgba(15,23,42,.16)" zIndex={50} maxH="400px" overflow="auto">
+            <Box position={{ base: "fixed", md: "absolute" }} top={{ base: "80px", md: "100%" }} left={{ base: "50%", md: "auto" }} right={{ base: "auto", md: 0 }} transform={{ base: "translateX(-50%)", md: "none" }} mt={{ base: 0, md: 2 }} w={{ base: "calc(100vw - 32px)", md: "360px" }} maxW="360px" bg="white" border="1px solid" borderColor="rgba(255,255,255,.9)" borderRadius="xl" boxShadow="inset 2px 2px 5px rgba(255,255,255,1), inset -3px -3px 8px rgba(15,23,42,.06), 8px 14px 28px rgba(15,23,42,.16)" zIndex={70} maxH="400px" overflow="auto">
               <HStack justify="space-between" p={3} borderBottom="1px solid" borderColor="border">
                 <Text fontWeight="semibold" fontSize="sm">Notifications</Text>
                 {unreadCount > 0 && (
