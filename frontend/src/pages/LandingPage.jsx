@@ -44,6 +44,34 @@ const FAQS = [
   { q: "Is my data secure?", a: "Yes. Sign-in uses JWT authentication with hashed passwords, every company workspace is strictly isolated so teams only ever see their own data, and sensitive actions are limited by role." },
 ];
 
+function BackToTop() {
+  const [show, setShow] = useState(false);
+  const reduceMotion = useReducedMotion();
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 600);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.button
+          className="sq-top"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 16, transition: { duration: 0.15 } }}
+          transition={{ duration: 0.25, ease: EASE }}
+          onClick={() => window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" })}
+          aria-label="Back to top"
+        >
+          <span className="material-symbols-outlined">arrow_upward</span>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function LandingPage() {
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
@@ -739,6 +767,7 @@ export default function LandingPage() {
               <div className="sq-cta-row">
                 <motion.button className="sq-btn-white" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => go("/register")}>Start Free <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_forward</span></motion.button>
                 <a className="sq-btn-ghost" href="#product-capabilities"><span className="material-symbols-outlined">computer</span> Check out the features.</a>
+                <button className="sq-btn-ghost" onClick={() => go("/contact")}><span className="material-symbols-outlined">forum</span> Contact Us</button>
               </div>
               <div className="sq-trust"><span>✓ Free Started</span><span>✓ Zero setup fees</span><span>✓ Instant WhatsApp API provisioning</span></div>
               </div>
@@ -776,6 +805,7 @@ export default function LandingPage() {
           <div className="sq-bottom"><span>© 2026 Qontak Sales. All rights reserved.</span><span>Created By IamFit Space</span></div>
         </div>
       </footer>
+      <BackToTop />
     </div>
     </MotionConfig>
   );

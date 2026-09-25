@@ -293,6 +293,10 @@
 .sq-cta-caption p { font-size: 14px; line-height: 1.6; color: #434655; margin: 0; text-shadow: 0 1px 8px rgba(255,255,255,.6); }
 @media (min-width: 768px) { .sq-cta-caption p { font-size: 16px; } }
 
+/* Back to top */
+.sq-top { position: fixed; right: 20px; bottom: 20px; z-index: 40; width: 48px; height: 48px; border-radius: 16px; background: var(--sq-inverse); color: #fff; border: 1px solid rgba(255,255,255,.2); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 2px 2px 4px rgba(255,255,255,.2), inset -2px -2px 5px rgba(0,0,0,.3), 4px 8px 18px rgba(15,23,42,.3); }
+.sq-top:hover { background: #1e293b; }
+
 /* CTA + footer */
 .sq-cta-card { background: var(--sq-inverse); border-radius: 24px; padding: 3rem 2rem; text-align: center; color: #fff; border: 1px solid rgba(255,255,255,.12); box-shadow: inset 2px 2px 6px rgba(255,255,255,.14), inset -6px -6px 14px rgba(0,0,0,.4), 12px 16px 32px rgba(15,23,42,.3); position: relative; overflow: hidden; }
 .sq-cta-bg { position: absolute; inset: 0; }
