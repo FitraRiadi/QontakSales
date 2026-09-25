@@ -145,17 +145,18 @@ function NavList({ expanded, onNavigate }) {
   );
 }
 
-export default function Sidebar({ open, onClose }) {
-  const [expanded, setExpanded] = useState(false);
+export default function Sidebar({ open, onClose, pinned }) {
+  const [hovered, setHovered] = useState(false);
+  const expanded = pinned || hovered;
 
   return (
     <>
-      {/* Desktop: hover-expand 280 / 72 */}
+      {/* Desktop: hover-expand 280 / 72, bisa dikunci via pin */}
       <motion.div
         animate={{ width: expanded ? 280 : 72 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        onMouseEnter={() => setExpanded(true)}
-        onMouseLeave={() => setExpanded(false)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
           height: "100vh",
           background: "#edf2ff",

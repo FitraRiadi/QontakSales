@@ -10,11 +10,11 @@ import {
   VStack,
   Spinner,
 } from "@chakra-ui/react";
-import { Bell, List, SignOut, Gear, ArrowsClockwise, ArrowUUpLeft, ArrowLeft } from "@phosphor-icons/react";
+import { Bell, List, SignOut, Gear, ArrowsClockwise, ArrowUUpLeft, ArrowLeft, PushPin, PushPinSlash } from "@phosphor-icons/react";
 import api from "@/services/api";
 import logoNav from "@/assets/landing-stitch/logo-nav.png";
 
-export default function TopBar({ onMenuClick }) {
+export default function TopBar({ onMenuClick, pinned, onTogglePin }) {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
@@ -184,7 +184,34 @@ export default function TopBar({ onMenuClick }) {
         boxShadow="inset 2px 2px 5px rgba(255,255,255,.9), inset -3px -3px 8px rgba(15,23,42,.05), 0 8px 20px -12px rgba(15,23,42,.18)"
         justify="space-between" gap={4}
         flexShrink={0}
+        position="relative"
       >
+        <Box
+          as="button"
+          aria-label={pinned ? "Unpin sidebar" : "Pin sidebar"}
+          aria-pressed={pinned}
+          title={pinned ? "Unpin sidebar" : "Pin sidebar"}
+          onClick={onTogglePin}
+          position="absolute"
+          left="-14px"
+          top="50%"
+          style={{ transform: "translateY(-50%)" }}
+          zIndex={60}
+          w="28px"
+          h="28px"
+          borderRadius="full"
+          bg="#fff"
+          color={pinned ? "#2563EB" : "#0F172A"}
+          border="1px solid rgba(195,198,215,.6)"
+          display={{ base: "none", md: "flex" }}
+          alignItems="center"
+          justifyContent="center"
+          cursor="pointer"
+          boxShadow="0 4px 12px -4px rgba(15,23,42,.25)"
+          _hover={{ color: "#2563EB" }}
+        >
+          {pinned ? <PushPinSlash size={15} weight="fill" /> : <PushPin size={15} />}
+        </Box>
         <HStack gap={3}>
           <Box display={{ base: "block", md: "none" }} cursor="pointer" onClick={onMenuClick} p={2} borderRadius="md" _hover={{ bg: "muted" }}>
             <List size={22} color="#0F172A" />
