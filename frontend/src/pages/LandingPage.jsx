@@ -139,7 +139,7 @@ export default function LandingPage() {
         { icon: "calendar_month", tint: "#ede9fe", color: "#6d28d9", title: "Activities & Calendar", desc: "Timeline per deal", onClick: () => openTab("activities") },
         { icon: "monitoring", tint: "#fef3c7", color: "#92400e", title: "Dashboard & Reports", desc: "Export Excel", onClick: () => openTab("reports") },
       ],
-      feature: { kicker: "LIVE METRICS", title: "$842K closing + 98.4% WA delivery", cta: "Book a Demo", onClick: () => go("/register") },
+      feature: { kicker: "Live Metrics", title: "$842K closing + 98.4% WA delivery", cta: "Book a Demo", onClick: () => go("/register") },
     },
     solutions: {
       label: "Solutions",
@@ -149,7 +149,7 @@ export default function LandingPage() {
         { icon: "security", tint: "#ecfdf5", color: "#006242", title: "Roles & Security", desc: "Manager + Agent access", onClick: () => { setOpenMenu(null); scrollTo("pricing"); } },
         { icon: "campaign", tint: "#ede9fe", color: "#6d28d9", title: "WhatsApp Broadcast", desc: "HSM campaigns", onClick: () => { setOpenMenu(null); scrollTo("product-capabilities"); } },
       ],
-      feature: { kicker: "CASE STUDY", title: "+68% pipeline conversion, 120+ reps", cta: "See proof", onClick: () => { setOpenMenu(null); scrollTo("insights-resources"); } },
+      feature: { kicker: "Case Study", title: "+68% pipeline conversion, 120+ reps", cta: "See proof", onClick: () => { setOpenMenu(null); scrollTo("insights-resources"); } },
     },
     resources: {
       label: "Resources",
@@ -158,7 +158,7 @@ export default function LandingPage() {
         { icon: "speed", tint: "#fef3c7", color: "#92400e", title: "Kill Deal Stalls", desc: "7 min guide", onClick: () => go("/blog") },
         { icon: "bar_chart", tint: "#ecfdf5", color: "#006242", title: "2024 Conversion Report", desc: "4 min benchmark", onClick: () => go("/blog") },
       ],
-      feature: { kicker: "SALES ACADEMY", title: "Playbooks dari practitioner enterprise", cta: "View all articles", onClick: () => go("/blog") },
+      feature: { kicker: "Sales Academy", title: "Playbooks dari practitioner enterprise", cta: "View all articles", onClick: () => go("/blog") },
     },
   };
 
@@ -228,7 +228,7 @@ export default function LandingPage() {
                     <div className="sq-mini-top">
                       <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#f59e0b", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 18 }}>+</div>
                       <div style={{ height: 40, borderRadius: 12, background: "#eff4ff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: 10, color: "#565e74", fontWeight: 700 }}>PIPELINE</span>
+                        <span style={{ fontSize: 10, color: "#565e74", fontWeight: 700 }}>Pipeline</span>
                         <span style={{ fontWeight: 800, fontSize: 12 }}>23 Deals</span>
                       </div>
                       <div style={{ height: 40, borderRadius: 12, background: "#eff4ff", display: "flex", alignItems: "center", justifyContent: "center", color: "#565e74" }}>
@@ -290,12 +290,12 @@ export default function LandingPage() {
           <div className="sq-container">
             <Reveal><p style={{ textAlign: "center", fontSize: 11, fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: "#434655", marginBottom: 24 }}>Over 5,000+ Fast-Growing Enterprise Teams Accelerate Growth With Sales Qontak</p></Reveal>
             <Stagger className="sq-logo-grid">
-              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#2563eb", marginRight: 4 }}>●</span>TOKOPEDIA</motion.div>
-              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#006242", marginRight: 4 }}>■</span>GOJEK REVENUE</motion.div>
-              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#004ac6", marginRight: 4 }}>▲</span>BANK JAGO</motion.div>
-              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#565e74", marginRight: 4 }}>◆</span>TRAVELOKA</motion.div>
-              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#2563eb", marginRight: 4 }}>★</span>TELKOM IND</motion.div>
-              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#007d55", marginRight: 4 }}>❖</span>KALBE FARMA</motion.div>
+              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#2563eb", marginRight: 4 }}>●</span>Tokopedia</motion.div>
+              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#006242", marginRight: 4 }}>■</span>Gojek Revenue</motion.div>
+              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#004ac6", marginRight: 4 }}>▲</span>Bank Jago</motion.div>
+              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#565e74", marginRight: 4 }}>◆</span>Traveloka</motion.div>
+              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#2563eb", marginRight: 4 }}>★</span>Telkom Ind</motion.div>
+              <motion.div variants={staggerChild} className="sq-logo-item"><span style={{ color: "#007d55", marginRight: 4 }}>❖</span>Kalbe Farma</motion.div>
             </Stagger>
             <Stagger className="sq-metrics">
               <motion.div variants={staggerChild} className="sq-metric"><p className="big" style={{ color: "#2563eb" }}>3.4x</p><p style={{ fontWeight: 700, margin: "0 0 4px" }}>Faster Deal Close</p><p className="sq-body">Automated task routing eliminates pipeline stalls.</p></motion.div>
@@ -343,19 +343,19 @@ export default function LandingPage() {
                   </div>
                   <div className="sq-kanban">
                     <div className="sq-kanban-col">
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>DISCOVERY (7)</span><span style={{ fontSize: 12, fontWeight: 700 }}>Rp 240JT</span></div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>Discovery (7)</span><span style={{ fontSize: 12, fontWeight: 700 }}>Rp 240JT</span></div>
                       <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Astra Agro Inc</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#eff6ff", color: "#004ac6", fontWeight: 700 }}>New</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 65JT • Move forward in one click</p></div>
                       <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Nusa Logistics</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#f1f5f9", color: "#565e74", fontWeight: 700 }}>Demo done</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 18,5JT • Action today</p></div>
                     </div>
                     <div className="sq-kanban-col">
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>PROPOSAL (5)</span><span style={{ fontSize: 12, fontWeight: 700 }}>Rp 510JT</span></div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>Proposal (5)</span><span style={{ fontSize: 12, fontWeight: 700 }}>Rp 510JT</span></div>
                       <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Bhinneka Retail</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#ecfdf5", color: "#006242", fontWeight: 700 }}>Sent</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 120JT • Contract sent</p></div>
                       <div className="sq-deal"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Indomobil Fleet</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#fef3c7", color: "#92400e", fontWeight: 700 }}>Follow-up</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 88JT • WA follow-up logged</p></div>
                     </div>
                     <div className="sq-kanban-col">
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>WON (6)</span><span style={{ fontSize: 12, fontWeight: 800, color: "#006242" }}>Rp 870JT</span></div>
-                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Sinarmas Multi</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>WON</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 320JT • Annual plan</p></div>
-                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Ruang Financial</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>WON</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 145JT • 3-year agreement</p></div>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ fontSize: 10, fontWeight: 800, color: "#565e74" }}>Won (6)</span><span style={{ fontSize: 12, fontWeight: 800, color: "#006242" }}>Rp 870JT</span></div>
+                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Sinarmas Multi</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>Won</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 320JT • Annual plan</p></div>
+                      <div className="sq-deal won"><div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Ruang Financial</span><span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#a7f3d0", color: "#006242", fontWeight: 800 }}>Won</span></div><p style={{ fontSize: 11, color: "#565e74", margin: 0 }}>Rp 145JT • 3-year agreement</p></div>
                     </div>
                   </div>
                 </div>
@@ -466,7 +466,7 @@ export default function LandingPage() {
               <motion.div variants={staggerChild} className="sq-tcard white sq-span-8 clay">
                 <div className="sq-tcard-inner">
                   <div className="l">
-                    <span className="sq-badge" style={{ background: "#6ffbbe", color: "#002113", marginBottom: 8 }}>CUSTOMER CASE STUDY</span>
+                    <span className="sq-badge" style={{ background: "#6ffbbe", color: "#002113", marginBottom: 8 }}>Customer Case Study</span>
                     <h3 className="sq-h3" style={{ margin: "8px 0" }}>&quot;Sales Qontak consolidated 6 fragmented chat apps and legacy Salesforce into a single high-speed dashboard.&quot;</h3>
                     <p className="sq-body" style={{ marginBottom: 12 }}>Over 120 account reps now manage their omnichannel WhatsApp and enterprise deal pipelines synchronously without ever copy-pasting lead records.</p>
                     <div className="sq-tfoot">
