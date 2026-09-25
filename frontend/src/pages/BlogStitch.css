@@ -47,7 +47,7 @@
 
 /* Detail */
 .sb-article { max-width: 800px; }
-.sb-cat { font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: .05em; }
+.sb-cat { font-size: 13px; font-weight: 700; color: #2563eb; letter-spacing: .01em; }
 .sb-title { font-family: "Plus Jakarta Sans", sans-serif; font-size: 30px; line-height: 38px; font-weight: 700; letter-spacing: -.015em; margin: 8px 0 12px; }
 @media (min-width: 768px) { .sb-title { font-size: 36px; line-height: 44px; } }
 .sb-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 13px; color: #565e74; margin-bottom: 1.5rem; }

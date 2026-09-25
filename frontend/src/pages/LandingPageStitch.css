@@ -104,7 +104,7 @@
 .sq-main { padding-top: 88px; min-height: calc(100vh - 80px); }
 
 /* Type */
-.sq-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--sq-primary-container); margin-bottom: 4px; }
+.sq-eyebrow { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--sq-primary-container); margin-bottom: 4px; }
 .sq-h1 { font-family: "Plus Jakarta Sans", "Inter", sans-serif; font-size: 36px; line-height: 44px; letter-spacing: -.02em; font-weight: 700; margin: 0; }
 @media (min-width: 768px) { .sq-h1 { font-size: 40px; line-height: 48px; } }
 .sq-h1 .blue { color: var(--sq-primary-container); }

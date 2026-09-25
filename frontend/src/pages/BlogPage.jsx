@@ -29,7 +29,7 @@ function ArticleCard({ a, onOpen }) {
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 8 }}>
           {a.category_name ? (
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: ".04em" }}>{a.category_name}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#2563eb" }}>{a.category_name}</span>
           ) : <span />}
           <span style={{ fontSize: 12, color: "#565e74", flexShrink: 0 }}>{readMins(a.excerpt)} min read</span>
         </div>

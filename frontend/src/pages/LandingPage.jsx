@@ -55,7 +55,7 @@ function CmpCell({ v, hl }) {
 const FAQS = [
   { q: "What is QontakSales?", a: "A sales workspace for teams: manage accounts and contacts, track deals on a 7-stage visual pipeline, send WhatsApp broadcasts, schedule activities on a shared calendar, and monitor revenue on a live dashboard." },
   { q: "Is QontakSales free to use?", a: "Yes. Create an account for free with no credit card required and use the full workspace — pipeline, broadcast, activities, dashboard and articles." },
-  { q: "How does WhatsApp broadcast work?", a: "Pick contacts with search and select-all, write one message using {name}, {phone} and {company} variables so each recipient gets a personalized text, send once, then check sent vs failed per batch in Broadcast History." },
+  { q: "How does WhatsApp broadcast work?", a: "Pick contacts with search and select all, write one message using {name}, {phone} and {company} variables so each recipient gets a personalized text, send once, then check sent vs failed per batch in Broadcast History. Messages go out through Fonnte using your company API key." },
   { q: "What is the difference between Manager and Agent roles?", a: "Managers see everything: all leads and deals, team members, the full broadcast history, and article publishing. Agents work on their own assigned accounts, contacts and deals." },
   { q: "How does the deal pipeline work?", a: "Seven stages: Qualification, Discovery & Demo, Proposal Sent, Negotiation, Closing, Won and Lost. Move deals forward with one click, see per-stage totals, and managers are notified on every move." },
   { q: "Can I archive items instead of deleting them?", a: "Yes. Archiving hides accounts, contacts and deals from the workspace without deleting them — restore anything anytime from the Archive page." },
@@ -158,7 +158,7 @@ export default function LandingPage() {
         { icon: "speed", tint: "#fef3c7", color: "#92400e", title: "Kill Deal Stalls", desc: "7 min guide", onClick: () => go("/blog") },
         { icon: "bar_chart", tint: "#ecfdf5", color: "#006242", title: "2024 Conversion Report", desc: "4 min benchmark", onClick: () => go("/blog") },
       ],
-      feature: { kicker: "Sales Academy", title: "Playbooks dari practitioner enterprise", cta: "View all articles", onClick: () => go("/blog") },
+      feature: { kicker: "Sales Academy", title: "Playbooks from enterprise practitioners", cta: "View all articles", onClick: () => go("/blog") },
     },
   };
 
@@ -299,7 +299,7 @@ export default function LandingPage() {
             </Stagger>
             <Stagger className="sq-metrics">
               <motion.div variants={staggerChild} className="sq-metric"><p className="big" style={{ color: "#2563eb" }}>3.4x</p><p style={{ fontWeight: 700, margin: "0 0 4px" }}>Faster Deal Close</p><p className="sq-body">Automated task routing eliminates pipeline stalls.</p></motion.div>
-              <motion.div variants={staggerChild} className="sq-metric"><p className="big" style={{ color: "#006242" }}>98.4%</p><p style={{ fontWeight: 700, margin: "0 0 4px" }}>WhatsApp Delivery Rate</p><p className="sq-body">Official Tier-1 Meta BSP direct cloud infrastructure.</p></motion.div>
+              <motion.div variants={staggerChild} className="sq-metric"><p className="big" style={{ color: "#006242" }}>98.4%</p><p style={{ fontWeight: 700, margin: "0 0 4px" }}>WhatsApp Delivery Rate</p><p className="sq-body">Powered by Fonnte with your company API key.</p></motion.div>
               <motion.div variants={staggerChild} className="sq-metric"><p className="big">$1.2B+</p><p style={{ fontWeight: 700, margin: "0 0 4px" }}>Pipeline Managed</p><p className="sq-body">Trusted by mid-market to Fortune 500 commercial teams.</p></motion.div>
             </Stagger>
           </div>
@@ -366,10 +366,10 @@ export default function LandingPage() {
               <div className="sq-split">
                 <div className="sq-split-5" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   <h3 className="sq-h3">Broadcast WhatsApp with template variables</h3>
-                  <p className="sq-body">Pick contacts, write one message with {"{name}"}, {"{phone}"} and {"{company}"} variables, send to tens or hundreds at once — then track sent vs failed per batch in history.</p>
+                  <p className="sq-body">Pick contacts, write one message with {"{name}"}, {"{phone}"} and {"{company}"} variables, send to tens or hundreds at once. Then track sent vs failed per batch in history. Powered by Fonnte. Each company broadcasts with its own Fonnte API key.</p>
                   <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>{"{name}"}, {"{phone}"}, {"{company}"} auto personalization</span></div>
                   <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Contact picker with search and select-all</span></div>
-                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Per-batch history: sent, failed and detail</span></div>
+                  <div className="sq-check"><span className="material-symbols-outlined" style={{ color: "#2563eb" }}>check_circle</span><span>Batch history: sent, failed and detail</span></div>
                 </div>
                 <div className="sq-split-7 sq-mock">
                   <div className="sq-chat">
@@ -381,7 +381,7 @@ export default function LandingPage() {
                       <span style={{ padding: "4px 8px", borderRadius: 999, fontSize: 12, fontWeight: 700, background: "#eff6ff", color: "#004ac6" }}>128 recipients</span>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 12 }}>
-                      <div style={{ padding: 10, borderRadius: 6, background: "#eff4ff" }}>Halo <b>{"{name}"}</b> dari <b>{"{company}"}</b>, ada promo khusus bulan ini. Balas pesan ini atau hubungi kami di <b>{"{phone}"}</b> ya!</div>
+                      <div style={{ padding: 10, borderRadius: 6, background: "#eff4ff" }}>Hi <b>{"{name}"}</b> from <b>{"{company}"}</b>, we have a special promo this month. Just reply to this message or reach us at <b>{"{phone}"}</b>!</div>
                       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                         <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#dbeafe", color: "#004ac6" }}>{"{name}"}</span>
                         <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#dbeafe", color: "#004ac6" }}>{"{phone}"}</span>
@@ -389,7 +389,7 @@ export default function LandingPage() {
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 4, borderTop: "1px solid rgba(195,198,215,.3)", fontSize: 11, color: "#565e74" }}>
                         <span>Promo Lebaran • <b style={{ color: "#006242" }}>125 sent</b> • <b style={{ color: "#ba1a1a" }}>3 failed</b></span>
-                        <span>History per batch</span>
+                        <span>History per batch · Powered by Fonnte</span>
                       </div>
                     </div>
                   </div>
@@ -598,7 +598,7 @@ export default function LandingPage() {
                       <div>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 8 }}>
                           {a.category_name ? (
-                            <span style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: ".04em" }}>{a.category_name}</span>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: "#2563eb" }}>{a.category_name}</span>
                           ) : <span />}
                           <span style={{ fontSize: 12, color: "#565e74", flexShrink: 0 }}>{readMins(a)} min read</span>
                         </div>
@@ -629,7 +629,7 @@ export default function LandingPage() {
         <section className="sq-section-lg sq-bg-white" id="comparison">
           <div className="sq-container">
             <motion.div className="sq-center left" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
-              <span className="sq-eyebrow">Honest comparison</span>
+              <span className="sq-eyebrow">Honest Comparison</span>
               <h2 className="sq-h2">Why teams switch to QontakSales</h2>
               <p className="sq-sub">No inflated claims. Just what each option actually gives you, feature by feature.</p>
             </motion.div>
@@ -730,7 +730,7 @@ export default function LandingPage() {
         <section className="sq-section-lg sq-bg-white" id="faq">
           <div className="sq-container">
             <motion.div className="sq-center" initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.55, ease: EASE }}>
-              <span className="sq-eyebrow">Need to know</span>
+              <span className="sq-eyebrow">Need To Know</span>
               <h2 className="sq-h2">Frequently Asked Questions</h2>
               <p className="sq-sub">Everything you need to know about the workspace, roles and data.</p>
             </motion.div>
