@@ -178,10 +178,12 @@ export default function TopBar({ onMenuClick }) {
       )}
 
       <HStack
-        h="14" px={{ base: 4, md: 6 }} bg="#edf2ff"
-        borderBottom="1px solid" borderColor="rgba(255,255,255,.9)"
-        boxShadow="inset 0 2px 5px rgba(255,255,255,.9), inset 0 -3px 8px rgba(15,23,42,.05), 0 8px 20px -12px rgba(15,23,42,.18)"
+        h="14" mx={{ base: 4, md: 6 }} mt={{ base: 4, md: 4 }} px={{ base: 4, md: 5 }} bg="#edf2ff"
+        border="1px solid" borderColor="rgba(255,255,255,.9)"
+        borderRadius="20px"
+        boxShadow="inset 2px 2px 5px rgba(255,255,255,.9), inset -3px -3px 8px rgba(15,23,42,.05), 0 8px 20px -12px rgba(15,23,42,.18)"
         justify="space-between" gap={4}
+        flexShrink={0}
       >
         <HStack gap={3}>
           <Box display={{ base: "block", md: "none" }} cursor="pointer" onClick={onMenuClick} p={2} borderRadius="md" _hover={{ bg: "muted" }}>

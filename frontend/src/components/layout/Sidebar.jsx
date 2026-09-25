@@ -157,7 +157,7 @@ export default function Sidebar({ open, onClose }) {
         onMouseEnter={() => setExpanded(true)}
         onMouseLeave={() => setExpanded(false)}
         style={{
-          height: "calc(100vh - 56px)",
+          height: "100vh",
           background: "#edf2ff",
           borderRight: "1px solid rgba(255,255,255,.9)",
           boxShadow:
@@ -168,7 +168,7 @@ export default function Sidebar({ open, onClose }) {
         }}
         className="sb-desktop"
       >
-        <Box flex={1} overflowY="auto" overflowX="hidden" px={expanded ? 3 : 2} py={4} className="sb-scroll" minH={0}>
+        <Box flex={1} overflowY="auto" overflowX="hidden" overscrollBehavior="contain" px={expanded ? 3 : 2} py={4} className="sb-scroll" minH={0}>
           <NavList expanded={expanded} onNavigate={() => {}} />
         </Box>
       </motion.div>
@@ -215,7 +215,7 @@ export default function Sidebar({ open, onClose }) {
                   <X size={20} />
                 </Box>
               </HStack>
-              <Box flex={1} overflowY="auto" overflowX="hidden" px={3} py={4} className="sb-scroll" minH={0}>
+              <Box flex={1} overflowY="auto" overflowX="hidden" overscrollBehavior="contain" px={3} py={4} className="sb-scroll" minH={0}>
                 <NavList expanded onNavigate={onClose} />
               </Box>
             </motion.div>

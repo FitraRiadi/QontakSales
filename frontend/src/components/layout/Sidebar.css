@@ -41,11 +41,11 @@
 /* Tampil/sembunyi responsif (pengganti class Tailwind) */
 .sb-desktop {
   display: none;
-  flex-direction: column;
 }
 @media (min-width: 768px) {
   .sb-desktop {
     display: flex;
+    flex-direction: column;
   }
 }
 .sb-mobile-panel {
@@ -58,5 +58,11 @@
 @media (min-width: 768px) {
   .sb-mobileonly {
     display: none;
+  }
+}
+@media (max-width: 767.98px) {
+  .sb-mobileonly.sb-mobile-panel {
+    display: flex;
+    flex-direction: column;
   }
 }
