@@ -294,7 +294,9 @@
 @media (min-width: 768px) { .sq-cta-caption p { font-size: 16px; } }
 
 /* CTA + footer */
-.sq-cta-card { background: var(--sq-inverse); border-radius: 24px; padding: 3rem 2rem; text-align: center; color: #fff; border: 1px solid rgba(255,255,255,.12); box-shadow: inset 2px 2px 6px rgba(255,255,255,.14), inset -6px -6px 14px rgba(0,0,0,.4), 12px 16px 32px rgba(15,23,42,.3); }
+.sq-cta-card { background: var(--sq-inverse); border-radius: 24px; padding: 3rem 2rem; text-align: center; color: #fff; border: 1px solid rgba(255,255,255,.12); box-shadow: inset 2px 2px 6px rgba(255,255,255,.14), inset -6px -6px 14px rgba(0,0,0,.4), 12px 16px 32px rgba(15,23,42,.3); position: relative; overflow: hidden; }
+.sq-cta-bg { position: absolute; inset: 0; }
+.sq-cta-content { position: relative; z-index: 1; }
 @media (min-width: 768px) { .sq-cta-card { padding: 4rem; } }
 .sq-cta-card h2 { color: #fff; }
 .sq-cta-card p { color: rgba(255,255,255,.8); }

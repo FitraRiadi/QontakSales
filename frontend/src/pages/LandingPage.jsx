@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence, MotionConfig } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig, useReducedMotion } from "framer-motion";
 import { Reveal, Stagger, staggerChild, heroParent, heroChild, EASE } from "./landingMotion";
 import SiteNav from "@/components/layout/SiteNav";
+import Topography from "@/components/ui/Topography";
 import BackgroundRipple from "@/components/ui/BackgroundRipple";
 import TextFlip from "@/components/ui/TextFlip";
 import api from "@/services/api";
@@ -45,6 +46,7 @@ const FAQS = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
   const [tab, setTab] = useState("reports");
   const [billing, setBilling] = useState("annual");
   const [insight, setInsight] = useState("All Insights");
@@ -717,6 +719,21 @@ export default function LandingPage() {
               viewport={{ once: true, margin: "-70px" }}
               transition={{ duration: 0.6, ease: EASE }}
             >
+              {!reduceMotion && (
+                <div className="sq-cta-bg" aria-hidden="true">
+                  <Topography
+                    lowColor="#172554"
+                    midColor="#2563eb"
+                    highColor="#dbeafe"
+                    bands={3.5}
+                    glow={0.6}
+                    opacity={1}
+                    fillBands
+                    mouseInteraction
+                  />
+                </div>
+              )}
+              <div className="sq-cta-content">
               <h2 className="sq-h2">Transform your sales organization into an unstoppable revenue machine.</h2>
               <p style={{ maxWidth: 40 + "rem", margin: "12px auto 0" }}>Join thousands of fast-growing commercial teams closing deals faster with Sales Qontak&apos;s unified omnichannel CRM. Start free for 14 days or speak to an enterprise architect.</p>
               <div className="sq-cta-row">
@@ -724,6 +741,7 @@ export default function LandingPage() {
                 <a className="sq-btn-ghost" href="#product-capabilities"><span className="material-symbols-outlined">computer</span> Check out the features.</a>
               </div>
               <div className="sq-trust"><span>✓ Free Started</span><span>✓ Zero setup fees</span><span>✓ Instant WhatsApp API provisioning</span></div>
+              </div>
             </motion.div>
           </div>
         </section>
